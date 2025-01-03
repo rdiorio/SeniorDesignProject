@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "166475004453",
+    "project_id": "social-sense-9fd88",
+    "storage_bucket": "social-sense-9fd88.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:166475004453:android:128fd626e24cd66011ddcc",
+        "android_client_info": {
+          "package_name": "com.example.social_sense"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOLwaeZKa-LGzpTaon8BrSqgHnPGpXGUY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
