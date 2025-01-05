@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:social_sense/services/auth.dart';
 
-class SignIn extends StatefulWidget {
+class Register extends StatefulWidget {
   final Function toggleView;  // toggleView is a required parameter
-  SignIn({required this.toggleView});  // Make sure this is marked as required
+  Register({required this.toggleView});  // Make sure this is marked as required
 
   @override
-  State<SignIn> createState() => _SignInState();
+  State<Register> createState() => _RegisterState();
 }
 
-class _SignInState extends State<SignIn> {
+class _RegisterState extends State<Register> {
 
   final AuthService _auth = AuthService();
 
@@ -24,11 +24,11 @@ class _SignInState extends State<SignIn> {
       appBar: AppBar(
         backgroundColor: Colors.brown[400],
         elevation: 0.0,
-        title: Text('Sign in to Social Sense'),
+        title: Text('Sign up to Social Sense'),
         actions: <Widget>[
           TextButton.icon(
             icon: Icon(Icons.person),
-            label: Text('Register'),
+            label: Text('Sign In'),
             onPressed: () {
               widget.toggleView();
             },
@@ -58,7 +58,7 @@ class _SignInState extends State<SignIn> {
                   backgroundColor: Colors.pink[400], // Background color
                 ),
                 child: Text(
-                  'Sign in',
+                  'Register',
                   style: TextStyle(color: Colors.white), // Text color
                 ),
                 onPressed: () async {
