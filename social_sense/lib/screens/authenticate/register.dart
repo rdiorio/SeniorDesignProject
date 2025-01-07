@@ -82,6 +82,7 @@ class _RegisterState extends State<Register> {
                           setState(() => loading = true);
                           dynamic result = await _auth
                               .registerWithEmailAndPassword(email, password);
+                          if (!mounted) return; // Check if the widget is still mounted
                           if (result == null) {
                             setState(() {
                               error = 'please supply a valid email';

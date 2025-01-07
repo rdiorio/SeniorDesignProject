@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:social_sense/models/user.dart' as app;
+import 'package:social_sense/services/database.dart';
 
 class AuthService {
   final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
@@ -45,6 +46,9 @@ Stream<app.User?> get user {
     try {
       firebase_auth.UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       firebase_auth.User? user = result.user;
+
+      await DatabaseService(uid: user!.uid).updateUserData('firstName', 'lastName');
+
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());
