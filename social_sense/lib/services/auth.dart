@@ -11,11 +11,11 @@ class AuthService {
   }
 
   //auth change user stream
-Stream<app.User?> get user {
-  return _auth.authStateChanges()
-      //.map((firebase_auth.User? user) => _userFromFirebaseUser(user));
-      .map(_userFromFirebaseUser);
-}
+  Stream<app.User?> get user {
+    return _auth.authStateChanges()
+        //.map((firebase_auth.User? user) => _userFromFirebaseUser(user));
+        .map(_userFromFirebaseUser);
+  }
 
   // sign in anonymously
   Future signInAnon() async {
@@ -42,19 +42,24 @@ Stream<app.User?> get user {
 
 
   // register with email and password
-  Future registerWithEmailAndPassword(String email, String password) async {
-    try {
-      firebase_auth.UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-      firebase_auth.User? user = result.user;
+Future registerWithEmailAndPassword(String email, String password) async {
+  try {
+    firebase_auth.UserCredential result = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    firebase_auth.User? user = result.user;
 
-      await DatabaseService(uid: user!.uid).updateUserData('firstName', 'lastName');
+    // Initialize Firestore with empty names for the first-time check
+    await DatabaseService(uid: user!.uid).updateUserData('', '');
 
-      return _userFromFirebaseUser(user);
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
+    return _userFromFirebaseUser(user);
+  } catch (e) {
+    print(e.toString());
+    return null;
   }
+}
+
 
 
   // sign out

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:social_sense/services/auth.dart';
+import 'package:social_sense/screens/information.dart';
+import 'package:social_sense/screens/daily_checkin.dart';
 
 class Home extends StatelessWidget {
-
   final AuthService _auth = AuthService();
+  final String uid;
+
+  Home({required this.uid});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,17 +19,47 @@ class Home extends StatelessWidget {
         elevation: 0.0,
         actions: <Widget>[
           TextButton.icon(
-            icon: Icon(Icons.person, color: Colors.white), // Set icon color
+            icon: Icon(Icons.person, color: Colors.white),
             label: Text(
               'logout',
-              style: TextStyle(color: Colors.white), // Set label color
+              style: TextStyle(color: Colors.white),
             ),
             onPressed: () async {
-              // Add your logout logic here
               await _auth.signOut();
             },
           ),
         ],
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              child: Text('Update Information'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => InformationScreen(uid: uid),
+                  ),
+                );
+              },
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              child: Text('Daily Check-In'),
+              onPressed: () {
+                print("Navigating to Daily Check-In with uid: $uid");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DailyCheckInScreen(uid: uid),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
