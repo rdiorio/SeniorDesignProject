@@ -3,6 +3,10 @@ allprojects {
         google()
         mavenCentral()
     }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.0.2' // Ensure compatibility with Gradle 8.3
+        // Add other classpath dependencies here
+    }
 }
 
 rootProject.buildDir = "../build"
