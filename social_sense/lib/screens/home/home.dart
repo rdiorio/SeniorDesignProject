@@ -80,66 +80,83 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.brown[50],
-      appBar: AppBar(
-        title: Text('Social Sense'),
-        backgroundColor: Colors.brown[400],
-        elevation: 0.0,
-        actions: <Widget>[
-          TextButton.icon(
-            icon: Icon(Icons.person, color: Colors.white),
-            label: Text(
-              'logout',
-              style: TextStyle(color: Colors.white),
+      body: Stack(
+        children: [
+          // Background image
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/Brando_Aminals-05.png'), // Path to your image
+                fit: BoxFit.cover,
+              ),
             ),
-            onPressed: () async {
-              await _auth.signOut();
-            },
+          ),
+          // Foreground content
+          Column(
+            children: [
+              AppBar(
+                title: Text('Social Sense'),
+                backgroundColor: Colors.brown[400],
+                elevation: 0.0,
+                actions: <Widget>[
+                  TextButton.icon(
+                    icon: Icon(Icons.person, color: Colors.white),
+                    label: Text(
+                      'logout',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () async {
+                      await _auth.signOut();
+                    },
+                  ),
+                ],
+              ),
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      child: Text('Update Information'),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => InformationScreen(uid: uid),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      child: Text('Daily Check-In'),
+                      onPressed: () {
+                        print("Navigating to Daily Check-In with uid: $uid");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DailyCheckInScreen(uid: uid),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      child: Text('Capture Face Emotion'),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FaceCaptureScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              child: Text('Update Information'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => InformationScreen(uid: uid),
-                  ),
-                );
-              },
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              child: Text('Daily Check-In'),
-              onPressed: () {
-                print("Navigating to Daily Check-In with uid: $uid");
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DailyCheckInScreen(uid: uid),
-                  ),
-                );
-              },
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              child: Text('Capture Face Emotion'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FaceCaptureScreen(),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
       ),
     );
   }
