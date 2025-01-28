@@ -2,6 +2,7 @@
 // import 'package:social_sense/services/auth.dart';
 // import 'package:social_sense/screens/information.dart';
 // import 'package:social_sense/screens/daily_checkin.dart';
+// import 'package:social_sense/screens/face_capture.dart';
 
 // class Home extends StatelessWidget {
 //   final AuthService _auth = AuthService();
@@ -58,6 +59,18 @@
 //                 );
 //               },
 //             ),
+//             SizedBox(height: 20),
+//             ElevatedButton(
+//               child: Text('Capture Face Emotion'),
+//               onPressed: () {
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                     builder: (context) => FaceCaptureScreen(),
+//                   ),
+//                 );
+//               },
+//             ),
 //           ],
 //         ),
 //       ),
@@ -70,6 +83,7 @@ import 'package:social_sense/services/auth.dart';
 import 'package:social_sense/screens/information.dart';
 import 'package:social_sense/screens/daily_checkin.dart';
 import 'package:social_sense/screens/face_capture.dart';
+import 'package:social_sense/screens/lessons.dart'; // Import the LessonsPage
 
 class Home extends StatelessWidget {
   final AuthService _auth = AuthService();
@@ -134,6 +148,19 @@ class Home extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => FaceCaptureScreen(),
+                  ),
+                );
+              },
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              child: Text('Lessons'), // New "Lessons" button
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        LessonsPage(), // Navigate to LessonsPage
                   ),
                 );
               },
