@@ -1,65 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:social_sense/screens/face_capture.dart'; // Import FaceCaptureScreen
+import 'package:social_sense/screens/face_capture.dart';
 
-class LessonsPage extends StatelessWidget {
+class MediumEmotionsPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Lessons'),
-        backgroundColor: Colors.brown[400],
-      ),
-      body: ListView(
-        children: [
-          ListTile(
-            title: Text('Easy Emotions'),
-            subtitle: Text('Learn basic emotions with examples.'),
-            trailing: Icon(Icons.arrow_forward),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EasyEmotionsPage(),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
+  _MediumEmotionsPageState createState() => _MediumEmotionsPageState();
 }
 
-class EasyEmotionsPage extends StatefulWidget {
-  @override
-  _EasyEmotionsPageState createState() => _EasyEmotionsPageState();
-}
-
-class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
-  int currentStep = 0; // Tracks which emotion we're showing
+class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
+  int currentStep = 0;
   final List<Map<String, dynamic>> emotions = [
     {
-      'emoji': '😊',
       'emotion': 'happy',
       'color': Colors.yellow,
       'image': 'lib/screens/assets/happy.png'
     },
     {
-      'emoji': '😢',
       'emotion': 'sad',
       'color': Colors.blue,
       'image': 'lib/screens/assets/sad.png'
     },
     {
-      'emoji': '😡',
       'emotion': 'angry',
       'color': Colors.red,
       'image': 'lib/screens/assets/angry.png'
     },
   ];
-  String feedbackMessage = ''; // Feedback for the user
-  bool showFaceCapture = false; // Whether to show the FaceCaptureScreen
-  bool isRetrying = false; // Tracks whether the user is retrying their face
+  String feedbackMessage = '';
+  bool showFaceCapture = false;
+  bool isRetrying = false;
 
   void _checkAnswer(String selectedEmotion) {
     final correctEmotion = emotions[currentStep]['emotion'];
@@ -67,7 +35,7 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
       setState(() {
         feedbackMessage =
             'Correct! Now practice making the ${correctEmotion} face!';
-        showFaceCapture = true; // Show the face capture step
+        showFaceCapture = true;
       });
     } else {
       setState(() {
@@ -86,8 +54,7 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
       _checkEmotionFromFace(detectedEmotion.toLowerCase());
     } else {
       setState(() {
-        feedbackMessage =
-            'Could not detect emotion. Please try capturing your face again.';
+        feedbackMessage = 'Could not detect emotion. Please try again.';
       });
     }
   }
@@ -103,21 +70,19 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
           Future.delayed(const Duration(seconds: 2), () {
             setState(() {
               currentStep++;
-              feedbackMessage = ''; // Reset feedback for the next step
-              showFaceCapture = false; // Reset face capture for the next step
+              feedbackMessage = '';
+              showFaceCapture = false;
             });
           });
         } else {
-          setState(() {
-            feedbackMessage = 'Lesson complete! Well done!';
-          });
+          feedbackMessage = 'Lesson complete! Well done!';
         }
       });
     } else {
       setState(() {
         feedbackMessage =
             'Hmm, that doesn’t look like ${correctEmotion}. Try again!';
-        isRetrying = true; // Allow user to retry
+        isRetrying = true;
       });
     }
   }
@@ -128,28 +93,18 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Easy Emotions Lesson'),
+        title: Text('Medium Emotions Lesson'),
         backgroundColor: Colors.brown[400],
       ),
       body: Container(
-        color: currentData['color'], // Set background color
+        color: currentData['color'],
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    currentData['emoji'],
-                    style: TextStyle(fontSize: 80), // Display the emoji
-                  ),
-                  SizedBox(width: 20), // Space between emoji and image
-                  Image.asset(
-                    currentData['image'],
-                    width: 100, // Display the corresponding image
-                  ),
-                ],
+              Image.asset(
+                currentData['image'],
+                width: 100,
               ),
               SizedBox(height: 20),
               Text(
@@ -157,7 +112,6 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
                 style: TextStyle(fontSize: 24),
               ),
               SizedBox(height: 20),
-              // Multiple-choice buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: ['happy', 'sad', 'angry'].map((emotion) {
@@ -184,7 +138,7 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
                   textAlign: TextAlign.center,
                 ),
               SizedBox(height: 20),
-              if (showFaceCapture) // Show face capture button only after correct answer
+              if (showFaceCapture)
                 ElevatedButton(
                   onPressed: _startFaceCapture,
                   child: Text(isRetrying ? 'Try Again' : 'Capture Your Face'),
