@@ -61,51 +61,52 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
     }
   }
 
-  Future<void> _startFaceCapture() async {
-    final detectedEmotion = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => FaceCaptureScreen()),
-    );
+Future<void> _startFaceCapture() async {
+  final detectedEmotion = await Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const FaceCaptureScreen()),
+  );
 
-    if (detectedEmotion != null) {
-      _checkEmotionFromFace(detectedEmotion.toLowerCase());
-    } else {
-      setState(() {
-        feedbackMessage =
-            'Could not detect emotion. Please try capturing your face again.';
-      });
-    }
+  if (detectedEmotion != null) {
+    _checkEmotionFromFace(detectedEmotion.toLowerCase());
+  } else {
+    setState(() {
+      feedbackMessage =
+          'Could not detect emotion. Please try capturing your face again.';
+    });
   }
+}
 
-  void _checkEmotionFromFace(String detectedEmotion) {
-    final correctEmotion = emotions[currentStep]['emotion'];
-    if (detectedEmotion == correctEmotion) {
-      setState(() {
-        feedbackMessage =
-            'Great job! You successfully made the ${correctEmotion} face!';
-        isRetrying = false;
-        if (currentStep < emotions.length - 1) {
-          Future.delayed(Duration(seconds: 2), () {
-            setState(() {
-              currentStep++;
-              feedbackMessage = ''; // Reset feedback for the next step
-              showFaceCapture = false; // Reset face capture for the next step
-            });
-          });
-        } else {
+void _checkEmotionFromFace(String detectedEmotion) {
+  final correctEmotion = emotions[currentStep]['emotion'];
+  if (detectedEmotion == correctEmotion) {
+    setState(() {
+      feedbackMessage =
+          'Great job! You successfully made the ${correctEmotion} face!';
+      isRetrying = false;
+      if (currentStep < emotions.length - 1) {
+        Future.delayed(const Duration(seconds: 2), () {
           setState(() {
-            feedbackMessage = 'Lesson complete! Well done!';
+            currentStep++;
+            feedbackMessage = ''; // Reset feedback for the next step
+            showFaceCapture = false; // Reset face capture for the next step
           });
-        }
-      });
-    } else {
-      setState(() {
-        feedbackMessage =
-            'Hmm, that doesn’t look like ${correctEmotion}. Try again!';
-        isRetrying = true; // Allow user to retry
-      });
-    }
+        });
+      } else {
+        setState(() {
+          feedbackMessage = 'Lesson complete! Well done!';
+        });
+      }
+    });
+  } else {
+    setState(() {
+      feedbackMessage =
+          'Hmm, that doesn’t look like ${correctEmotion}. Try again!';
+      isRetrying = true; // Allow user to retry
+    });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

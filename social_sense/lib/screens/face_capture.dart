@@ -173,17 +173,19 @@ class FaceCaptureScreenState extends State<FaceCaptureScreen> {
       final cameras = await availableCameras();
       final frontCamera = cameras.firstWhere(
         (camera) => camera.lensDirection == CameraLensDirection.front,
-        orElse: () => cameras.first,
+        orElse: () => cameras.first, // Fallback to the first available camera
       );
 
-      _controller = CameraController(
-        frontCamera,
-        ResolutionPreset.medium, // Use medium for a balanced aspect ratio
-      );
-      _initializeControllerFuture = _controller.initialize();
-      setState(() {});
+      _controller = CameraController(frontCamera, ResolutionPreset.high);
+      setState(() {
+        _initializeControllerFuture = _controller.initialize();
+      });
     } catch (e) {
       print('Error initializing camera: $e');
+      setState(() {
+        _initializeControllerFuture =
+            Future.error('Failed to initialize camera');
+      });
     }
   }
 
@@ -195,30 +197,6 @@ class FaceCaptureScreenState extends State<FaceCaptureScreen> {
     super.dispose();
   }
 
-  Future<void> _captureAndSendImage() async {
-    try {
-      if (_initializeControllerFuture != null) {
-        await _initializeControllerFuture;
-
-        final path = join(
-          (await getTemporaryDirectory()).path,
-          '${DateTime.now()}.png',
-        );
-
-        final XFile picture = await _controller.takePicture();
-        await picture.saveTo(path);
-
-        // Call AWS Lambda
-        await _sendImageToAWS(path);
-
-        // Close the camera screen
-        if (mounted) Navigator.of(context).pop();
-      }
-    } catch (e) {
-      print('Error capturing or sending image: $e');
-    }
-  }
-
   Future<void> _sendImageToAWS(String imagePath) async {
     try {
       final File imageFile = File(imagePath);
@@ -227,7 +205,7 @@ class FaceCaptureScreenState extends State<FaceCaptureScreen> {
 
       final response = await http.post(
         Uri.parse(
-            'https://u4ez9excm2.execute-api.us-east-2.amazonaws.com/default/DetectFacesFunction'), // Replace with your AWS Lambda endpoint
+            'https://u4ez9excm2.execute-api.us-east-2.amazonaws.com/default/DetectFacesFunction'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'image': base64Image}),
       );
@@ -240,70 +218,63 @@ class FaceCaptureScreenState extends State<FaceCaptureScreen> {
         if (emotions != null && emotions.isNotEmpty) {
           final highestEmotion = emotions
               .reduce((a, b) => a['Confidence'] > b['Confidence'] ? a : b);
-
-          // Return the highest-confidence emotion
-          if (mounted) {
-            Navigator.pop(context, highestEmotion['Type']);
-          }
-        } else {
-          if (mounted) {
-            Navigator.pop(context, null); // No emotions detected
-          }
+          Navigator.pop(context, highestEmotion['Type']); // Pass emotion back
         }
       } else {
         print('Failed to analyze the image. Response: ${response.body}');
-        if (mounted) {
-          Navigator.pop(context, null); // Indicate failure
-        }
+        Navigator.pop(context, null); // Return null if analysis failed
       }
     } catch (e) {
       print('Error sending image to AWS: $e');
-      if (mounted) {
-        Navigator.pop(context, null); // Indicate failure
-      }
+      Navigator.pop(context, null); // Return null on error
     }
   }
+
+  void _showEmotionDialog(String emotion) {
+    // Remove dialog; we are now returning the emotion directly.
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _initializeControllerFuture == null
-          ? const Center(child: CircularProgressIndicator())
-          : FutureBuilder<void>(
-              future: _initializeControllerFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Center(
-                        child: AspectRatio(
-                          aspectRatio:
-                              3 / 4, // Fixed aspect ratio for a normal view
-                          child: CameraPreview(_controller),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: FloatingActionButton(
-                            onPressed: _captureAndSendImage,
-                            child: const Icon(Icons.camera_alt),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text('Error initializing camera: ${snapshot.error}'),
-                  );
-                } else {
-                  return const Center(child: CircularProgressIndicator());
-                }
-              },
-            ),
+      appBar: AppBar(title: const Text('Capture Your Face')),
+      body: FutureBuilder<void>(
+        future: _initializeControllerFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return CameraPreview(_controller);
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error initializing camera: ${snapshot.error}'),
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          if (_controller.value.isInitialized) {
+            try {
+              await _initializeControllerFuture;
+              final path = join(
+                (await getTemporaryDirectory()).path,
+                '${DateTime.now()}.png',
+              );
+              final XFile picture = await _controller.takePicture();
+              await picture.saveTo(path);
+
+              await _sendImageToAWS(path);
+            } catch (e) {
+              print('Error capturing or sending image: $e');
+            }
+          } else {
+            print('Camera not initialized.');
+          }
+        },
+        child: const Icon(Icons.camera_alt),
+      ),
     );
   }
 }
