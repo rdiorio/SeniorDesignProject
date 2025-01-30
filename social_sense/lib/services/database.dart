@@ -32,11 +32,40 @@ class DatabaseService {
       await userCollection.doc(uid).set({
         'First Name': '',
         'Last Name': '',
+        'scores': {
+          'easy': 0,
+          'medium': 0,
+          'hard': 0
+        }
       });
     } catch (e) {
       print('Error creating user profile: $e');
     }
   }
+
+  Future<void> updateUserScore(String difficulty, int score) async {
+    try {
+      await userCollection.doc(uid).update({
+        'scores.$difficulty': score,
+      });
+    } catch (e) {
+      print('Error updating user score: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>?> getUserScores() async {
+    try {
+      DocumentSnapshot snapshot = await userCollection.doc(uid).get();
+      if (snapshot.exists) {
+        return (snapshot.data() as Map<String, dynamic>)['scores'];
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching user scores: $e');
+      return null;
+    }
+  }
+
 
   // Update user profile (e.g., first name & last name)
   Future<void> updateUserData(String firstName, String lastName) async {
@@ -60,4 +89,6 @@ class DatabaseService {
       return null;
     }
   }
+
+  
 }
