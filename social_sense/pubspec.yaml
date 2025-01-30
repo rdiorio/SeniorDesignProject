@@ -65,6 +65,10 @@ flutter:
     - lib/screens/assets/happy.png
     - lib/screens/assets/sad.png
     - lib/screens/assets/angry.png
+    - lib/screens/assets/badge1.png
+    - lib/screens/assets/badge2.png
+    - lib/screens/assets/badge3.png
+    - lib/screens/assets/badge4.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

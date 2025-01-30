@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:social_sense/screens/face_capture.dart'; // Import FaceCaptureScreen
 import 'package:social_sense/services/database.dart';
-import 'package:social_sense/services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LessonsPage extends StatelessWidget {
@@ -125,49 +124,51 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
   //   }
   // }
 
-void _checkEmotionFromFace(String detectedEmotion) async {
-  final correctEmotion = emotions[currentStep]['emotion'];
-  if (detectedEmotion == correctEmotion) {
-    setState(() {
-      feedbackMessage = 'Great job! You successfully made the ${correctEmotion} face!';
-      isRetrying = false;
-    });
-
-    // ✅ Get the current user's UID
-    String? userUid = FirebaseAuth.instance.currentUser?.uid;
-    if (userUid == null) {
-      print("Error: No user signed in.");
-      return;
-    }
-
-    // ✅ Fetch existing score and increment
-    Map<String, dynamic>? scores = await DatabaseService(uid: userUid).getUserScores();
-    int newScore = (scores?['easy'] ?? 0) + 10; // Award 10 points per correct answer
-
-    await DatabaseService(uid: userUid).updateUserScore('easy', newScore);
-
-    if (currentStep < emotions.length - 1) {
-      Future.delayed(const Duration(seconds: 2), () {
-        setState(() {
-          currentStep++;
-          feedbackMessage = '';
-          showFaceCapture = false;
-        });
+  void _checkEmotionFromFace(String detectedEmotion) async {
+    final correctEmotion = emotions[currentStep]['emotion'];
+    if (detectedEmotion == correctEmotion) {
+      setState(() {
+        feedbackMessage =
+            'Great job! You successfully made the ${correctEmotion} face!';
+        isRetrying = false;
       });
+
+      // ✅ Get the current user's UID
+      String? userUid = FirebaseAuth.instance.currentUser?.uid;
+      if (userUid == null) {
+        print("Error: No user signed in.");
+        return;
+      }
+
+      // ✅ Fetch existing score and increment
+      Map<String, dynamic>? scores =
+          await DatabaseService(uid: userUid).getUserScores();
+      int newScore =
+          (scores?['easy'] ?? 0) + 10; // Award 10 points per correct answer
+
+      await DatabaseService(uid: userUid).updateUserScore('easy', newScore);
+
+      if (currentStep < emotions.length - 1) {
+        Future.delayed(const Duration(seconds: 2), () {
+          setState(() {
+            currentStep++;
+            feedbackMessage = '';
+            showFaceCapture = false;
+          });
+        });
+      } else {
+        setState(() {
+          feedbackMessage = 'Lesson complete! Well done!';
+        });
+      }
     } else {
       setState(() {
-        feedbackMessage = 'Lesson complete! Well done!';
+        feedbackMessage =
+            'Hmm, that doesn’t look like ${correctEmotion}. Try again!';
+        isRetrying = true;
       });
     }
-  } else {
-    setState(() {
-      feedbackMessage = 'Hmm, that doesn’t look like ${correctEmotion}. Try again!';
-      isRetrying = true;
-    });
   }
-}
-
-
 
   @override
   Widget build(BuildContext context) {
