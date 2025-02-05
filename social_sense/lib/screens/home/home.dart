@@ -86,7 +86,7 @@ class Home extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/Brando_Aminals-05.png'), // Path to your image
+                image: AssetImage('assets/topRed_background.png'), // Path to your image
                 fit: BoxFit.cover,
               ),
             ),
