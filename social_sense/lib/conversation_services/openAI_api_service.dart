@@ -2,7 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AIAPIService {
- 
+  final String apiKey = 'YOUR_API_KEY_HERE';  // Placeholder
+  final String modelId = 'YOUR_MODEL_ID_HERE';  // Placeholder
+  // No secrets here. The API key has been removed for security.
+
 
   Future<String> sendMessage(List<Map<String, String>> conversation) async {
   final url = Uri.parse("https://api.openai.com/v1/chat/completions");
