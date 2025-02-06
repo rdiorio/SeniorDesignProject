@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_sense/conversation_services/openAI_api_service.dart';
 import 'package:social_sense/services/database.dart';
+import 'dart:convert'; 
 
 class ConversationController {
   final AIAPIService _apiService = AIAPIService();
@@ -53,12 +54,13 @@ class ConversationController {
     "classifies their responses, and provides feedback on their responses."},
       {"role": "assistant", "content": initialMessage},
     ];
-
+    initialMessage = extractResponseContent(initialMessage);
     return initialMessage;
   }
 
   // end conversation
 Future<bool> endConversation(String response) async {
+
   // Extract classification
   String? classification = extractClassification(response);
 
@@ -91,13 +93,28 @@ Future<bool> endConversation(String response) async {
 
 //Finds the response classification
   String extractClassification(String response) {
+    
+    response = response.replaceAll(r'\n', '\n');
+    var splitResponse = response.split("\n");
 
-    String firstLine = response.split("\n")[0];
-
+    String classification = splitResponse[0];
+    print(splitResponse);
   // Remove "Classification: " from the first line
-  String classification = firstLine.replaceFirst("Classification: ", "");
+  classification = classification.replaceFirst("Classification: ", "");
+
+  print(classification);
 
   return classification;
+}
+
+String extractResponseContent(String response){
+  response = response.replaceAll(r'\n', '\n');
+  var splitResponse = response.split("\n");
+
+  String content = splitResponse[1];
+
+  return content;
+
 }
 
 

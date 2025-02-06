@@ -15,6 +15,7 @@ class ConversationScreenState extends State<ConversationScreen> {
   final TextEditingController _textController = TextEditingController();
 
   bool isLoading = true;
+  bool isConversationEnded = false;  // New state to track conversation end
   List<Map<String, String>> conversationLog = []; // Store the conversation log
 
   @override
@@ -41,12 +42,12 @@ class ConversationScreenState extends State<ConversationScreen> {
       _textController.clear(); // Clear the input field
     });
 
-    // Get the assistant's response from the controller
+    // Get the assistant's full response from the controller
     String response = await _controller.handleUserInput(userInput);
-
+    String responseContent =  _controller.extractResponseContent(response);
     // Add assistant's response to the log
     setState(() {
-      conversationLog.add({"role": "assistant", "content": response});
+      conversationLog.add({"role": "assistant", "content": responseContent});
     });
 
     // Check if the conversation should end
@@ -54,13 +55,17 @@ class ConversationScreenState extends State<ConversationScreen> {
     if (shouldEnd) {
       // Send the final goodbye message
       String goodbyeResponse = await _controller.handleUserInput("end conversation");
+      String goodbyeContent = _controller.extractResponseContent(goodbyeResponse);
       setState(() {
-        conversationLog.add({"role": "assistant", "content": goodbyeResponse});
+        conversationLog.add({"role": "assistant", "content": goodbyeContent});
+        isConversationEnded = true; // Mark the conversation as ended
       });
     }
+  }
 
-    // Update the UI to reflect the new counts
-    setState(() {});
+  void _viewResults() {
+    // Navigate to the results page or show results (customize as needed)
+    print("View results button clicked!");
   }
 
   @override
@@ -120,28 +125,33 @@ class ConversationScreenState extends State<ConversationScreen> {
                   ),
                 ),
 
-                // User input field and send button
+                // Input field and buttons
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _textController,
-                          decoration: InputDecoration(
-                            labelText: "Type your message...",
-                            border: OutlineInputBorder(),
-                          ),
-                          onSubmitted: (value) => _sendUserMessage(value), // Handle enter key
+                  child: isConversationEnded
+                      ? ElevatedButton(
+                          onPressed: _viewResults,  // Handle results button press
+                          child: const Text("View Results"),
+                        )
+                      : Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _textController,
+                                decoration: InputDecoration(
+                                  labelText: "Type your message...",
+                                  border: OutlineInputBorder(),
+                                ),
+                                onSubmitted: (value) => _sendUserMessage(value), // Handle enter key
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            ElevatedButton(
+                              onPressed: () => _sendUserMessage(_textController.text),
+                              child: const Text("Send"),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      ElevatedButton(
-                        onPressed: () => _sendUserMessage(_textController.text),
-                        child: const Text("Send"),
-                      ),
-                    ],
-                  ),
                 ),
               ],
             ),
