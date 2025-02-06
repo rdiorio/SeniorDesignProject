@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AIAPIService {
-  final String apiKey = "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";
+  //final String apiKey = ;
   final String modelId = "ft:gpt-4o-mini-2024-07-18:personal:first-model:ArUqSGNx";
 
   Future<String> sendMessage(List<Map<String, String>> conversation) async {
