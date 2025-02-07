@@ -4,12 +4,15 @@ import 'package:social_sense/services/database.dart';
 import 'dart:convert'; 
 
 class ConversationController {
-  final AIAPIService _apiService = AIAPIService();
+   final AIAPIService _apiService;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final DatabaseService _dbService;
 
   // Constructor to initialize the DatabaseService with a user ID
-  ConversationController({required String uid}) : _dbService = DatabaseService(uid: uid);
+  // Constructor to initialize DatabaseService and AIAPIService with a user ID
+  ConversationController({required String uid})
+      : _dbService = DatabaseService(uid: uid),
+        _apiService = AIAPIService(uid: uid);  // Initialize AIAPIService with UID
 
   // Stores conversation settings
   String initialMessage = "Loading...";
