@@ -24,6 +24,7 @@ class DatabaseService {
   final String uid;
   DatabaseService({required this.uid});
 
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
   final CollectionReference userCollection = FirebaseFirestore.instance.collection('users');
 
   // Create a new user document with empty fields (only runs when registering a new user)
@@ -87,6 +88,37 @@ class DatabaseService {
     } catch (e) {
       print('Error fetching user data: $e');
       return null;
+    }
+  }
+
+  Future<Map<String, dynamic>> getConversationSettings(String conversationTopic) async {
+    try {
+      DocumentSnapshot thresholdsSnapshot = await _db
+          .collection('modules')
+          .doc(conversationTopic)
+          .collection('Thresholds')
+          .doc('threshold')
+          .get();
+
+      DocumentSnapshot initialPromptSnapshot = await _db
+          .collection('modules')
+          .doc(conversationTopic)
+          .collection('initialPrompt')
+          .doc('prompt')
+          .get();
+
+      return {
+        "initialMessage": initialPromptSnapshot.exists ? initialPromptSnapshot.get('start') ?? "The data doesn't exist!" : "the data doesn't exist!",
+        "positiveThreshold": thresholdsSnapshot.exists ? thresholdsSnapshot.get('positiveThreshold') ?? 0 : 0,
+        "negativeThreshold": thresholdsSnapshot.exists ? thresholdsSnapshot.get('negativeThreshold') ?? 0 : 0,
+      };
+    } catch (e) {
+      print("Error fetching conversation data: $e");
+      return {
+        "initialMessage": "Error loading message.",
+        "positiveThreshold": 0,
+        "negativeThreshold": 0,
+      };
     }
   }
 
