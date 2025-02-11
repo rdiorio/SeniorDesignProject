@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:social_sense/screens/wrapper.dart';
 import 'package:social_sense/services/auth.dart';
 import 'package:social_sense/models/user.dart';
+import 'package:social_sense/screens/home/home.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
