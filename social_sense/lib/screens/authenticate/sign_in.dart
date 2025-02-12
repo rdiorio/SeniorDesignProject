@@ -39,35 +39,41 @@ class _SignInState extends State<SignIn> {
                 ),
                 // Foreground content
                 Center(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
-                    constraints: BoxConstraints(maxWidth: 400), // Adjust the maxWidth to make the box smaller
-                    color: Colors.green.withOpacity(0), // Set the color with opacity
-                    child: Column(
-                      children: [
-                        AppBar(
-                          backgroundColor: const Color.fromARGB(255, 124, 206, 158).withOpacity(0), // Set the AppBar color with opacity
-                          elevation: 0.0,
-                          title: Text('Sign in to Social Sense'),
-                          actions: <Widget>[
-                            TextButton.icon(
-                              icon: Icon(Icons.person),
-                              label: Text('Register'),
-                              onPressed: () {
-                                widget.toggleView();
-                              },
-                            )
-                          ],
-                        ),
-                        Expanded(
-                          child: Form(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
+                      constraints: BoxConstraints(maxWidth: 400), // Adjust the maxWidth to make the box smaller
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Logo in the middle
+                          Image.asset(
+                            'assets/logo_bear.png', // Path to the logo image
+                            height: 300.0, // Adjust the height as needed
+                          ),
+                          SizedBox(height: 20.0),
+                          // Title
+                          Text(
+                            'Login',
+                            style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 20.0),
+                          Form(
                             key: _formKey,
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 SizedBox(height: 20.0),
                                 TextFormField(
-                                  decoration: textInputDecoration.copyWith(hintText: 'Email'),
+                                  decoration: textInputDecoration.copyWith(
+                                    hintText: 'Email',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                      borderSide: BorderSide(color: Colors.black),
+                                    ),
+                                  ),
                                   validator: (val) => (val?.isEmpty ?? true) ? 'Enter an email' : null,
                                   onChanged: (val) {
                                     setState(() => email = val);
@@ -75,7 +81,13 @@ class _SignInState extends State<SignIn> {
                                 ),
                                 SizedBox(height: 20.0),
                                 TextFormField(
-                                  decoration: textInputDecoration.copyWith(hintText: 'Password'),
+                                  decoration: textInputDecoration.copyWith(
+                                    hintText: 'Password',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                    ),
+                                  ),
+                                  obscureText: true,
                                   validator: (val) => (val?.length ?? 0) < 6 ? 'Enter a password that is 6 characters long' : null,
                                   onChanged: (val) {
                                     setState(() => password = val);
@@ -107,12 +119,31 @@ class _SignInState extends State<SignIn> {
                                 Text(
                                   error,
                                   style: TextStyle(color: Colors.red, fontSize: 14.0),
-                                )
+                                ),
+                                SizedBox(height: 20.0),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text("Need an account? "),
+                                    GestureDetector(
+                                      onTap: () {
+                                        widget.toggleView();
+                                      },
+                                      child: Text(
+                                        "Register",
+                                        style: TextStyle(
+                                          color: Colors.blue,
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -121,3 +152,6 @@ class _SignInState extends State<SignIn> {
           );
   }
 }
+
+
+

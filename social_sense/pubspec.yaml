@@ -79,7 +79,7 @@ flutter:
     - assets/animal_Sloth.png
     - assets/animal_Pig.png
     - assets/animal_Bear.png
-    # - assets/logo_bear.png
+    - assets/logo_bear.png
 
 
 
