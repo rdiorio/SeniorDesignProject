@@ -61,14 +61,14 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
-  uses-material-design: true
-
-  # To add assets to your application, add an assets section, like this:
   assets:
+    - lib/screens/assets/happy.png
+    - lib/screens/assets/sad.png
+    - lib/screens/assets/angry.png
+    - lib/screens/assets/badge1.png
+    - lib/screens/assets/badge2.png
+    - lib/screens/assets/badge3.png
+    - lib/screens/assets/badge4.png
     - assets/topRed_background.png
     - assets/topPurple_background.png
     - assets/topOrange_background.png
@@ -79,6 +79,21 @@ flutter:
     - assets/animal_Sloth.png
     - assets/animal_Pig.png
     - assets/animal_Bear.png
+    # - assets/logo_bear.png
+
+
+
+    
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  # assets:
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
