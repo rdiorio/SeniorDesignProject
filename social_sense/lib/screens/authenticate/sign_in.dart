@@ -57,7 +57,8 @@ class _SignInState extends State<SignIn> {
                             'Login',
                             style: TextStyle(
                               fontSize: 24.0,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.bold, 
+                              fontFamily: 'Times New Roman',
                             ),
                           ),
                           SizedBox(height: 20.0),
@@ -96,7 +97,7 @@ class _SignInState extends State<SignIn> {
                                 SizedBox(height: 20.0),
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.pink[400], // Background color
+                                    backgroundColor: const Color.fromARGB(255, 103, 27, 131), // Background color
                                   ),
                                   child: Text(
                                     'Sign in',
@@ -108,7 +109,7 @@ class _SignInState extends State<SignIn> {
                                       dynamic result = await _auth.signInWithEmailAndPassword(email, password);
                                       if (result == null) {
                                         setState(() {
-                                          error = 'could not sign in with those credentials';
+                                          error = 'Could not sign in with those credentials';
                                           loading = false;
                                         });
                                       }
@@ -124,7 +125,13 @@ class _SignInState extends State<SignIn> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text("Need an account? "),
+                                    Text(
+                                      "Need an account? ",
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                     GestureDetector(
                                       onTap: () {
                                         widget.toggleView();
@@ -132,8 +139,10 @@ class _SignInState extends State<SignIn> {
                                       child: Text(
                                         "Register",
                                         style: TextStyle(
-                                          color: Colors.blue,
+                                          color: const Color.fromARGB(255, 17, 116, 196),
                                           decoration: TextDecoration.underline,
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),

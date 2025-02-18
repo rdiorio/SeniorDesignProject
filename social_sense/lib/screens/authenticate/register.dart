@@ -31,7 +31,7 @@ class _RegisterState extends State<Register> {
                 // Background image with color filter
                 ColorFiltered(
                   colorFilter: ColorFilter.mode(
-                    Colors.black.withOpacity(0.2), // Change this to the desired color
+                    Colors.black.withOpacity(0.1), // Change this to the desired color
                     BlendMode.darken,
                   ),
                   child: Container(
@@ -64,6 +64,7 @@ class _RegisterState extends State<Register> {
                             style: TextStyle(
                               fontSize: 24.0,
                               fontWeight: FontWeight.bold,
+                              fontFamily: 'Times New Roman',
                             ),
                           ),
                           SizedBox(height: 20.0),
@@ -90,7 +91,7 @@ class _RegisterState extends State<Register> {
                                   decoration: textInputDecoration.copyWith(
                                     hintText: 'Password',
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30.0),
+                                      borderRadius: BorderRadius.circular(300.0),
                                     ),
                                   ),
                                   obscureText: true,
@@ -131,7 +132,7 @@ class _RegisterState extends State<Register> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text("Already have an account? "),
+                                    Text("Already have an account? ", style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold), ),
                                     GestureDetector(
                                       onTap: () {
                                         widget.toggleView();
@@ -139,8 +140,10 @@ class _RegisterState extends State<Register> {
                                       child: Text(
                                         "Sign in",
                                         style: TextStyle(
-                                          color: Colors.blue,
+                                          color: const Color.fromARGB(255, 17, 116, 196),
                                           decoration: TextDecoration.underline,
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
