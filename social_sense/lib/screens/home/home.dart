@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:social_sense/services/auth.dart';
+import 'package:social_sense/services/database.dart';
 import 'package:social_sense/screens/information.dart';
 import 'package:social_sense/screens/daily_checkin.dart';
 import 'package:social_sense/screens/face_capture.dart';
 import 'package:social_sense/screens/lessons.dart'; // Import the LessonsPage
 import 'package:social_sense/screens/profile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Home extends StatelessWidget {
   final AuthService _auth = AuthService();
@@ -12,94 +14,169 @@ class Home extends StatelessWidget {
 
   Home({required this.uid});
 
+  Future<Map<String, dynamic>?> _getUserData() async {
+    DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    return userDoc.exists ? userDoc.data() as Map<String, dynamic> : null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.brown[50],
-      appBar: AppBar(
-        title: Text('Social Sense'),
-        backgroundColor: Colors.brown[400],
-        elevation: 0.0,
-        actions: <Widget>[
-          TextButton.icon(
-            icon: Icon(Icons.person, color: Colors.white),
-            label: Text(
-              'logout',
-              style: TextStyle(color: Colors.white),
+      body: Stack(
+        children: [
+          // Background image
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/topRed_background.png'), // Path to your background image
+                fit: BoxFit.cover,
+              ),
             ),
-            onPressed: () async {
-              await _auth.signOut();
-            },
+          ),
+          // Foreground content
+          Column(
+            children: [
+              // Transparent AppBar on top of the background image
+              AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0.0,
+                leading: IconButton(
+                  icon: Icon(Icons.info, color: Colors.white),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => InformationScreen(uid: uid),
+                      ),
+                    );
+                  },
+                ),
+                actions: <Widget>[
+                  TextButton.icon(
+                    icon: Icon(Icons.person, color: Colors.white),
+                    label: Text(
+                      'logout',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () async {
+                      await _auth.signOut();
+                    },
+                  ),
+                ],
+              ),
+              // Welcome text below the app bar
+              FutureBuilder(
+                future: _getUserData(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else if (snapshot.hasData) {
+                    var userData = snapshot.data as Map<String, dynamic>?;
+                    print('User Data: $userData'); // Debug print
+                    if (userData != null && userData.containsKey('First Name')) {
+                      return Text(
+                        'Welcome ${userData['First Name']}!',
+                        style: TextStyle(
+                          fontSize: 40.0,
+                          fontWeight: FontWeight.bold,
+                          color: const Color.fromARGB(255, 0, 0, 0),
+                        ),
+                      );
+                    } else {
+                      return Text(
+                        'Welcome!',
+                        style: TextStyle(
+                          fontSize: 200.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      );
+                    }
+                  } else {
+                    return Text(
+                      'Welcome!',
+                      style: TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    );
+                  }
+                },
+              ),
+              // Foreground content
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        child: Text('Daily Check-In'),
+                        onPressed: () {
+                          print("Navigating to Daily Check-In with uid: $uid");
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DailyCheckInScreen(uid: uid),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        child: Text('Capture Face Emotion'),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FaceCaptureScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        child: Text('Lessons'), // New "Lessons" button
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LessonsPage(), // Navigate to LessonsPage
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        child: Text('Profile'),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfilePage(uid: uid),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          // Image at the bottom left
+          Positioned(
+            bottom: 0,
+            left: 0,
+            child: Image.asset(
+              'assets/animal_Lion.png', // Path to your image
+              height: 200.0, // Adjust the height as needed
+            ),
           ),
         ],
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              child: Text('Update Information'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => InformationScreen(uid: uid),
-                  ),
-                );
-              },
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              child: Text('Daily Check-In'),
-              onPressed: () {
-                print("Navigating to Daily Check-In with uid: $uid");
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DailyCheckInScreen(uid: uid),
-                  ),
-                );
-              },
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              child: Text('Capture Face Emotion'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FaceCaptureScreen(),
-                  ),
-                );
-              },
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              child: Text('Lessons'), // New "Lessons" button
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        LessonsPage(), // Navigate to LessonsPage
-                  ),
-                );
-              },
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              child: Text('Profile'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfilePage(uid: uid),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
       ),
     );
   }
