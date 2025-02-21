@@ -14,7 +14,7 @@ class AIAPIService {
 
   // Asynchronously fetch the API key
   Future<void> _initializeAPIKey() async {
-    apiKey = await _dbService.getAPIKey();
+    apiKey = await _dbService.getAPIKey("OpenAIKey");
     if (apiKey == null) {
       throw Exception("Failed to fetch API Key.");
     }

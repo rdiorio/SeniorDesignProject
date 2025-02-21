@@ -122,14 +122,14 @@ class DatabaseService {
     }
   }
 
-  Future<String?> getAPIKey() async {
+  Future<String?> getAPIKey(String API) async {
     try {
       // Access the 'secure_keys' collection and get the 'openai_key' document
       DocumentSnapshot snapshot = await _db.collection('secureKeys').doc('KiBCxiL66kL1aQACVMXi').get();
 
       if (snapshot.exists) {
         // Return the API key if it exists
-        return snapshot.get('OpenAIKey');
+        return snapshot.get(API);
       } else {
         print("API key not found.");
         return null;
