@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:social_sense/services/database.dart';
+import 'package:social_sense/screens/home/home.dart';
+
 
 class InformationScreen extends StatefulWidget {
   final String uid;
@@ -50,7 +52,10 @@ class _InformationScreenState extends State<InformationScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Information Saved!'))
                     );
-                    Navigator.pop(context);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => Home(uid: widget.uid)), // Use Home instead of HomeScreen
+                    );
                   }
                 },
               ),

@@ -21,6 +21,27 @@ class _SignInState extends State<SignIn> {
   String password = '';
   String error = '';
 
+  // Function to handle password reset
+  void _resetPassword() async {
+    if (email.isEmpty) {
+      setState(() {
+        error = 'Enter your email to reset password';
+      });
+      return;
+    }
+
+    try {
+      await _auth.sendPasswordResetEmail(email);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Password reset link sent to your email')),
+      );
+    } catch (e) {
+      setState(() {
+        error = 'Error sending password reset email';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return loading
@@ -57,8 +78,7 @@ class _SignInState extends State<SignIn> {
                             'Login',
                             style: TextStyle(
                               fontSize: 24.0,
-                              fontWeight: FontWeight.bold, 
-                              fontFamily: 'Times New Roman',
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           SizedBox(height: 20.0),
@@ -109,12 +129,23 @@ class _SignInState extends State<SignIn> {
                                       dynamic result = await _auth.signInWithEmailAndPassword(email, password);
                                       if (result == null) {
                                         setState(() {
-                                          error = 'Could not sign in with those credentials';
+                                          error = 'could not sign in with those credentials';
                                           loading = false;
                                         });
                                       }
                                     }
                                   },
+                                ),
+                                SizedBox(height: 12.0),
+                                SizedBox(
+                                  height: 20.0,
+                                  child: TextButton(
+                                    onPressed: _resetPassword,
+                                    child: Text(
+                                      'Forgot Password?',
+                                      style: TextStyle(color: Colors.blue),
+                                    ),
+                                  ),
                                 ),
                                 SizedBox(height: 12.0),
                                 Text(
@@ -125,13 +156,7 @@ class _SignInState extends State<SignIn> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      "Need an account? ",
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                                    Text("Need an account? "),
                                     GestureDetector(
                                       onTap: () {
                                         widget.toggleView();
@@ -139,10 +164,8 @@ class _SignInState extends State<SignIn> {
                                       child: Text(
                                         "Register",
                                         style: TextStyle(
-                                          color: const Color.fromARGB(255, 17, 116, 196),
+                                          color: const Color.fromARGB(255, 58, 131, 190),
                                           decoration: TextDecoration.underline,
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
