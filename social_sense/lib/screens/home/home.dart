@@ -1,116 +1,7 @@
-// import 'package:flutter/material.dart';
-// import 'package:social_sense/services/auth.dart';
-// import 'package:social_sense/screens/information.dart';
-// import 'package:social_sense/screens/daily_checkin.dart';
-// import 'package:social_sense/screens/face_capture.dart';
-// import 'package:social_sense/screens/lessons.dart'; // Import the LessonsPage
-// import 'package:social_sense/screens/profile.dart';
-
-// class Home extends StatelessWidget {
-//   final AuthService _auth = AuthService();
-//   final String uid;
-
-//   Home({required this.uid});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.brown[50],
-//       appBar: AppBar(
-//         title: Text('Social Sense'),
-//         backgroundColor: Colors.brown[400],
-//         elevation: 0.0,
-//         actions: <Widget>[
-//           TextButton.icon(
-//             icon: Icon(Icons.person, color: Colors.white),
-//             label: Text(
-//               'logout',
-//               style: TextStyle(color: Colors.white),
-//             ),
-//             onPressed: () async {
-//               await _auth.signOut();
-//             },
-//           ),
-//         ],
-//       ),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             ElevatedButton(
-//               child: Text('Update Information'),
-//               onPressed: () {
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(
-//                     builder: (context) => InformationScreen(uid: uid),
-//                   ),
-//                 );
-//               },
-//             ),
-//             SizedBox(height: 20),
-//             ElevatedButton(
-//               child: Text('Daily Check-In'),
-//               onPressed: () {
-//                 print("Navigating to Daily Check-In with uid: $uid");
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(
-//                     builder: (context) => DailyCheckInScreen(uid: uid),
-//                   ),
-//                 );
-//               },
-//             ),
-//             SizedBox(height: 20),
-//             ElevatedButton(
-//               child: Text('Capture Face Emotion'),
-//               onPressed: () {
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(
-//                     builder: (context) => FaceCaptureScreen(),
-//                   ),
-//                 );
-//               },
-//             ),
-//             SizedBox(height: 20),
-//             ElevatedButton(
-//               child: Text('Lessons'), // New "Lessons" button
-//               onPressed: () {
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(
-//                     builder: (context) =>
-//                         LessonsPage(), // Navigate to LessonsPage
-//                   ),
-//                 );
-//               },
-//             ),
-//             SizedBox(height: 20),
-//             ElevatedButton(
-//               child: Text('Profile'),
-//               onPressed: () {
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(
-//                     builder: (context) => ProfilePage(uid: uid),
-//                   ),
-//                 );
-//               },
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:social_sense/services/auth.dart';
 import 'package:social_sense/services/database.dart';
 import 'package:social_sense/screens/information.dart';
-import 'package:social_sense/screens/daily_checkin.dart';
-import 'package:social_sense/screens/face_capture.dart';
 import 'package:social_sense/screens/lessons.dart';
 import 'package:social_sense/screens/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -150,7 +41,7 @@ class Home extends StatelessWidget {
                 backgroundColor: Colors.transparent,
                 elevation: 0.0,
                 leading: IconButton(
-                  icon: Icon(Icons.info, color: Colors.white),
+                  icon: Icon(Icons.settings, color: Colors.white),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -164,7 +55,7 @@ class Home extends StatelessWidget {
                   TextButton.icon(
                     icon: Icon(Icons.person, color: Colors.white),
                     label: Text(
-                      'logout',
+                      'Logout',
                       style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () async {
@@ -221,33 +112,28 @@ class Home extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ElevatedButton(
-                        child: Text('Daily Check-In'),
-                        onPressed: () {
-                          print("Navigating to Daily Check-In with uid: $uid");
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DailyCheckInScreen(uid: uid),
-                            ),
-                          );
-                        },
+                      SizedBox(height: 10),
+                      Text( "Lessons",
+                        style: TextStyle(
+                          fontSize: 60.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: 40),
                       ElevatedButton(
-                        child: Text('Capture Face Emotion'),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FaceCaptureScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      SizedBox(height: 20),
-                      ElevatedButton(
-                        child: Text('Lessons'), // New "Lessons" button
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.yellow, // Change button color to yellow
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(0.0), // Rounded corners
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0), // Increase button size
+                          minimumSize: Size(200.0, 60.0), // Set button size
+                        ),
+                        child: Text(
+                          'Emotion',
+                          style: TextStyle(fontSize: 30.0 ,fontWeight: FontWeight.bold, color: Colors.black),  
+                          ), // New "Lessons" button
                         onPressed: () {
                           Navigator.push(
                             context,
