@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:social_sense/conversation_services/conversation_controller.dart';
-import 'package:social_sense/conversation_services/tts_services.dart'; // Import TTS service
+import 'package:social_sense/conversation_services/tts_services.dart'; 
 
 class ConversationScreen extends StatefulWidget {
   final String conversationTopic;
@@ -14,7 +14,7 @@ class ConversationScreen extends StatefulWidget {
 class ConversationScreenState extends State<ConversationScreen> {
   late ConversationController _controller;
   final TextEditingController _textController = TextEditingController();
-  final TextToSpeechService _ttsService = TextToSpeechService(); // Initialize TTS service
+  final TextToSpeechService _ttsService = TextToSpeechService(uid: "user123"); 
 
   bool isLoading = true;
   bool isConversationEnded = false;

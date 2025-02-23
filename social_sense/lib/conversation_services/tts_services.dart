@@ -3,13 +3,28 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:audioplayers/audioplayers.dart';
+import 'package:social_sense/services/database.dart';
 
 class TextToSpeechService {
-  final String _apiKey = "AIzaSyDNcBCgTWSzwQIC8Hlhsl-JVPk8z9F-EBo"; // Store securely
+  final DatabaseService _dbService;
   final AudioPlayer _audioPlayer = AudioPlayer();
+  String? apiKey;
+
+  // Constructor to initialize DatabaseService and fetch the API key
+  TextToSpeechService({required String uid}) : _dbService = DatabaseService(uid: uid) {
+    _initializeAPIKey();
+  }
+
+  // Asynchronously fetch the API key
+  Future<void> _initializeAPIKey() async {
+    apiKey = await _dbService.getAPIKey("GoogleKey");
+    if (apiKey == null) {
+      throw Exception("Failed to fetch API Key.");
+    }
+  }
 
   Future<void> speak(String text) async {
-    final url = Uri.parse("https://texttospeech.googleapis.com/v1/text:synthesize?key=$_apiKey");
+    final url = Uri.parse("https://texttospeech.googleapis.com/v1/text:synthesize?key=$apiKey");
 
     final Map<String, dynamic> requestPayload = {
       "input": {"text": text},
