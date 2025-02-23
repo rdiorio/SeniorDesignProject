@@ -30,8 +30,8 @@ class TextToSpeechService {
       "input": {"text": text},
       "voice": {
         "languageCode": "en-US",
-        "name": "en-US-Wavenet-D",
-        "ssmlGender": "MALE"
+        "name": "Leda",
+        "ssmlGender": "FEMALE"
       },
       "audioConfig": {
         "audioEncoding": "MP3",

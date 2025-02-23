@@ -88,9 +88,27 @@ class LessonsPage extends StatelessWidget {
           ),
           _buildLessonTile(
             context,
-            title: 'Greeting Conversation',
+            title: 'Practice greeting!',
             subtitle: 'Practice greeting conversations interactively.',
             page: ConversationScreen(conversationTopic: "greeting"),
+          ),
+          _buildLessonTile(
+            context,
+            title: 'Practice asking for help!',
+            subtitle: 'Practice greeting conversations interactively.',
+            page: ConversationScreen(conversationTopic: "askHelp"),
+          ),
+          _buildLessonTile(
+            context,
+            title: 'Practice setting boundaries!',
+            subtitle: 'Practice greeting conversations interactively.',
+            page: ConversationScreen(conversationTopic: "boundaries"),
+          ),
+          _buildLessonTile(
+            context,
+            title: 'Practice being a good sport!',
+            subtitle: 'Practice greeting conversations interactively.',
+            page: ConversationScreen(conversationTopic: "game"),
           ),
         ],
       ),
