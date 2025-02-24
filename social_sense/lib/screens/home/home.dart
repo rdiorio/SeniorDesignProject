@@ -233,18 +233,18 @@ class Home extends StatelessWidget {
                           );
                         },
                       ),
-                      SizedBox(height: 20),
-                      ElevatedButton(
-                        child: Text('Capture Face Emotion'),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FaceCaptureScreen(),
-                            ),
-                          );
-                        },
-                      ),
+                      // SizedBox(height: 20),
+                      // ElevatedButton(
+                      //   child: Text('Capture Face Emotion'),
+                      //   onPressed: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder: (context) => FaceCaptureScreen(),
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
                       SizedBox(height: 20),
                       ElevatedButton(
                         child: Text('Lessons'), // New "Lessons" button
