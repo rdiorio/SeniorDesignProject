@@ -94,36 +94,6 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
     }
   }
 
-  // void _checkEmotionFromFace(String detectedEmotion) {
-  //   final correctEmotion = emotions[currentStep]['emotion'];
-  //   if (detectedEmotion == correctEmotion) {
-  //     setState(() {
-  //       feedbackMessage =
-  //           'Great job! You successfully made the ${correctEmotion} face!';
-  //       isRetrying = false;
-  //       if (currentStep < emotions.length - 1) {
-  //         Future.delayed(const Duration(seconds: 2), () {
-  //           setState(() {
-  //             currentStep++;
-  //             feedbackMessage = ''; // Reset feedback for the next step
-  //             showFaceCapture = false; // Reset face capture for the next step
-  //           });
-  //         });
-  //       } else {
-  //         setState(() {
-  //           feedbackMessage = 'Lesson complete! Well done!';
-  //         });
-  //       }
-  //     });
-  //   } else {
-  //     setState(() {
-  //       feedbackMessage =
-  //           'Hmm, that doesn’t look like ${correctEmotion}. Try again!';
-  //       isRetrying = true; // Allow user to retry
-  //     });
-  //   }
-  // }
-
   void _checkEmotionFromFace(String detectedEmotion) async {
     final correctEmotion = emotions[currentStep]['emotion'];
     if (detectedEmotion == correctEmotion) {
@@ -170,6 +140,32 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
     }
   }
 
+  // Function to create a styled button
+Widget _buildEmotionButton(String emotion) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+    child: ElevatedButton(
+      onPressed: () => _checkAnswer(emotion),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.purple[200], // Light purple
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20), // Rounded corners
+          side: BorderSide(color: Colors.black, width: 3), // Thick border
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12), // Button padding
+      ),
+      child: Text(
+        emotion,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold, // Bold text
+          color: Colors.black, // Black font color
+        ),
+      ),
+    ),
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     final currentData = emotions[currentStep];
@@ -180,7 +176,12 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
         backgroundColor: Colors.brown[400],
       ),
       body: Container(
-        color: currentData['color'], // Set background color
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/topPurple_background.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -188,54 +189,85 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    currentData['emoji'],
-                    style: TextStyle(fontSize: 80), // Display the emoji
+                  // Rounded Color Block
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      color: currentData['color'],
+                      borderRadius: BorderRadius.circular(20), // Rounded edges
+                      border: Border.all(color: Colors.black, width: 4), // Thick border
+                    ),
                   ),
-                  SizedBox(width: 20), // Space between emoji and image
-                  Image.asset(
-                    currentData['image'],
-                    width: 100, // Display the corresponding image
+                  SizedBox(width: 20), // Space between elements
+                  // Rounded Image
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20), // Rounded edges
+                      border: Border.all(color: Colors.black, width: 4), // Thick border
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20), // Match container radius
+                      child: Image.asset(
+                        currentData['image'],
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                 ],
               ),
               SizedBox(height: 20),
               Text(
-                'What emotion is this?',
-                style: TextStyle(fontSize: 24),
+                currentData['emoji'],
+                style: TextStyle(fontSize: 80), // Emoji centered below
               ),
               SizedBox(height: 20),
-              // Multiple-choice buttons
+              Text(
+                'What emotion is this?',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 20),
+              // Buttons using the custom function
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: ['happy', 'sad', 'angry'].map((emotion) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: ElevatedButton(
-                      onPressed: () => _checkAnswer(emotion),
-                      child: Text(emotion),
-                    ),
-                  );
+                  return _buildEmotionButton(emotion);
                 }).toList(),
               ),
               SizedBox(height: 20),
-              if (feedbackMessage.isNotEmpty)
-                Text(
-                  feedbackMessage,
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: feedbackMessage.startsWith('Correct') ||
-                            feedbackMessage.startsWith('Great job')
-                        ? Colors.green
-                        : Colors.red,
+                if (feedbackMessage.isNotEmpty)
+                  Text(
+                    feedbackMessage,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold, // Bold text
+                      color: Colors.black, // Black font color
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
+
               SizedBox(height: 20),
-              if (showFaceCapture) // Show face capture button only after correct answer
+              if (showFaceCapture) // Styled "Capture Your Face" button
                 ElevatedButton(
                   onPressed: _startFaceCapture,
-                  child: Text(isRetrying ? 'Try Again' : 'Capture Your Face'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple[200], // Light purple
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20), // Rounded corners
+                      side: BorderSide(color: Colors.black, width: 3), // Thick border
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  ),
+                  child: Text(
+                    isRetrying ? 'Try Again' : 'Capture Your Face',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold, // Bold text
+                      color: Colors.black, // Black font color
+                    ),
+                  ),
                 ),
             ],
           ),
@@ -243,4 +275,6 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
       ),
     );
   }
+
+
 }
