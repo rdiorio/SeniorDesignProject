@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:social_sense/conversation_services/conversation_controller.dart';
-import 'package:social_sense/conversation_services/tts_services.dart'; 
+import 'package:social_sense/conversation_services/tts_services.dart';
+import 'package:social_sense/services/database.dart';
 
 class ConversationScreen extends StatefulWidget {
   final String conversationTopic;
@@ -13,19 +15,52 @@ class ConversationScreen extends StatefulWidget {
 
 class ConversationScreenState extends State<ConversationScreen> {
   late ConversationController _controller;
-  final TextEditingController _textController = TextEditingController();
-  final TextToSpeechService _ttsService = TextToSpeechService(uid: "user123"); 
+  late TextToSpeechService _ttsService;
+  String? userUid;
 
+  final TextEditingController _textController = TextEditingController();
   bool isLoading = true;
   bool isConversationEnded = false;
-  bool isTTSActive = true; // Toggle TTS feature
+  bool isTTSActive = true;
   List<Map<String, String>> conversationLog = [];
+
+  // **Voice Preferences (Defaults)**
+  String voiceName = "Leda";
+  String voiceGender = "FEMALE";
 
   @override
   void initState() {
     super.initState();
-    _controller = ConversationController(uid: "user123");
+    _initializeUser();
+  }
+
+  /// **Retrieves the Signed-in User's UID**
+  void _initializeUser() async {
+    userUid = FirebaseAuth.instance.currentUser?.uid;
+    if (userUid == null) {
+      print("Error: No user signed in.");
+      return;
+    }
+
+    _controller = ConversationController(uid: userUid!);
+    _ttsService = TextToSpeechService(uid: userUid!);
+
+    await _loadUserVoicePreferences();
     _startConversation();
+  }
+
+  /// **Loads User's Selected Voice from Firestore**
+  Future<void> _loadUserVoicePreferences() async {
+    if (userUid == null) return;
+    try {
+      Map<String, String> voiceData = await DatabaseService(uid: userUid!).getUserVoice();
+      setState(() {
+        voiceName = voiceData["name"] ?? "Leda";
+        voiceGender = voiceData["gender"] ?? "FEMALE";
+      });
+    } catch (e) {
+      print("Error loading voice preferences: $e");
+    }
   }
 
   Future<void> _startConversation() async {
@@ -36,7 +71,7 @@ class ConversationScreenState extends State<ConversationScreen> {
     });
 
     if (isTTSActive) {
-      _ttsService.speak(initMessage);
+      _ttsService.speak(initMessage, voiceName, voiceGender);
     }
   }
 
@@ -56,15 +91,13 @@ class ConversationScreenState extends State<ConversationScreen> {
     });
 
     if (isTTSActive) {
-      _ttsService.speak(responseContent); // Play assistant's response
+      _ttsService.speak(responseContent, voiceName, voiceGender);
     }
 
     bool shouldEnd = await _controller.endConversation(response);
     if (shouldEnd) {
-
-        if (isTTSActive) {
-      await _ttsService.speak(responseContent); // Wait for response to finish playing
-      }
+      await _ttsService.speak(responseContent, voiceName, voiceGender); // Ensure first response finishes
+      
       String goodbyeResponse = await _controller.handleUserInput("end conversation");
       String goodbyeContent = _controller.extractResponseContent(goodbyeResponse);
 
@@ -74,7 +107,7 @@ class ConversationScreenState extends State<ConversationScreen> {
       });
 
       if (isTTSActive) {
-        _ttsService.speak(goodbyeContent);
+        _ttsService.speak(goodbyeContent, voiceName, voiceGender);
       }
     }
   }
@@ -102,7 +135,6 @@ class ConversationScreenState extends State<ConversationScreen> {
           ? Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                // Display counts
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   color: Colors.grey[200],
@@ -120,8 +152,6 @@ class ConversationScreenState extends State<ConversationScreen> {
                     ],
                   ),
                 ),
-
-                // Chat log
                 Expanded(
                   child: ListView.builder(
                     padding: const EdgeInsets.all(16.0),
@@ -148,8 +178,6 @@ class ConversationScreenState extends State<ConversationScreen> {
                     },
                   ),
                 ),
-
-                // Input field and buttons
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: isConversationEnded
@@ -201,7 +229,7 @@ class ConversationScreenState extends State<ConversationScreen> {
   @override
   void dispose() {
     _textController.dispose();
-    _ttsService.stop(); // Stop TTS when screen is closed
+    _ttsService.stop();
     super.dispose();
   }
 }

@@ -112,7 +112,8 @@ import 'package:social_sense/screens/daily_checkin.dart';
 import 'package:social_sense/screens/face_capture.dart';
 import 'package:social_sense/screens/lessons.dart';
 import 'package:social_sense/screens/profile.dart';
-import 'package:social_sense/screens/speechtotext.dart'; // Import SpeechToTextScreen
+import 'package:social_sense/screens/speechtotext.dart'; 
+import 'package:social_sense/screens/voice_selection.dart'; 
 
 class Home extends StatelessWidget {
   final AuthService _auth = AuthService();
@@ -212,6 +213,17 @@ class Home extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => SpeechToTextScreen(),
+                  ),
+                );
+              },
+            ),
+            ElevatedButton(
+              child: Text('Pick your voice'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => VoiceSelectionScreen(),
                   ),
                 );
               },

@@ -56,7 +56,7 @@ import 'package:flutter/material.dart';
 import 'package:social_sense/screens/emotional_lessons/easy_emotions.dart';
 import 'package:social_sense/screens/emotional_lessons/medium_emotions.dart';
 import 'package:social_sense/screens/emotional_lessons/hard_emotions.dart';
-import 'package:social_sense/screens/conversation.dart'; // Import Conversation Screen
+import 'package:social_sense/screens/conversation.dart'; 
 
 class LessonsPage extends StatelessWidget {
   @override

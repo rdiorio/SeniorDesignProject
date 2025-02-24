@@ -23,15 +23,15 @@ class TextToSpeechService {
     }
   }
 
-  Future<void> speak(String text) async {
+  Future<void> speak(String text, String name, String gender) async {
     final url = Uri.parse("https://texttospeech.googleapis.com/v1/text:synthesize?key=$apiKey");
 
     final Map<String, dynamic> requestPayload = {
       "input": {"text": text},
       "voice": {
         "languageCode": "en-US",
-        "name": "Leda",
-        "ssmlGender": "FEMALE"
+        "name": name,
+        "ssmlGender": gender
       },
       "audioConfig": {
         "audioEncoding": "MP3",

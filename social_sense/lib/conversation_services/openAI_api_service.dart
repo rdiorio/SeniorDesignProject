@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 class AIAPIService {
   final DatabaseService _dbService;
-  final String modelId = "ft:gpt-4o-mini-2024-07-18:personal:first-model:ArUqSGNx";
+  final String modelId = "ft:gpt-4o-mini-2024-07-18:personal:fix-extraposneut1:B4C9Wouh";
   String? apiKey;
 
   // Constructor to initialize DatabaseService and fetch the API key

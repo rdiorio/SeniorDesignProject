@@ -37,7 +37,12 @@ class DatabaseService {
           'easy': 0,
           'medium': 0,
           'hard': 0
-        }
+        },
+        'voice': {
+          'name': 'Leda',
+          'gender': 'FEMALE'
+        },
+        'buddy': 'bear'
       });
     } catch (e) {
       print('Error creating user profile: $e');
@@ -90,6 +95,48 @@ class DatabaseService {
       return null;
     }
   }
+
+  // Update User's Selected Voice
+  Future<void> updateUserVoice(String voiceName, String gender) async {
+    try {
+      await userCollection.doc(uid).update({
+        'voice': {
+          'name': voiceName,
+          'gender': gender,
+        }
+      });
+      print("Voice updated successfully.");
+    } catch (e) {
+      print("Error updating voice: $e");
+    }
+  }
+
+  ///Fetch User's Selected Voice
+  Future<Map<String, String>> getUserVoice() async {
+    try {
+      DocumentSnapshot snapshot = await userCollection.doc(uid).get();
+      if (snapshot.exists) {
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        if (data.containsKey('voice')) {
+          return {
+            "name": data['voice']['name'],
+            "gender": data['voice']['gender'],
+          };
+        }
+      }
+      return {
+            "name": "Leda",
+            "gender": "FEMALE",
+          };
+    } catch (e) {
+      print("Error fetching voice data: $e");
+      return {
+            "name": "Leda",
+            "gender": "FEMALE",
+          };
+    }
+  }
+
 
   Future<Map<String, dynamic>> getConversationSettings(String conversationTopic) async {
     try {
