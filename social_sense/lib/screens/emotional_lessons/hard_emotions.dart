@@ -335,8 +335,8 @@ class _HardEmotionsPageState extends State<HardEmotionsPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                           Container(
-                            width: 100,
-                            height: 100,
+                            width: 170,
+                            height: 170,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(color: Colors.black, width: 4),

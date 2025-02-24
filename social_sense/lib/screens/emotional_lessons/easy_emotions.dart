@@ -184,8 +184,8 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: 100,
-                            height: 100,
+                            width: 150, // Match emoji size
+                            height: 150, // Match emoji size
                             decoration: BoxDecoration(
                               color: currentData['color'],
                               borderRadius: BorderRadius.circular(20),
@@ -194,8 +194,8 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
                           ),
                           const SizedBox(width: 20),
                           Container(
-                            width: 100,
-                            height: 100,
+                            width: 150, // Match emoji size
+                            height: 150, // Match emoji size
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(color: Colors.black, width: 4),
@@ -211,7 +211,7 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      Text(currentData['emoji'], style: const TextStyle(fontSize: 80)),
+                      Text(currentData['emoji'], style: const TextStyle(fontSize: 130)),
                       const SizedBox(height: 20),
                       const Text('What emotion is this?',
                           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),

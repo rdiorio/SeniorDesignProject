@@ -184,8 +184,8 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: 100,
-                            height: 100,
+                            width: 150,
+                            height: 150,
                             decoration: BoxDecoration(
                               color: currentData['color'],
                               borderRadius: BorderRadius.circular(20),
@@ -194,8 +194,8 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
                           ),
                           const SizedBox(width: 20),
                           Container(
-                            width: 100,
-                            height: 100,
+                            width: 150,
+                            height: 150,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(color: Colors.black, width: 4),
