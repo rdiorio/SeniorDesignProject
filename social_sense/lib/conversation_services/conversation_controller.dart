@@ -33,7 +33,7 @@ class ConversationController {
     }
   ];
 
-  /// **Loads initial conversation settings**
+  //Loads initial conversation settings
   Future<void> loadConversationSettings(String conversationTopic) async {
     try {
       Map<String, dynamic> data =
@@ -50,7 +50,7 @@ class ConversationController {
     }
   }
 
-  /// **Initializes the conversation**
+  //Initializes the conversation
   Future<String> startConversation(String conversationTopic) async {
     await loadConversationSettings(conversationTopic);
 
@@ -66,7 +66,7 @@ class ConversationController {
     return initialMessage;
   }
 
-  /// **Handles User Input (Text or Speech)**
+  //Handles User Input (Text or Speech)
   Future<String> handleUserInput(String userInput) async {
     conversation.add({"role": "user", "content": userInput});
 
@@ -129,7 +129,7 @@ class ConversationController {
     return false;
   }
 
-  /// **Extracts Classification from AI Response**
+  //Extracts Classification from AI Response
   String extractClassification(String response) {
     response = response.replaceAll(r'\n', '\n');
     var splitResponse = response.split("\n");
@@ -137,7 +137,7 @@ class ConversationController {
     return classification;
   }
 
-  /// **Extracts Message Content (Without Classification)**
+  //Extracts Message Content (Without Classification)
   String extractResponseContent(String response) {
     response = response.replaceAll(r'\n', '\n');
     var splitResponse = response.split("\n");

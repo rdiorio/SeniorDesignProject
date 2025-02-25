@@ -187,5 +187,90 @@ class DatabaseService {
     }
   }
 
+  //Initialize conversation storage
+
+Future<String?> initializeConversationStorage({
+  required String userId,
+  required String topic,
+}) async {
+  try {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    // Create a new conversation document with an auto-generated ID
+    DocumentReference conversationRef = firestore
+        .collection('users')
+        .doc(userId)
+        .collection('conversations')
+        .doc();
+
+    // Initialize the conversation with the correct structure
+    await conversationRef.set({
+      "convoInfo": {
+        "topic": topic,
+        "date": Timestamp.now(),
+        "score": 0, // Default score
+      },
+      "classifications": {
+        "positive": 0,
+        "neutral": 0,
+        "off-topic": 0,
+        "inappropriate": 0,
+        "non-responsive": 0,
+      },
+      "conversationLog": [], // Empty conversation log
+    });
+
+    print("Conversation initialized successfully!");
+    return conversationRef.id; // Return the document ID for future updates
+  } catch (e) {
+    print("Error initializing conversation: $e");
+    return null; // Return null if an error occurs
+  }
+}
+
+//Store message to the convo log
+Future<void> addMessageToConversationLog({
+  required String userId,
+  required String? conversationId,
+  required String role, // "user" or "assistant"
+  required String message,
+}) async {
+  try {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    // Reference the conversation document
+    DocumentReference conversationRef = firestore
+        .collection('users')
+        .doc(userId)
+        .collection('conversations')
+        .doc(conversationId);
+
+    // Fetch current conversation data
+    DocumentSnapshot docSnapshot = await conversationRef.get();
+    if (!docSnapshot.exists) {
+      print("Error: Conversation does not exist.");
+      return;
+    }
+
+    Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
+
+    // Get existing conversation log
+    List<dynamic> conversationLog = data["conversationLog"] ?? [];
+
+    // Add the new message
+    conversationLog.add({"role": role, "content": message});
+
+    // Update Firestore
+    await conversationRef.update({
+      "conversationLog": conversationLog,
+    });
+
+    print("Message added to conversation log!");
+  } catch (e) {
+    print("Error adding message to conversation log: $e");
+  }
+}
+
+
   
 }

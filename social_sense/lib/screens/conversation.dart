@@ -17,6 +17,7 @@ class ConversationScreenState extends State<ConversationScreen> {
   late ConversationController _controller;
   late TextToSpeechService _ttsService;
   String? userUid;
+  String? conversationId; // Stores Firestore conversation ID
 
   final TextEditingController _textController = TextEditingController();
   bool isLoading = true;
@@ -34,7 +35,7 @@ class ConversationScreenState extends State<ConversationScreen> {
     _initializeUser();
   }
 
-  /// **Retrieves the Signed-in User's UID**
+  /// **Retrieves the Signed-in User's UID and Initializes Services**
   void _initializeUser() async {
     userUid = FirebaseAuth.instance.currentUser?.uid;
     if (userUid == null) {
@@ -46,14 +47,15 @@ class ConversationScreenState extends State<ConversationScreen> {
     _ttsService = TextToSpeechService(uid: userUid!);
 
     await _loadUserVoicePreferences();
-    _startConversation();
+    await _startConversation();
   }
 
   /// **Loads User's Selected Voice from Firestore**
   Future<void> _loadUserVoicePreferences() async {
     if (userUid == null) return;
     try {
-      Map<String, String> voiceData = await DatabaseService(uid: userUid!).getUserVoice();
+      Map<String, String> voiceData =
+          await DatabaseService(uid: userUid!).getUserVoice();
       setState(() {
         voiceName = voiceData["name"] ?? "Leda";
         voiceGender = voiceData["gender"] ?? "FEMALE";
@@ -63,52 +65,103 @@ class ConversationScreenState extends State<ConversationScreen> {
     }
   }
 
+  /// **Initializes Firestore Entry for the Conversation**
   Future<void> _startConversation() async {
+    if (userUid == null) return;
+
+    // Initialize fatabase conversation entry**
+    conversationId = await DatabaseService(uid: userUid!).initializeConversationStorage(userId: userUid!, topic: widget.conversationTopic);
+
+    if (conversationId == null) {
+      print("Error initializing conversation.");
+      return;
+    }
+
+    // **Start conversation in the controller**
     String initMessage = await _controller.startConversation(widget.conversationTopic);
+
+  //store initial message
+  await DatabaseService(uid: userUid!).addMessageToConversationLog(
+   userId: userUid!,
+    conversationId: conversationId,
+    role: "assistant",
+    message: initMessage,
+  );
+
+
     setState(() {
       conversationLog.add({"role": "assistant", "content": initMessage});
       isLoading = false;
     });
 
     if (isTTSActive) {
-      _ttsService.speak(initMessage, voiceName, voiceGender);
+      await _ttsService.speak(initMessage, voiceName, voiceGender);
     }
   }
 
+  /// **Handles User Messages and Updates Firestore**
   Future<void> _sendUserMessage(String userInput) async {
-    if (userInput.isEmpty) return;
+    if (userInput.isEmpty || userUid == null || conversationId == null) return;
 
+    // **Update UI immediately**
     setState(() {
       conversationLog.add({"role": "user", "content": userInput});
       _textController.clear();
     });
 
+    //store user input
+     await DatabaseService(uid: userUid!).addMessageToConversationLog(
+   userId: userUid!,
+    conversationId: conversationId,
+    role: "user",
+    message: userInput,
+  );
+
+    // **Get assistant response**
     String response = await _controller.handleUserInput(userInput);
     String responseContent = _controller.extractResponseContent(response);
 
+  //Store AI response
+  await DatabaseService(uid: userUid!).addMessageToConversationLog(
+   userId: userUid!,
+    conversationId: conversationId,
+    role: "assistant",
+    message: responseContent,
+  );
+    // **Update UI with assistant's response**
     setState(() {
       conversationLog.add({"role": "assistant", "content": responseContent});
     });
 
     if (isTTSActive) {
-      _ttsService.speak(responseContent, voiceName, voiceGender);
+      await _ttsService.speak(responseContent, voiceName, voiceGender);
     }
 
+    // **Check if conversation should end**
     bool shouldEnd = await _controller.endConversation(response);
     if (shouldEnd) {
-      await _ttsService.speak(responseContent, voiceName, voiceGender); // Ensure first response finishes
-      
+      //await _ttsService.speak(responseContent, voiceName, voiceGender); // Ensure response finishes
+
       String goodbyeResponse = await _controller.handleUserInput("end conversation");
       String goodbyeContent = _controller.extractResponseContent(goodbyeResponse);
+
 
       setState(() {
         conversationLog.add({"role": "assistant", "content": goodbyeContent});
         isConversationEnded = true;
       });
 
+
       if (isTTSActive) {
-        _ttsService.speak(goodbyeContent, voiceName, voiceGender);
+        await _ttsService.speak(goodbyeContent, voiceName, voiceGender);
       }
+
+       await DatabaseService(uid: userUid!).addMessageToConversationLog(
+      userId: userUid!,
+      conversationId: conversationId,
+      role: "assistant",
+        message: goodbyeContent,
+  );
     }
   }
 
