@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:social_sense/screens/home/home.dart';
+import 'package:social_sense/screens/lessons.dart';
 
 class ResultsPage extends StatelessWidget {
   final List<int> attempts;
@@ -85,7 +87,11 @@ class ResultsPage extends StatelessWidget {
 
                 // Back Button
                 ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LessonsPage()), // Replace HomePage() with your actual home widget
+                    (route) => false,
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.purple[300],
                     shape: RoundedRectangleBorder(
@@ -95,7 +101,7 @@ class ResultsPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   ),
                   child: const Text(
-                    'Back to Home',
+                    'Back to Lessons',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
