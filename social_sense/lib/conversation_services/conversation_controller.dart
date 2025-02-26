@@ -65,6 +65,13 @@ class ConversationController {
     initialMessage = extractResponseContent(initialMessage);
     return initialMessage;
   }
+//Scores conversation
+int scoreConversation(Map<String, int> classificationCounts){
+  
+  int score = classificationCounts["positive"]! * 10 + classificationCounts["neutral"]! * 5 + classificationCounts["off-topic"]! * 2 + classificationCounts["non-responsive"]! * 2 + classificationCounts["inappropriate"]! * 2; 
+  return score;
+}
+
 
   //Handles User Input (Text or Speech)
   Future<String> handleUserInput(String userInput) async {

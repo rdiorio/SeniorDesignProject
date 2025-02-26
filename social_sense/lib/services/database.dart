@@ -19,6 +19,7 @@
 // }
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/semantics.dart';
 
 class DatabaseService {
   final String uid;
@@ -187,44 +188,49 @@ class DatabaseService {
     }
   }
 
-  //Initialize conversation storage
-
-Future<String?> initializeConversationStorage({
+//Initialize conversation storage
+Future<void> storeConversation({
   required String userId,
   required String topic,
+  required int score,
+  required Map<String, int> classificationCounts,
+  required List<Map<String, String>> conversationLog,
 }) async {
   try {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-    // Create a new conversation document with an auto-generated ID
+    // Format the date for easy sorting (ISO 8601 format)
+    String timestamp = DateTime.now().toIso8601String();
+
+    // Reference to the topic-based subcollection
     DocumentReference conversationRef = firestore
         .collection('users')
         .doc(userId)
-        .collection('conversations')
-        .doc();
+        .collection('conversations') // Conversations collection inside user
+        .doc(topic) // Topic document
+        .collection('conversations') // Subcollection for conversations
+        .doc(timestamp); // Date-based conversation ID
 
-    // Initialize the conversation with the correct structure
-    await conversationRef.set({
-      "convoInfo": {
-        "topic": topic,
-        "date": Timestamp.now(),
-        "score": 0, // Default score
-      },
+    // Conversation data
+    Map<String, dynamic> conversationData = {
+      "date": Timestamp.now(),
+      "score": score,
       "classifications": {
-        "positive": 0,
-        "neutral": 0,
-        "off-topic": 0,
-        "inappropriate": 0,
-        "non-responsive": 0,
+        "positive": classificationCounts["positive"] ?? 0,
+        "neutral": classificationCounts["neutral"] ?? 0,
+        "off-topic": classificationCounts["off-topic"] ?? 0,
+        "inappropriate": classificationCounts["inappropriate"] ?? 0,
+        "non-responsive": classificationCounts["non-responsive"] ?? 0,
       },
-      "conversationLog": [], // Empty conversation log
-    });
+      "conversationLog": conversationLog,
+    };
 
-    print("Conversation initialized successfully!");
-    return conversationRef.id; // Return the document ID for future updates
+    // Store in Firestore
+    await conversationRef.set(conversationData);
+
+    print("Conversation stored successfully!");
   } catch (e) {
-    print("Error initializing conversation: $e");
-    return null; // Return null if an error occurs
+    print("Error storing conversation: $e");
   }
 }
 

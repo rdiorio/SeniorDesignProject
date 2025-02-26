@@ -23,9 +23,20 @@ class ConversationScreenState extends State<ConversationScreen> {
   bool isLoading = true;
   bool isConversationEnded = false;
   bool isTTSActive = true;
-  List<Map<String, String>> conversationLog = [];
 
-  // **Voice Preferences (Defaults)**
+  //initializing conversation values
+  List<Map<String, String>> conversationLog = [];
+  Map<String, int> classificationCounts = {
+  "positive": 0,
+  "neutral": 0,
+  "off-topic": 0,
+  "inappropriate": 0,
+  "non-responsive": 0,
+};
+int conversationScore = 0;
+
+
+  //Voice Preferences (Default)
   String voiceName = "Leda";
   String voiceGender = "FEMALE";
 
@@ -35,7 +46,7 @@ class ConversationScreenState extends State<ConversationScreen> {
     _initializeUser();
   }
 
-  /// **Retrieves the Signed-in User's UID and Initializes Services**
+  //Retrieves the Signed-in User's UID and Initializes Services
   void _initializeUser() async {
     userUid = FirebaseAuth.instance.currentUser?.uid;
     if (userUid == null) {
@@ -50,7 +61,7 @@ class ConversationScreenState extends State<ConversationScreen> {
     await _startConversation();
   }
 
-  /// **Loads User's Selected Voice from Firestore**
+  //Loads User's Selected Voice from Firestore
   Future<void> _loadUserVoicePreferences() async {
     if (userUid == null) return;
     try {
@@ -65,28 +76,14 @@ class ConversationScreenState extends State<ConversationScreen> {
     }
   }
 
-  /// **Initializes Firestore Entry for the Conversation**
+  
   Future<void> _startConversation() async {
     if (userUid == null) return;
 
-    // Initialize fatabase conversation entry**
-    conversationId = await DatabaseService(uid: userUid!).initializeConversationStorage(userId: userUid!, topic: widget.conversationTopic);
 
-    if (conversationId == null) {
-      print("Error initializing conversation.");
-      return;
-    }
-
-    // **Start conversation in the controller**
+    //Start conversation from the controller
     String initMessage = await _controller.startConversation(widget.conversationTopic);
 
-  //store initial message
-  await DatabaseService(uid: userUid!).addMessageToConversationLog(
-   userId: userUid!,
-    conversationId: conversationId,
-    role: "assistant",
-    message: initMessage,
-  );
 
 
     setState(() {
@@ -99,36 +96,28 @@ class ConversationScreenState extends State<ConversationScreen> {
     }
   }
 
-  /// **Handles User Messages and Updates Firestore**
+  //Handles User Messages 
   Future<void> _sendUserMessage(String userInput) async {
-    if (userInput.isEmpty || userUid == null || conversationId == null) return;
 
-    // **Update UI immediately**
+    //Update UI immediately
     setState(() {
       conversationLog.add({"role": "user", "content": userInput});
       _textController.clear();
     });
 
-    //store user input
-     await DatabaseService(uid: userUid!).addMessageToConversationLog(
-   userId: userUid!,
-    conversationId: conversationId,
-    role: "user",
-    message: userInput,
-  );
-
-    // **Get assistant response**
-    String response = await _controller.handleUserInput(userInput);
+    
+    //Get assistant response
+    String response = await _controller.handleUserInput(userInput);  
     String responseContent = _controller.extractResponseContent(response);
+    String classification = _controller.extractClassification(response);
 
-  //Store AI response
-  await DatabaseService(uid: userUid!).addMessageToConversationLog(
-   userId: userUid!,
-    conversationId: conversationId,
-    role: "assistant",
-    message: responseContent,
-  );
-    // **Update UI with assistant's response**
+    //update conversation counts
+    if (classificationCounts.containsKey(classification)) {
+      classificationCounts[classification] = classificationCounts[classification]! + 1;
+    }
+
+ 
+    //Update UI with assistant's response
     setState(() {
       conversationLog.add({"role": "assistant", "content": responseContent});
     });
@@ -137,10 +126,9 @@ class ConversationScreenState extends State<ConversationScreen> {
       await _ttsService.speak(responseContent, voiceName, voiceGender);
     }
 
-    // **Check if conversation should end**
+    // Check if conversation should end
     bool shouldEnd = await _controller.endConversation(response);
     if (shouldEnd) {
-      //await _ttsService.speak(responseContent, voiceName, voiceGender); // Ensure response finishes
 
       String goodbyeResponse = await _controller.handleUserInput("end conversation");
       String goodbyeContent = _controller.extractResponseContent(goodbyeResponse);
@@ -150,18 +138,27 @@ class ConversationScreenState extends State<ConversationScreen> {
         conversationLog.add({"role": "assistant", "content": goodbyeContent});
         isConversationEnded = true;
       });
-
-
       if (isTTSActive) {
         await _ttsService.speak(goodbyeContent, voiceName, voiceGender);
       }
 
-       await DatabaseService(uid: userUid!).addMessageToConversationLog(
-      userId: userUid!,
-      conversationId: conversationId,
-      role: "assistant",
-        message: goodbyeContent,
-  );
+
+      //Store everything
+      conversationScore = _controller.scoreConversation(classificationCounts);
+
+         if (userUid != null) {
+      DatabaseService dbService = DatabaseService(uid: userUid!); // ✅ Create an instance
+      await dbService.storeConversation(
+        userId: userUid!,
+        topic: widget.conversationTopic,
+        score: conversationScore,
+        classificationCounts: classificationCounts,
+        conversationLog: conversationLog,
+      );
+    } else {
+      print("Error: No user signed in.");
+    }
+
     }
   }
 
