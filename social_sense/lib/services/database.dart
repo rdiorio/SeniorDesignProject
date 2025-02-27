@@ -37,7 +37,12 @@ class DatabaseService {
           'easy': 0,
           'medium': 0,
           'hard': 0
-        }
+        },
+        'voice': {
+          'name': 'Leda',
+          'gender': 'FEMALE'
+        },
+        'buddy': 'bear'
       });
     } catch (e) {
       print('Error creating user profile: $e');
@@ -91,6 +96,46 @@ class DatabaseService {
     }
   }
 
+  Future<void> updateUserVoice(String voiceName, String gender) async {
+    try {
+      await userCollection.doc(uid).update({
+        'voice': {
+          'name': voiceName,
+          'gender': gender,
+        }
+      });
+      print("Voice updated successfully.");
+    } catch (e) {
+      print("Error updating voice: $e");
+    }
+  }
+
+  ///Fetch User's Selected Voice
+  Future<Map<String, String>> getUserVoice() async {
+    try {
+      DocumentSnapshot snapshot = await userCollection.doc(uid).get();
+      if (snapshot.exists) {
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        if (data.containsKey('voice')) {
+          return {
+            "name": data['voice']['name'],
+            "gender": data['voice']['gender'],
+          };
+        }
+      }
+      return {
+            "name": "Leda",
+            "gender": "FEMALE",
+          };
+    } catch (e) {
+      print("Error fetching voice data: $e");
+      return {
+            "name": "Leda",
+            "gender": "FEMALE",
+          };
+    }
+  }
+
   Future<Map<String, dynamic>> getConversationSettings(String conversationTopic) async {
     try {
       DocumentSnapshot thresholdsSnapshot = await _db
@@ -122,14 +167,59 @@ class DatabaseService {
     }
   }
 
-  Future<String?> getAPIKey() async {
+  Future<void> storeConversation({
+    required String userId,
+    required String topic,
+    required int score,
+    required Map<String, int> classificationCounts,
+    required List<Map<String, String>> conversationLog,
+  }) async {
+    try {
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      // Format the date for easy sorting (ISO 8601 format)
+      String timestamp = DateTime.now().toIso8601String();
+
+      // Reference to the topic-based subcollection
+      DocumentReference conversationRef = firestore
+          .collection('users')
+          .doc(userId)
+          .collection('conversations') // Conversations collection inside user
+          .doc(topic) // Topic document
+          .collection('conversations') // Subcollection for conversations
+          .doc(timestamp); // Date-based conversation ID
+
+      // Conversation data
+      Map<String, dynamic> conversationData = {
+        "date": Timestamp.now(),
+        "score": score,
+        "classifications": {
+          "positive": classificationCounts["positive"] ?? 0,
+          "neutral": classificationCounts["neutral"] ?? 0,
+          "off-topic": classificationCounts["off-topic"] ?? 0,
+          "inappropriate": classificationCounts["inappropriate"] ?? 0,
+          "non-responsive": classificationCounts["non-responsive"] ?? 0,
+        },
+        "conversationLog": conversationLog,
+      };
+
+      // Store in Firestore
+      await conversationRef.set(conversationData);
+
+      print("Conversation stored successfully!");
+    } catch (e) {
+      print("Error storing conversation: $e");
+    }
+  }
+
+  Future<String?> getAPIKey(String API) async {
     try {
       // Access the 'secure_keys' collection and get the 'openai_key' document
       DocumentSnapshot snapshot = await _db.collection('secureKeys').doc('KiBCxiL66kL1aQACVMXi').get();
 
       if (snapshot.exists) {
         // Return the API key if it exists
-        return snapshot.get('OpenAIKey');
+        return snapshot.get(API);
       } else {
         print("API key not found.");
         return null;

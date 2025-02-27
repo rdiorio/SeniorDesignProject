@@ -1,18 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_sense/conversation_services/openAI_api_service.dart';
 import 'package:social_sense/services/database.dart';
-import 'dart:convert'; 
+import 'package:speech_to_text/speech_to_text.dart' as stt; // Speech-to-Text
+import 'dart:convert';
 
 class ConversationController {
-   final AIAPIService _apiService;
+  final AIAPIService _apiService;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final DatabaseService _dbService;
+  final stt.SpeechToText _speech = stt.SpeechToText(); // STT instance
 
-  // Constructor to initialize the DatabaseService with a user ID
-  // Constructor to initialize DatabaseService and AIAPIService with a user ID
+  bool _isListening = false; // Track if listening
+  Function(String)? onSpeechResult; // Callback function to send results
+
   ConversationController({required String uid})
       : _dbService = DatabaseService(uid: uid),
-        _apiService = AIAPIService(uid: uid);  // Initialize AIAPIService with UID
+        _apiService = AIAPIService(uid: uid);
 
   // Stores conversation settings
   String initialMessage = "Loading...";
@@ -23,68 +26,54 @@ class ConversationController {
 
   // Conversation history
   List<Map<String, String>> conversation = [
-    {"role": "system", "content":"You are a friendly assistant that role-plays conversations with children, "
-    "classifies their responses, and provides feedback on their responses."}
+    {
+      "role": "system",
+      "content":
+          "You are a friendly assistant that role-plays conversations with children, classifies their responses, and provides feedback on their responses."
+    }
   ];
 
-  /// Loads initial conversation settings
+  //Loads initial conversation settings
   Future<void> loadConversationSettings(String conversationTopic) async {
     try {
-      Map<String, dynamic> data = await _dbService.getConversationSettings(conversationTopic);
+      Map<String, dynamic> data =
+          await _dbService.getConversationSettings(conversationTopic);
 
-      // Store fetched data
       initialMessage = data["initialMessage"];
       positiveThreshold = data["positiveThreshold"];
       negativeThreshold = data["negativeThreshold"];
-      
-
     } catch (e) {
       print("Error loading conversation settings: $e");
-      
-      // Assign default values if fetching fails
       initialMessage = "Error loading message.";
       positiveThreshold = 0;
       negativeThreshold = 0;
     }
   }
 
-  // Initializes the conversation
+  //Initializes the conversation
   Future<String> startConversation(String conversationTopic) async {
     await loadConversationSettings(conversationTopic);
 
     conversation = [
-      {"role": "system", "content": "You are a friendly assistant that role-plays conversations with children, "
-    "classifies their responses, and provides feedback on their responses."},
+      {
+        "role": "system",
+        "content":
+            "You are a friendly assistant that role-plays conversations with children, classifies their responses, and provides feedback on their responses."
+      },
       {"role": "assistant", "content": initialMessage},
     ];
     initialMessage = extractResponseContent(initialMessage);
     return initialMessage;
   }
-
-  // end conversation
-Future<bool> endConversation(String response) async {
-
-  // Extract classification
-  String? classification = extractClassification(response);
-
-  // Increment counters 
-  if (classification == "positive" || classification == "neutral") {
-    this.positiveCount++;
-    this.negativeCount = 0; // Reset negative count on positive or neutral classification
-  } else if (classification == "off-topic" || classification == "inappropriate" || classification == "non-responsive") {
-    this.negativeCount++;
-  }
-
-  // End conversation if either threshold is reached
-  if (positiveCount >= positiveThreshold || negativeCount >= negativeThreshold) {
-    conversation.add({"role": "user", "content": "end conversation"});
-    return true;
-  }
-  return false;
+//Scores conversation
+int scoreConversation(Map<String, int> classificationCounts){
+  
+  int score = classificationCounts["positive"]! * 10 + classificationCounts["neutral"]! * 5 + classificationCounts["off-topic"]! * 2 + classificationCounts["non-responsive"]! * 2 + classificationCounts["inappropriate"]! * 2; 
+  return score;
 }
 
 
-  // Handles user input and generates AI response
+  //Handles User Input (Text or Speech)
   Future<String> handleUserInput(String userInput) async {
     conversation.add({"role": "user", "content": userInput});
 
@@ -94,33 +83,71 @@ Future<bool> endConversation(String response) async {
     return response;
   }
 
-//Finds the response classification
+  /// **Starts Listening for Speech**
+  Future<void> startListening(Function(String) onResult) async {
+  if (!_isListening) {
+    bool available = await _speech.initialize(
+      onStatus: (status) => print("Status: $status"),
+      onError: (error) => print("Error: $error"),
+    );
+
+    if (available) {
+      _isListening = true;
+      _speech.listen(
+        onResult: (result) async {
+          if (result.finalResult) { // Ensures only the final recognized words are sent
+            _isListening = false; // Mark as stopped
+            _speech.stop(); // Stop listening
+            onResult(result.recognizedWords); // Send final recognized text
+          }
+        },
+      );
+    }
+  }
+}
+
+
+  /// **Stops Listening**
+  Future<void> stopListening() async {
+    if (_isListening) {
+      _isListening = false;
+      _speech.stop();
+    }
+  }
+
+  /// **Ends the Conversation Based on Thresholds**
+  Future<bool> endConversation(String response) async {
+    String? classification = extractClassification(response);
+
+    if (classification == "positive" || classification == "neutral") {
+      this.positiveCount++;
+      this.negativeCount = 0;
+    } else if (classification == "off-topic" ||
+        classification == "inappropriate" ||
+        classification == "non-responsive") {
+      this.negativeCount++;
+    }
+
+    if (positiveCount >= positiveThreshold ||
+        negativeCount >= negativeThreshold) {
+      conversation.add({"role": "user", "content": "end conversation"});
+      return true;
+    }
+    return false;
+  }
+
+  //Extracts Classification from AI Response
   String extractClassification(String response) {
-    
     response = response.replaceAll(r'\n', '\n');
     var splitResponse = response.split("\n");
+    String classification = splitResponse[0].replaceFirst("Classification: ", "");
+    return classification;
+  }
 
-    String classification = splitResponse[0];
-    print(splitResponse);
-  // Remove "Classification: " from the first line
-  classification = classification.replaceFirst("Classification: ", "");
-
-  print(classification);
-
-  return classification;
-}
-
-String extractResponseContent(String response){
-  response = response.replaceAll(r'\n', '\n');
-  var splitResponse = response.split("\n");
-
-  String content = splitResponse[1];
-
-  return content;
-
-}
-
-
-
-
+  //Extracts Message Content (Without Classification)
+  String extractResponseContent(String response) {
+    response = response.replaceAll(r'\n', '\n');
+    var splitResponse = response.split("\n");
+    return splitResponse.length > 1 ? splitResponse[1] : response;
+  }
 }

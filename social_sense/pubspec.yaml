@@ -48,6 +48,7 @@ dependencies:
   highlight_text: ^1.8.0
   avatar_glow: ^3.0.1
   shared_preferences: ^2.5.2
+  audioplayers: ^5.2.1
   
 dev_dependencies:
   flutter_test:
