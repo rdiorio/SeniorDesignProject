@@ -58,7 +58,7 @@ class ConversationController {
       {
         "role": "system",
         "content":
-            "You are a friendly assistant that role-plays conversations with children, classifies their responses, and provides feedback on their responses."
+            "You are a friendly assistant that role-plays conversations with autistic children, classifies their responses, and provides feedback based on their responses. You guide children through structured social interactions, ensuring they practice appropriate communication. Current scenario: $conversationTopic"
       },
       {"role": "assistant", "content": initialMessage},
     ];
