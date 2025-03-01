@@ -47,6 +47,7 @@ dependencies:
   speech_to_text: ^7.0.0
   highlight_text: ^1.8.0
   avatar_glow: ^3.0.1
+  audioplayers: ^5.2.1
 
 dev_dependencies:
   flutter_test:

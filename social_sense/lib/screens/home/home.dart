@@ -7,6 +7,8 @@ import 'package:social_sense/screens/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_sense/screens/speechtotext.dart'; // Import SpeechToTextScreen
 import 'package:social_sense/screens/daily_checkin.dart';
+import 'package:social_sense/screens/wrapper.dart';
+import 'package:social_sense/screens/voice_selection.dart';
 
 class Home extends StatelessWidget {
   final AuthService _auth = AuthService();
@@ -60,8 +62,19 @@ class Home extends StatelessWidget {
                       'Logout',
                       style: TextStyle(color: Colors.white),
                     ),
+                    // onPressed: () async {
+                    //   await _auth.signOut();
+                    // },
                     onPressed: () async {
                       await _auth.signOut();
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                Wrapper()), // Ensures app resets to Wrapper
+                        (route) =>
+                            false, // Removes all previous screens from the stack
+                      );
                     },
                   ),
                 ],
@@ -188,6 +201,17 @@ class Home extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (context) =>
                                   DailyCheckInScreen(uid: uid),
+                            ),
+                          );
+                        },
+                      ),
+                      ElevatedButton(
+                        child: Text('Pick your voice'),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => VoiceSelectionScreen(),
                             ),
                           );
                         },
