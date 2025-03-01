@@ -13,6 +13,7 @@ class DailyCheckInScreen extends StatelessWidget {
       );
     } else {
       // Handle other cases if needed
+      Navigator.of(context).pop();
     }
   }
 

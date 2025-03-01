@@ -6,6 +6,7 @@ import 'package:social_sense/screens/lessons.dart';
 import 'package:social_sense/screens/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_sense/screens/speechtotext.dart'; // Import SpeechToTextScreen
+import 'package:social_sense/screens/daily_checkin.dart';
 
 class Home extends StatelessWidget {
   final AuthService _auth = AuthService();
@@ -28,7 +29,8 @@ class Home extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/topRed_background.png'), // Path to your background image
+                image: AssetImage(
+                    'assets/topRed_background.png'), // Path to your background image
                 fit: BoxFit.cover,
               ),
             ),
@@ -75,7 +77,8 @@ class Home extends StatelessWidget {
                   } else if (snapshot.hasData) {
                     var userData = snapshot.data as Map<String, dynamic>?;
                     print('User Data: $userData'); // Debug print
-                    if (userData != null && userData.containsKey('First Name')) {
+                    if (userData != null &&
+                        userData.containsKey('First Name')) {
                       return Text(
                         'Welcome ${userData['First Name']}!',
                         style: TextStyle(
@@ -113,7 +116,8 @@ class Home extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(height: 10),
-                      Text( "Lessons",
+                      Text(
+                        "Lessons",
                         style: TextStyle(
                           fontSize: 60.0,
                           fontWeight: FontWeight.bold,
@@ -123,22 +127,30 @@ class Home extends StatelessWidget {
                       SizedBox(height: 40),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.yellow, // Change button color to yellow
+                          backgroundColor:
+                              Colors.yellow, // Change button color to yellow
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(0.0), // Rounded corners
+                            borderRadius:
+                                BorderRadius.circular(0.0), // Rounded corners
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0), // Increase button size
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 40.0,
+                              vertical: 20.0), // Increase button size
                           minimumSize: Size(200.0, 60.0), // Set button size
                         ),
                         child: Text(
                           'Emotion',
-                          style: TextStyle(fontSize: 30.0 ,fontWeight: FontWeight.bold, color: Colors.black),  
-                          ), // New "Lessons" button
+                          style: TextStyle(
+                              fontSize: 30.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        ), // New "Lessons" button
                         onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => LessonsPage(), // Navigate to LessonsPage
+                              builder: (context) =>
+                                  LessonsPage(), // Navigate to LessonsPage
                             ),
                           );
                         },
@@ -163,6 +175,19 @@ class Home extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => SpeechToTextScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        child: Text('Daily Check-In'),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  DailyCheckInScreen(uid: uid),
                             ),
                           );
                         },

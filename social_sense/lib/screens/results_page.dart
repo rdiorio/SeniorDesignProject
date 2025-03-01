@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:social_sense/screens/home/home.dart';
+import 'package:social_sense/screens/lessons.dart';
 
 class ResultsPage extends StatelessWidget {
   final List<int> attempts;
   final int points;
 
-  const ResultsPage({Key? key, required this.attempts, required this.points}) : super(key: key);
+  const ResultsPage({Key? key, required this.attempts, required this.points})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +17,8 @@ class ResultsPage extends StatelessWidget {
         height: double.infinity, // Ensure full height
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/topPurple_background.png'), // Background image
+            image: AssetImage(
+                'assets/topPurple_background.png'), // Background image
             fit: BoxFit.cover,
           ),
         ),
@@ -33,14 +37,16 @@ class ResultsPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                
+
                 // Attempt Results
                 Column(
                   children: List.generate(attempts.length, (index) {
                     return Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 20),
                       padding: const EdgeInsets.all(15),
-                      width: MediaQuery.of(context).size.width * 0.9, // Responsive width
+                      width: MediaQuery.of(context).size.width *
+                          0.9, // Responsive width
                       decoration: BoxDecoration(
                         color: Colors.purple[200],
                         borderRadius: BorderRadius.circular(20),
@@ -58,9 +64,9 @@ class ResultsPage extends StatelessWidget {
                     );
                   }),
                 ),
-                
+
                 const SizedBox(height: 20),
-                
+
                 // Points Display
                 Container(
                   padding: const EdgeInsets.all(15),
@@ -85,17 +91,24 @@ class ResultsPage extends StatelessWidget {
 
                 // Back Button
                 ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            LessonsPage()), // Replace HomePage() with your actual home widget
+                    (route) => false,
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.purple[300],
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                       side: const BorderSide(color: Colors.black, width: 3),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
                   ),
                   child: const Text(
-                    'Back to Home',
+                    'Back to Lessons',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -103,7 +116,8 @@ class ResultsPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 30), // Extra space at bottom to prevent cutoff
+                const SizedBox(
+                    height: 30), // Extra space at bottom to prevent cutoff
               ],
             ),
           ),
