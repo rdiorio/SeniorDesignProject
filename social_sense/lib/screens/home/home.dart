@@ -6,8 +6,8 @@ import 'package:social_sense/screens/information.dart';
 import 'package:social_sense/screens/lessons.dart';
 import 'package:social_sense/screens/profile.dart';
 import 'package:social_sense/screens/speechtotext.dart';
-import 'package:social_sense/screens/voice_selection.dart'; 
-
+import 'package:social_sense/screens/voice_selection.dart';
+import 'package:social_sense/screens/breathing_exercises.dart';
 
 class Home extends StatefulWidget {
   final String uid;
@@ -30,10 +30,11 @@ class _HomeState extends State<Home> {
   Future<void> _checkDailyCheckIn() async {
     DocumentReference userDoc =
         FirebaseFirestore.instance.collection('users').doc(widget.uid);
-    
+
     DocumentSnapshot docSnapshot = await userDoc.get();
     if (docSnapshot.exists) {
-      Map<String, dynamic> userData = docSnapshot.data() as Map<String, dynamic>;
+      Map<String, dynamic> userData =
+          docSnapshot.data() as Map<String, dynamic>;
 
       // Get last check-in date
       Timestamp? lastCheckIn = userData['lastCheckIn'] as Timestamp?;
@@ -78,7 +79,8 @@ class _HomeState extends State<Home> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => InformationScreen(uid: widget.uid),
+                        builder: (context) =>
+                            InformationScreen(uid: widget.uid),
                       ),
                     );
                   },
@@ -116,8 +118,8 @@ class _HomeState extends State<Home> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(0.0),
                           ),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 40.0, vertical: 20.0),
                           minimumSize: Size(200.0, 60.0),
                         ),
                         child: Text(
@@ -143,7 +145,8 @@ class _HomeState extends State<Home> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ProfilePage(uid: widget.uid),
+                              builder: (context) =>
+                                  ProfilePage(uid: widget.uid),
                             ),
                           );
                         },
@@ -167,6 +170,17 @@ class _HomeState extends State<Home> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => VoiceSelectionScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      ElevatedButton(
+                        child: Text('Breathing Exercises'),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BreathingExercises(),
                             ),
                           );
                         },
