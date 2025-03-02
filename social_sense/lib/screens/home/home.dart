@@ -9,6 +9,7 @@ import 'package:social_sense/screens/speechtotext.dart'; // Import SpeechToTextS
 import 'package:social_sense/screens/daily_checkin.dart';
 import 'package:social_sense/screens/wrapper.dart';
 import 'package:social_sense/screens/voice_selection.dart';
+import 'package:social_sense/screens/conversational_lessons.dart';
 
 class Home extends StatelessWidget {
   final AuthService _auth = AuthService();
@@ -176,6 +177,18 @@ class Home extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => ProfilePage(uid: uid),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        child: Text('Conversational lessons'),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ConversationalLessons(),
                             ),
                           );
                         },
