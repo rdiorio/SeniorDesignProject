@@ -137,11 +137,14 @@ class _SignInState extends State<SignIn> {
                                   },
                                 ),
                                 SizedBox(height: 12.0),
-                                TextButton(
-                                  onPressed: _resetPassword,
-                                  child: Text(
-                                    'Forgot Password?',
-                                    style: TextStyle(color: Colors.blue),
+                                SizedBox(
+                                  height: 20.0,
+                                  child: TextButton(
+                                    onPressed: _resetPassword,
+                                    child: Text(
+                                      'Forgot Password?',
+                                      style: TextStyle(color: Colors.blue),
+                                    ),
                                   ),
                                 ),
                                 SizedBox(height: 12.0),

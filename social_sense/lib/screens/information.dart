@@ -19,49 +19,67 @@ class _InformationScreenState extends State<InformationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Information'),
-        backgroundColor: Colors.brown[400],
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/topOrange_background.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Column(
             children: [
-              TextFormField(
-                decoration: InputDecoration(labelText: 'First Name'),
-                validator: (val) => val!.isEmpty ? 'Enter your first name' : null,
-                onChanged: (val) {
-                  setState(() => firstName = val);
-                },
+              AppBar(
+                title: Text('Change Information'),
+                backgroundColor: const Color.fromARGB(21, 149, 71, 42),
               ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Last Name'),
-                validator: (val) => val!.isEmpty ? 'Enter your last name' : null,
-                onChanged: (val) {
-                  setState(() => lastName = val);
-                },
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                child: Text('Save'),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    await DatabaseService(uid: widget.uid).updateUserData(firstName, lastName);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Information Saved!'))
-                    );
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => Home(uid: widget.uid)), // Use Home instead of HomeScreen
-                    );
-                  }
-                },
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          decoration: InputDecoration(labelText: 'First Name'),
+                          validator: (val) => val!.isEmpty ? 'Enter your first name' : null,
+                          onChanged: (val) {
+                            setState(() => firstName = val);
+                          },
+                        ),
+                        TextFormField(
+                          decoration: InputDecoration(labelText: 'Last Name'),
+                          validator: (val) => val!.isEmpty ? 'Enter your last name' : null,
+                          onChanged: (val) {
+                            setState(() => lastName = val);
+                          },
+                        ),
+                        SizedBox(height: 20),
+                        ElevatedButton(
+                          child: Text('Save'),
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              await DatabaseService(uid: widget.uid).updateUserData(firstName, lastName);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Information Saved!'))
+                              );
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => Home(uid: widget.uid)), // Use Home instead of HomeScreen
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }

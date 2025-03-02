@@ -70,7 +70,7 @@ class _HomeState extends State<Home> {
           Column(
             children: [
               AppBar(
-                backgroundColor: Colors.transparent,
+                backgroundColor: const Color.fromARGB(50, 85, 81, 81),
                 elevation: 0.0,
                 leading: IconButton(
                   icon: Icon(Icons.settings, color: Colors.white),
@@ -84,8 +84,19 @@ class _HomeState extends State<Home> {
                   },
                 ),
                 actions: <Widget>[
-                  TextButton.icon(
+                  IconButton(
                     icon: Icon(Icons.person, color: Colors.white),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfilePage(uid: widget.uid),
+                        ),
+                      );
+                    },
+                  ),
+                  TextButton.icon(
+                    icon: Icon(Icons.logout, color: Colors.white),
                     label: Text(
                       'Logout',
                       style: TextStyle(color: Colors.white),
@@ -96,25 +107,26 @@ class _HomeState extends State<Home> {
                   ),
                 ],
               ),
+              SizedBox(height: 20),
+              Text(
+                "Lessons",
+                style: TextStyle(
+                  fontSize: 60.0,
+                  fontWeight: FontWeight.bold,
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                ),
+              ),
               Expanded(
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        "Lessons",
-                        style: TextStyle(
-                          fontSize: 60.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(height: 40),
+                      SizedBox(height: 10), // Adjust the height to move the button higher
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.yellow,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(0.0),
+                            borderRadius: BorderRadius.circular(50.0),
                           ),
                           padding:
                               EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
@@ -136,19 +148,36 @@ class _HomeState extends State<Home> {
                           );
                         },
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: 10), // Adjust the height to move the button higher
                       ElevatedButton(
-                        child: Text('Profile'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 83, 211, 168),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50.0),
+                          ),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
+                          minimumSize: Size(200.0, 60.0),
+                        ),
+                        child: Text(
+                          'Story',
+                          style: TextStyle(
+                              fontSize: 30.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        ),
                         onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ProfilePage(uid: widget.uid),
+                              builder: (context) => LessonsPage(),
                             ),
                           );
                         },
                       ),
-                      SizedBox(height: 20),
+
+
+                      SizedBox(height: 200),
                       ElevatedButton(
                         child: Text('Speech'),
                         onPressed: () {

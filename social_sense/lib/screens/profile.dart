@@ -15,37 +15,67 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Profile')),
-      body: FutureBuilder(
-        future: _getUserData(),
-        builder: (context, AsyncSnapshot<Map<String, dynamic>?> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          if (!snapshot.hasData) {
-            return Center(child: Text('No user data found.'));
-          }
-          var userData = snapshot.data!;
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/topOrange_background.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Column(
             children: [
-              Text('First Name: ${userData['First Name']}'),
-              Text('Last Name: ${userData['Last Name']}'),
-              SizedBox(height: 20),
-              ElevatedButton(
-                child: Text('View Rewards'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => RewardsPage(uid: uid),
-                    ),
-                  );
-                },
+              AppBar(
+                title: Text('Profile'),
+                backgroundColor: const Color.fromARGB(160, 149, 70, 42),
+              ),
+              Expanded(
+                child: FutureBuilder(
+                  future: _getUserData(),
+                  builder: (context, AsyncSnapshot<Map<String, dynamic>?> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData) {
+                      return Center(child: Text('No user data found.'));
+                    }
+                    var userData = snapshot.data!;
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 20), // Add some spacing from the top
+                          Text(
+                            'First Name: ${userData['First Name']}',
+                            style: TextStyle(fontSize: 24), // Increase font size
+                          ),
+                          Text(
+                            'Last Name: ${userData['Last Name']}',
+                            style: TextStyle(fontSize: 24), // Increase font size
+                          ),
+                          SizedBox(height: 30),
+                          ElevatedButton(
+                            child: Text('View Rewards'),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => RewardsPage(uid: uid),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ],
-          );
-        },
+          ),
+        ],
       ),
     );
   }
