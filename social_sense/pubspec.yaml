@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  flutter_arc_text: ^0.6.0
   flutter:
     sdk: flutter
 
@@ -77,6 +78,7 @@ flutter:
     - assets/topRed_background.png
     - assets/topPurple_background.png
     - assets/topOrange_background.png
+    - assets/topYellow_background.png
     - assets/bottomRed_background.png
     - assets/bottomPurple_background.png
     - assets/bottomOrange_background.png

@@ -171,6 +171,18 @@ class _HomeState extends State<Home> {
                           );
                         },
                       ),
+                      ElevatedButton(
+                        child: Text('Daily Check-In'),
+                        onPressed: () {
+                          print("Navigating to Daily Check-In with uid: ${widget.uid}"); // ✅ Corrected
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DailyCheckInScreen(uid: widget.uid), // ✅ Corrected
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
