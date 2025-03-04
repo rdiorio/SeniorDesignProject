@@ -48,6 +48,7 @@ dependencies:
   highlight_text: ^1.8.0
   avatar_glow: ^3.0.1
   audioplayers: ^5.2.1
+  flutter_arc_text: ^0.6.0
 
 dev_dependencies:
   flutter_test:
@@ -79,11 +80,13 @@ flutter:
     - assets/bottomRed_background.png
     - assets/bottomPurple_background.png
     - assets/bottomOrange_background.png
+    - assets/topYellow_background.png
     - assets/animal_Lion.png
     - assets/animal_Sloth.png
     - assets/animal_Pig.png
     - assets/animal_Bear.png
     - assets/logo_bear.png
+    - assets/square_breathing.wav
 
 
 
