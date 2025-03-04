@@ -22,7 +22,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
   late stt.SpeechToText _speech;
   bool _isListening = false;
   String _text = 'Press the button and start speaking';
-  double _confidence = 1.0;
+  // double _confidence = 1.0;
 
   @override
   void initState() {
@@ -62,7 +62,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
           onResult: (result) {
             setState(() {
               _text = result.recognizedWords;
-              _confidence = result.confidence;
+              // _confidence = result.confidence;
             });
           },
         );

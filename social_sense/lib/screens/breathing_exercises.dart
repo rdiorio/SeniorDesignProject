@@ -20,7 +20,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:social_sense/screens/home/home.dart'; // Import Home screen
+//import 'package:social_sense/screens/home/home.dart'; // Import Home screen
 
 class BreathingExercises extends StatefulWidget {
   @override

@@ -60,7 +60,7 @@ import 'package:flutter/material.dart';
 import 'package:social_sense/screens/breathing_exercises.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
-import 'package:flutter_arc_text/flutter_arc_text.dart';
+//import 'package:flutter_arc_text/flutter_arc_text.dart';
 
 class ArcText extends StatelessWidget {
   @override
