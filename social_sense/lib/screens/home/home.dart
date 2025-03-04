@@ -139,18 +139,45 @@ class Home extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 40),
+                      // ElevatedButton(
+                      //   style: ElevatedButton.styleFrom(
+                      //     backgroundColor:
+                      //         Colors.yellow, // Change button color to yellow
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius:
+                      //           BorderRadius.circular(0.0), // Rounded corners
+                      //     ),
+                      //     padding: EdgeInsets.symmetric(
+                      //         horizontal: 40.0,
+                      //         vertical: 20.0), // Increase button size
+                      //     minimumSize: Size(200.0, 60.0), // Set button size
+                      //   ),
+                      //   child: Text(
+                      //     'Emotion',
+                      //     style: TextStyle(
+                      //         fontSize: 30.0,
+                      //         fontWeight: FontWeight.bold,
+                      //         color: Colors.black),
+                      //   ), // New "Lessons" button
+                      //   onPressed: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder: (context) =>
+                      //             LessonsPage(), // Navigate to LessonsPage
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Colors.yellow, // Change button color to yellow
+                          backgroundColor: Colors.yellow,
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(0.0), // Rounded corners
+                            borderRadius: BorderRadius.circular(0.0),
                           ),
                           padding: EdgeInsets.symmetric(
-                              horizontal: 40.0,
-                              vertical: 20.0), // Increase button size
-                          minimumSize: Size(200.0, 60.0), // Set button size
+                              horizontal: 40.0, vertical: 20.0),
+                          minimumSize: Size(200.0, 60.0),
                         ),
                         child: Text(
                           'Emotion',
@@ -158,13 +185,13 @@ class Home extends StatelessWidget {
                               fontSize: 30.0,
                               fontWeight: FontWeight.bold,
                               color: Colors.black),
-                        ), // New "Lessons" button
+                        ),
                         onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  LessonsPage(), // Navigate to LessonsPage
+                                  LessonsPage(uid: uid), // Pass actual uid
                             ),
                           );
                         },

@@ -14,6 +14,7 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
   int lessonPoints = 0; // Tracks points earned in this lesson
   List<int> attemptsPerQuestion = [0, 0, 0];
   int totalLessonPoints = 0; // Tracks total points across all questions
+  String? userUid = FirebaseAuth.instance.currentUser?.uid;
 
   final List<Map<String, dynamic>> emotions = [
     {
@@ -61,7 +62,8 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
 
     if (selectedEmotion == correctEmotion) {
       setState(() {
-        feedbackMessage = 'Correct! Now practice making the ${correctEmotion} face!';
+        feedbackMessage =
+            'Correct! Now practice making the ${correctEmotion} face!';
         showFaceCapture = true;
       });
     } else {
@@ -136,9 +138,10 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
 
     if (detectedEmotion == correctEmotion) {
       setState(() {
-        feedbackMessage = 'Great job! You successfully made the ${correctEmotion} face!';
+        feedbackMessage =
+            'Great job! You successfully made the ${correctEmotion} face!';
         if (!isRetrying) {
-          lessonPoints = 12;  // Assign points per question
+          lessonPoints = 12; // Assign points per question
         }
         totalLessonPoints += lessonPoints; // Keep running total
         isRetrying = false;
@@ -147,9 +150,11 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
       // Save score after the user gets it right
       String? userUid = FirebaseAuth.instance.currentUser?.uid;
       if (userUid != null) {
-        Map<String, dynamic>? scores = await DatabaseService(uid: userUid).getUserScores();
+        Map<String, dynamic>? scores =
+            await DatabaseService(uid: userUid).getUserScores();
         int previousScore = scores?['medium'] ?? 0;
-        await DatabaseService(uid: userUid).updateUserScore('medium', previousScore + lessonPoints);
+        await DatabaseService(uid: userUid)
+            .updateUserScore('medium', previousScore + lessonPoints);
       }
 
       // Move to next question after a short delay
@@ -160,33 +165,41 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
             feedbackMessage = '';
             showFaceCapture = false;
             isRetrying = false;
-            lessonPoints = 0;  // Reset for the new question
+            lessonPoints = 0; // Reset for the new question
           });
         });
       } else {
         // Navigate to Results Page with total score
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ResultsPage(
-              attempts: attemptsPerQuestion,
-              points: totalLessonPoints, // Pass the correct total score
+        if (userUid != null) {
+          // ✅ Ensure userUid is not null
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ResultsPage(
+                attempts: attemptsPerQuestion,
+                points: totalLessonPoints,
+                uid: userUid, // ✅ Now userUid is guaranteed to be non-null
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          setState(() {
+            feedbackMessage = "Error: User not logged in.";
+          });
+        }
       }
     } else {
       setState(() {
-        feedbackMessage = 'Hmm, that doesn’t look like ${correctEmotion}. Try again!';
+        feedbackMessage =
+            'Hmm, that doesn’t look like ${correctEmotion}. Try again!';
         if (!isRetrying) {
           attemptsPerQuestion[currentStep]++;
-          lessonPoints = 6;  // Only give 5 points on retry, not stacking
+          lessonPoints = 6; // Only give 5 points on retry, not stacking
         }
         isRetrying = true;
       });
     }
   }
-
 
   Widget _buildEmotionButton(String emotion) {
     return Padding(
@@ -229,7 +242,8 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -240,7 +254,7 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
                       },
                     ),
                     Text(
-                      'Points: $totalLessonPoints',  // Show cumulative score
+                      'Points: $totalLessonPoints', // Show cumulative score
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -287,7 +301,8 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
                       ),
                       const SizedBox(height: 20),
                       const Text('What emotion is this?',
-                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -312,9 +327,11 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
                             backgroundColor: Colors.purple[200],
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
-                              side: const BorderSide(color: Colors.black, width: 3),
+                              side: const BorderSide(
+                                  color: Colors.black, width: 3),
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 12),
                           ),
                           child: Text(
                             isRetrying ? 'Try Again' : 'Capture Your Face',

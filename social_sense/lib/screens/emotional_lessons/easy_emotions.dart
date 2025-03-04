@@ -4,7 +4,6 @@ import 'package:social_sense/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:social_sense/screens/results_page.dart';
 
-
 class EasyEmotionsPage extends StatefulWidget {
   @override
   _EasyEmotionsPageState createState() => _EasyEmotionsPageState();
@@ -15,6 +14,7 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
   int currentStep = 0; // Tracks which emotion we're showing
   int lessonPoints = 0; // Tracks points earned in this lesson
   int totalLessonPoints = 0; // Tracks total points across all questions
+  String? userUid = FirebaseAuth.instance.currentUser?.uid;
 
   final List<Map<String, dynamic>> emotions = [
     {
@@ -47,7 +47,8 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
 
     if (selectedEmotion == correctEmotion) {
       setState(() {
-        feedbackMessage = 'Correct! Now practice making the ${correctEmotion} face!';
+        feedbackMessage =
+            'Correct! Now practice making the ${correctEmotion} face!';
         showFaceCapture = true;
       });
     } else {
@@ -56,7 +57,6 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
       });
     }
   }
-
 
   Future<void> _startFaceCapture() async {
     final detectedEmotion = await Navigator.push(
@@ -79,9 +79,10 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
 
     if (detectedEmotion == correctEmotion) {
       setState(() {
-        feedbackMessage = 'Great job! You successfully made the ${correctEmotion} face!';
+        feedbackMessage =
+            'Great job! You successfully made the ${correctEmotion} face!';
         if (!isRetrying) {
-          lessonPoints = 10;  // Assign points per question
+          lessonPoints = 10; // Assign points per question
         }
         totalLessonPoints += lessonPoints; // Keep running total
         isRetrying = false;
@@ -90,9 +91,11 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
       // Save score after the user gets it right
       String? userUid = FirebaseAuth.instance.currentUser?.uid;
       if (userUid != null) {
-        Map<String, dynamic>? scores = await DatabaseService(uid: userUid).getUserScores();
+        Map<String, dynamic>? scores =
+            await DatabaseService(uid: userUid).getUserScores();
         int previousScore = scores?['easy'] ?? 0;
-        await DatabaseService(uid: userUid).updateUserScore('easy', previousScore + lessonPoints);
+        await DatabaseService(uid: userUid)
+            .updateUserScore('easy', previousScore + lessonPoints);
       }
 
       // Move to next question after a short delay
@@ -103,37 +106,41 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
             feedbackMessage = '';
             showFaceCapture = false;
             isRetrying = false;
-            lessonPoints = 0;  // Reset for the new question
+            lessonPoints = 0; // Reset for the new question
           });
         });
       } else {
         // Navigate to Results Page with total score
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ResultsPage(
-              attempts: attemptsPerQuestion,
-              points: totalLessonPoints, // Pass the correct total score
+        if (userUid != null) {
+          // ✅ Ensure userUid is not null
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ResultsPage(
+                attempts: attemptsPerQuestion,
+                points: totalLessonPoints,
+                uid: userUid, // ✅ Now userUid is guaranteed to be non-null
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          setState(() {
+            feedbackMessage = "Error: User not logged in.";
+          });
+        }
       }
     } else {
       setState(() {
-        feedbackMessage = 'Hmm, that doesn’t look like ${correctEmotion}. Try again!';
+        feedbackMessage =
+            'Hmm, that doesn’t look like ${correctEmotion}. Try again!';
         if (!isRetrying) {
           attemptsPerQuestion[currentStep]++;
-          lessonPoints = 5;  // Only give 5 points on retry, not stacking
+          lessonPoints = 5; // Only give 5 points on retry, not stacking
         }
         isRetrying = true;
       });
     }
   }
-
-
-
-
-
 
   Widget _buildEmotionButton(String emotion) {
     return Padding(
@@ -176,7 +183,8 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -187,7 +195,7 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
                       },
                     ),
                     Text(
-                      'Points: $totalLessonPoints',  // Show cumulative score
+                      'Points: $totalLessonPoints', // Show cumulative score
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -233,10 +241,12 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      Text(currentData['emoji'], style: const TextStyle(fontSize: 130)),
+                      Text(currentData['emoji'],
+                          style: const TextStyle(fontSize: 130)),
                       const SizedBox(height: 20),
                       const Text('What emotion is this?',
-                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -261,9 +271,11 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
                             backgroundColor: Colors.purple[200],
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
-                              side: const BorderSide(color: Colors.black, width: 3),
+                              side: const BorderSide(
+                                  color: Colors.black, width: 3),
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 12),
                           ),
                           child: Text(
                             isRetrying ? 'Try Again' : 'Capture Your Face',
