@@ -42,7 +42,8 @@ class DatabaseService {
           'name': 'Leda',
           'gender': 'FEMALE'
         },
-        'buddy': 'bear'
+        'buddy': 'Bear',
+        'buddyName': 'No Name'
       });
     } catch (e) {
       print('Error creating user profile: $e');
@@ -135,6 +136,52 @@ class DatabaseService {
           };
     }
   }
+
+  //Update buddy
+Future<void> updateBuddyInfo(String buddy, String buddyName, String voiceName, String voiceGender) async {
+    try {
+      await userCollection.doc(uid).update({
+        'buddy': buddy,
+        'buddyName': buddyName,
+        'voice': {
+          'name': voiceName,
+          'gender': voiceGender,
+        }
+      });
+      print("Voice updated successfully.");
+    } catch (e) {
+      print("Error updating voice: $e");
+    }
+  }
+
+  //Get buddy
+  Future<Map<String, String>> getBuddyInfo() async {
+    try {
+      DocumentSnapshot snapshot = await userCollection.doc(uid).get();
+
+      if (snapshot.exists) {
+        String buddy = snapshot.get("buddy") ?? "Unknown Buddy";
+        String buddyName = snapshot.get("buddyName") ?? "No Name";
+
+        return {
+          "buddy": buddy,
+          "buddyName": buddyName,
+        };
+      } else {
+        return {
+          "buddy": "Unknown Buddy",
+          "buddyName": "No Name",
+        };
+      }
+    } catch (e) {
+      print("Error retrieving buddy info: $e");
+      return {
+        "buddy": "Unknown Buddy",
+        "buddyName": "No Name",
+      };
+    }
+  }
+  
 
   Future<Map<String, dynamic>> getConversationSettings(String conversationTopic) async {
     try {

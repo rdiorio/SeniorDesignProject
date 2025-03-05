@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:social_sense/services/database.dart';
 import 'package:social_sense/screens/home/home.dart';
+import 'package:social_sense/screens/change_buddy.dart';
 
 
 class InformationScreen extends StatefulWidget {
@@ -49,12 +50,12 @@ class _InformationScreenState extends State<InformationScreen> {
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     await DatabaseService(uid: widget.uid).updateUserData(firstName, lastName);
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    /*ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Information Saved!'))
-                    );
+                    );*/
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => Home(uid: widget.uid)), // Use Home instead of HomeScreen
+                      MaterialPageRoute(builder: (context) => ChangeBuddy(uid: widget.uid)), 
                     );
                   }
                 },
