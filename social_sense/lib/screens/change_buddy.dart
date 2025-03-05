@@ -166,20 +166,14 @@ void _showEditNameDialog() {
 
                 // Wrap button in Flexible to prevent overflow
                 Flexible(
-                  child: ElevatedButton(
+                  child: IconButton(
+                    icon: Icon(Icons.casino, color: Colors.red[300], size: 30), // 🎲 Dice icon
                     onPressed: () {
                       setState(() {
-                        buddyName = selectRandomName(); // Randomize name on button press
+                        buddyName = selectRandomName(); // Randomize name on click
                       });
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red[300],
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    ),
-                    child: Text(
-                      'Random',
-                      style: TextStyle(fontSize: 14),
-                    ),
+                    tooltip: "Randomize Name", // Shows tooltip on hover (useful on web)
                   ),
                 ),
               ],
