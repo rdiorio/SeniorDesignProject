@@ -1,3 +1,23 @@
+// import 'package:cloud_firestore/cloud_firestore.dart';
+
+// class DatabaseService {
+
+//   final String uid;
+//   DatabaseService({required this.uid});
+
+//   // collection reference
+//   final CollectionReference userCollection =
+//       FirebaseFirestore.instance.collection('users');
+
+//   Future updateUserData(String firstName, String lastName) async {
+//     return await userCollection.doc(uid).set({
+//       'First Name' : firstName,
+//       'Last Name' : lastName,
+//     });
+//   }
+
+// }
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
@@ -16,7 +36,8 @@ class DatabaseService {
         'Last Name': '',
         'scores': {'easy': 0, 'medium': 0, 'hard': 0},
         'voice': {'name': 'Leda', 'gender': 'FEMALE'},
-        'buddy': 'bear'
+        'buddy': 'Bear',
+        'buddyName': 'No Name'
       });
     } catch (e) {
       print('Error creating user profile: $e');
@@ -105,6 +126,52 @@ class DatabaseService {
       return {
         "name": "Leda",
         "gender": "FEMALE",
+      };
+    }
+  }
+
+  //Update buddy
+  Future<void> updateBuddyInfo(String buddy, String buddyName, String voiceName,
+      String voiceGender) async {
+    try {
+      await userCollection.doc(uid).update({
+        'buddy': buddy,
+        'buddyName': buddyName,
+        'voice': {
+          'name': voiceName,
+          'gender': voiceGender,
+        }
+      });
+      print("Voice updated successfully.");
+    } catch (e) {
+      print("Error updating voice: $e");
+    }
+  }
+
+  //Get buddy
+  Future<Map<String, String>> getBuddyInfo() async {
+    try {
+      DocumentSnapshot snapshot = await userCollection.doc(uid).get();
+
+      if (snapshot.exists) {
+        String buddy = snapshot.get("buddy") ?? "Unknown Buddy";
+        String buddyName = snapshot.get("buddyName") ?? "No Name";
+
+        return {
+          "buddy": buddy,
+          "buddyName": buddyName,
+        };
+      } else {
+        return {
+          "buddy": "Unknown Buddy",
+          "buddyName": "No Name",
+        };
+      }
+    } catch (e) {
+      print("Error retrieving buddy info: $e");
+      return {
+        "buddy": "Unknown Buddy",
+        "buddyName": "No Name",
       };
     }
   }

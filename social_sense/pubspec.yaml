@@ -87,6 +87,12 @@ flutter:
     - assets/animal_Bear.png
     - assets/logo_bear.png
     - assets/square_breathing.wav
+    - assets/star.png
+
+  fonts:
+    - family: Modak
+      fonts:
+        - asset: assets/Modak-Regular.ttf
 
 
 
