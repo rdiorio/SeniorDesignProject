@@ -393,7 +393,7 @@ class Home extends StatelessWidget {
                 ),
                 actions: <Widget>[
                   TextButton.icon(
-                    icon: Icon(Icons.person, color: Colors.white),
+                    icon: Icon(Icons.logout, color: Colors.white, size: 30),
                     label: Text(
                       'Logout',
                       style: TextStyle(
