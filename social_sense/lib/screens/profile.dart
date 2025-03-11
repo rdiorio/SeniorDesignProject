@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_sense/screens/rewards.dart';
+import 'package:social_sense/screens/conversation_history/history_topic_menu.dart';
 
 class ProfilePage extends StatelessWidget {
   final String uid;
@@ -39,6 +40,17 @@ class ProfilePage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => RewardsPage(uid: uid),
+                    ),
+                  );
+                },
+              ),
+              ElevatedButton(
+                child: Text('View Conversation History'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ConversationHistory(uid: uid),
                     ),
                   );
                 },
