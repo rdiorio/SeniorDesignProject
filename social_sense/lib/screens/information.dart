@@ -1,3 +1,145 @@
+// import 'package:flutter/material.dart';
+// import 'package:social_sense/services/database.dart';
+// import 'package:social_sense/screens/home/home.dart';
+// import 'package:social_sense/screens/change_buddy.dart';
+
+// class InformationScreen extends StatefulWidget {
+//   final String uid;
+//   InformationScreen({required this.uid});
+
+//   @override
+//   _InformationScreenState createState() => _InformationScreenState();
+// }
+
+// class _InformationScreenState extends State<InformationScreen> {
+//   final _formKey = GlobalKey<FormState>();
+//   String firstName = '';
+//   String lastName = '';
+
+//   Future<Map<String, dynamic>?> _getUserData() async {
+//     return await DatabaseService(uid: widget.uid).getUserData();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Stack(
+//         children: [
+//           Container(
+//             decoration: BoxDecoration(
+//               image: DecorationImage(
+//                 image: AssetImage('assets/topOrange_background.png'),
+//                 fit: BoxFit.cover,
+//               ),
+//             ),
+//           ),
+//           // Foreground content
+//           Center(
+//           // Retreive user data
+//           child: FutureBuilder(
+//               future: _getUserData(),
+//               builder: (context, snapshot) {
+//                 if (snapshot.connectionState == ConnectionState.waiting) {
+//                   return Center(child: CircularProgressIndicator());
+//                 } else if (snapshot.hasError) {
+//                   return Center(child: Text('Error loading user data'));
+//                 } else if (snapshot.hasData) {
+//                   var userData = snapshot.data as Map<String, dynamic>?;
+//                   if (userData != null) {
+//                     firstName = userData['First Name'] ?? '';
+//                     lastName = userData['Last Name'] ?? '';
+//                   }
+//                 }
+
+//             return Column(
+//               children: [
+//                 SizedBox(height: 100),
+//                 Text('Change Information', 
+//                 style: TextStyle(
+//                   fontFamily: "Modak",
+//                   fontSize: 30,
+//                   color: Colors.white,
+//                   ),
+//                 ),
+//                 // changeing 
+//                 // SizedBox(height: 20),
+//                 // TextFormField(
+//                 //   decoration: InputDecoration(labelText: 'First Name', labelStyle: TextStyle(fontFamily: "Modak")),
+//                 //   validator: (val) => val!.isEmpty ? 'Enter your first name' : null,
+//                 //   onChanged: (val) {setState(() => firstName = val);},
+//                 //   ),
+//                 // TextFormField(
+//                 //   decoration: InputDecoration(labelText: 'Last Name', labelStyle: TextStyle(fontFamily: "Modak")),
+//                 //   validator: (val) => val!.isEmpty ? 'Enter your last name' : null,
+//                 //   onChanged: (val) {
+//                 //     setState(() => lastName = val);
+//                 //   },
+//                 // ),
+//                   // ...existing code...
+//                 Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
+//                   child: TextFormField(
+//                     decoration: InputDecoration(
+//                       labelText: firstName,
+//                       labelStyle: TextStyle(fontFamily: "Modak"),
+//                       border: OutlineInputBorder(),
+//                       filled: true,
+//                       fillColor: Colors.white,
+//                     ),
+//                     validator: (val) => val!.isEmpty ? 'Enter your first name' : null,
+//                     onChanged: (val) {
+//                       setState(() => firstName = val);
+//                     },
+//                   ),
+//                 ),
+//                 Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+//                   child: TextFormField(
+//                     decoration: InputDecoration(
+//                       labelText: lastName,
+//                       labelStyle: TextStyle(fontFamily: "Modak"),
+//                       border: OutlineInputBorder(),
+//                       filled: true,
+//                       fillColor: Colors.white,
+//                     ),
+//                     validator: (val) => val!.isEmpty ? 'Enter your last name' : null,
+//                     onChanged: (val) {
+//                       setState(() => lastName = val);
+//                     },
+//                   ),
+//                 ),
+//                 // ...existing code...
+
+
+
+
+
+//                 SizedBox(height: 20),
+//                 ElevatedButton(
+//                   child: Text('Save', style: TextStyle(fontFamily: "Modak")),
+//                   onPressed: () async {
+//                     if (_formKey.currentState!.validate()) {
+//                       await DatabaseService(uid: widget.uid).updateUserData(firstName, lastName);
+//                       Navigator.pushReplacement(
+//                         context,
+//                         MaterialPageRoute(builder: (context) => Home(uid: widget.uid)),
+//                       );
+//                     }
+//                   },
+//                 ),
+              
+            
+//               ],
+//             );
+//           }),
+//           ),
+          
+//         ],
+//       ),
+//     );
+//   }
+// }
+
 import 'package:flutter/material.dart';
 import 'package:social_sense/services/database.dart';
 import 'package:social_sense/screens/home/home.dart';
@@ -13,59 +155,133 @@ class InformationScreen extends StatefulWidget {
 
 class _InformationScreenState extends State<InformationScreen> {
   final _formKey = GlobalKey<FormState>();
-  String firstName = '';
-  String lastName = '';
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+
+  Future<Map<String, dynamic>?> _getUserData() async {
+    return await DatabaseService(uid: widget.uid).getUserData();
+  }
+
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Information'),
-        backgroundColor: Colors.brown[400],
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                decoration: InputDecoration(labelText: 'First Name'),
-                validator: (val) =>
-                    val!.isEmpty ? 'Enter your first name' : null,
-                onChanged: (val) {
-                  setState(() => firstName = val);
-                },
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/topOrange_background.png'),
+                fit: BoxFit.cover,
               ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Last Name'),
-                validator: (val) =>
-                    val!.isEmpty ? 'Enter your last name' : null,
-                onChanged: (val) {
-                  setState(() => lastName = val);
-                },
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                child: Text('Save'),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    await DatabaseService(uid: widget.uid)
-                        .updateUserData(firstName, lastName);
-                    /*ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Information Saved!'))
-                    );*/
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ChangeBuddy(uid: widget.uid)),
-                    );
-                  }
-                },
-              ),
-            ],
+            ),
           ),
-        ),
+          // Foreground content
+          Center(
+            child: FutureBuilder(
+              future: _getUserData(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error loading user data'));
+                } else if (snapshot.hasData) {
+                  var userData = snapshot.data as Map<String, dynamic>?;
+                  if (userData != null) {
+                    _firstNameController.text = userData['First Name'] ?? '';
+                    _lastNameController.text = userData['Last Name'] ?? '';
+                  }
+                }
+
+                return Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      SizedBox(height: 150),
+                      Text(
+                        'Change Information',
+                        style: TextStyle(
+                          fontFamily: "Modak",
+                          fontSize: 32, // Increase the font size
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 40),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: TextFormField(
+                          controller: _firstNameController,
+                          decoration: InputDecoration(
+                            labelText: 'First Name',
+                            labelStyle: TextStyle(fontFamily: "Modak", fontSize: 25),
+                            border: OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          validator: (val) => val!.isEmpty ? 'Enter your first name' : null,
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                        child: TextFormField(
+                          controller: _lastNameController,
+                          decoration: InputDecoration(
+                            labelText: 'Last Name',
+                            labelStyle: TextStyle(fontFamily: "Modak", fontSize: 25),
+                            border: OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          validator: (val) => val!.isEmpty ? 'Enter your last name' : null,
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        child: Text('Save', style: TextStyle(fontFamily: "Modak", color: Colors.black)),  
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {  
+                            await DatabaseService(uid: widget.uid).updateUserData(
+                              _firstNameController.text,
+                              _lastNameController.text,
+                            );
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => Home(uid: widget.uid)),
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          Positioned(
+            bottom: 100,
+            right: 20,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 81, 139, 227),
+                minimumSize: Size(100, 50),
+              ),
+              child: Text('Back to Home', style: TextStyle(fontFamily: "Modak", fontSize: 20, color: const Color.fromARGB(255, 255, 255, 255))),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => Home(uid: widget.uid)),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
