@@ -214,7 +214,7 @@ class DatabaseService {
     }
   }
 
-  Future<void> storeConversation({
+  /* Future<void> storeConversation({
     required String userId,
     required String topic,
     required int score,
@@ -257,6 +257,43 @@ class DatabaseService {
     } catch (e) {
       print("Error storing conversation: $e");
     }
+  }*/
+
+  Future<void> storeConversation({
+    required String userId,
+    required String topic,
+    required int score,
+    required Map<String, int> classificationCounts,
+    required List<Map<String, String>> conversationLog,
+  }) async {
+    try {
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      // Reference to the topic-based subcollection
+      CollectionReference conversationRef = firestore
+          .collection('users')
+          .doc(userId)
+          .collection('conversations')
+          .doc(topic)
+          .collection(
+              'conversations'); // Subcollection for actual conversations
+
+      // Store conversation with auto-generated ID
+      await conversationRef.add({
+        "timestamp": Timestamp.now(), // Firestore will handle sorting
+        "score": score,
+        "positive": classificationCounts["positive"] ?? 0,
+        "neutral": classificationCounts["neutral"] ?? 0,
+        "off_topic": classificationCounts["off-topic"] ?? 0,
+        "inappropriate": classificationCounts["inappropriate"] ?? 0,
+        "non_responsive": classificationCounts["non-responsive"] ?? 0,
+        "conversationLog": conversationLog, // Keep as a List
+      });
+
+      print("Conversation stored successfully!");
+    } catch (e) {
+      print("Error storing conversation: $e");
+    }
   }
 
   Future<String?> getAPIKey(String API) async {
@@ -275,6 +312,143 @@ class DatabaseService {
     } catch (e) {
       print("Error fetching API key: $e");
       return null;
+    }
+  }
+
+  // Fetch conversations for a specific topic, ordered by date/time
+/*Future<List<Map<String, dynamic>>> getConversations(String topic) async {
+  try {
+    // First, check if the topic document exists
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('conversations')
+        .doc(topic) 
+        .get();
+
+    if (!snapshot.exists) {
+      print("ERROR: Topic '$topic' does not exist for user $uid.");
+      return [];
+    }
+
+    // Fetch the actual conversations subcollection inside the topic
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('conversations')
+        .doc(topic)
+        .collection('conversations') 
+        .orderBy('timestamp', descending: true)
+        .get();
+
+    // Convert Firestore docs into a list
+    List<Map<String, dynamic>> conversations = querySnapshot.docs.map((doc) {
+      return {
+        "id": doc.id, // Document ID (timestamp-based)
+        ...doc.data() as Map<String, dynamic>, // Conversation data
+      };
+    }).toList();
+
+    return conversations;
+  } catch (e) {
+    print("Error fetching conversations: $e");
+    return [];
+  }
+}*/
+  Future<List<Map<String, dynamic>>> getConversations(String topic) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('conversations')
+          .doc(topic)
+          .collection('conversations')
+          .orderBy('timestamp', descending: true) // 🔥 Efficient sorting!
+          .get();
+
+      List<Map<String, dynamic>> conversations = querySnapshot.docs.map((doc) {
+        return {
+          "id": doc.id,
+          ...doc.data() as Map<String, dynamic>,
+        };
+      }).toList();
+
+      return conversations;
+    } catch (e) {
+      print("Error fetching conversations: $e");
+      return [];
+    }
+  }
+
+  Future<Map<String, dynamic>?> getConversationData({
+    required String userId,
+    required String topic,
+    required String conversationId,
+  }) async {
+    try {
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      // Reference to the specific conversation document
+      DocumentSnapshot docSnapshot = await firestore
+          .collection('users')
+          .doc(userId)
+          .collection('conversations')
+          .doc(topic)
+          .collection('conversations') // Subcollection for conversations
+          .doc(conversationId) // The specific conversation document
+          .get();
+
+      // Check if document exists
+      if (!docSnapshot.exists) {
+        print("ERROR: Conversation '$conversationId' not found.");
+        return null;
+      }
+
+      // Return the document data
+      return docSnapshot.data() as Map<String, dynamic>;
+    } catch (e) {
+      print("Error fetching conversation log: $e");
+      return null;
+    }
+  }
+
+  Future<void> debugConversations() async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('conversations')
+          .get();
+
+      print("DEBUG: Existing Topics in Firestore → ");
+      for (var doc in querySnapshot.docs) {
+        print(doc.id); // Print topic names
+      }
+    } catch (e) {
+      print("Error listing topics: $e");
+    }
+  }
+
+  Future<void> debugFirestoreTopics() async {
+    try {
+      print("DEBUG: Fetching from path → users/$uid/conversations");
+
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('conversations')
+          .get();
+
+      print("DEBUG: Existing Topics in Firestore:");
+      for (var doc in querySnapshot.docs) {
+        print(" - ${doc.id}"); // Print topic names
+      }
+
+      if (querySnapshot.docs.isEmpty) {
+        print("ERROR: No topics found in Firestore!");
+      }
+    } catch (e) {
+      print("ERROR: Failed to fetch topics → $e");
     }
   }
 }
