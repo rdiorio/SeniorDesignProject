@@ -173,6 +173,21 @@ class Home extends StatelessWidget {
               ),
             ),
           ),
+          Positioned(
+          top: screenHeight * 0.06, // Align with Logout button
+          left: screenWidth * 0.05, // Align to the left
+          child: IconButton(
+            icon: Icon(Icons.settings, color: Colors.white, size: 30),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => InformationScreen(uid: uid),
+                ),
+              );
+            },
+          ),
+        ),
 
           // ✅ Buttons Positioned at the Bottom (One Per Row)
           Align(
