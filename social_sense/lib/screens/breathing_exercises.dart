@@ -1,28 +1,12 @@
-// import 'package:flutter/material.dart';
-
-// class BreathingExercises extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Support Page'),
-//         backgroundColor: Colors.brown[400],
-//       ),
-//       body: Center(
-//         child: ElevatedButton(
-//           onPressed: () => Navigator.pop(context),
-//           child: Text('Back'),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
-//import 'package:social_sense/screens/home/home.dart'; // Import Home screen
+import 'package:social_sense/screens/home/home.dart'; // Import Home screen
 
 class BreathingExercises extends StatefulWidget {
+  final String uid; // ✅ Takes in the uid
+
+  BreathingExercises({required this.uid});
+
   @override
   _BreathingExercisesState createState() => _BreathingExercisesState();
 }
@@ -40,7 +24,7 @@ class _BreathingExercisesState extends State<BreathingExercises>
     _controller = AnimationController(
       vsync: this,
       duration: Duration(seconds: 12),
-    )..repeat();
+    );
 
     _animation = TweenSequence<double>([
       TweenSequenceItem(tween: Tween(begin: .7, end: 1.5), weight: 3),
@@ -50,11 +34,13 @@ class _BreathingExercisesState extends State<BreathingExercises>
     ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
-  Future<void> _toggleAudio() async {
+  Future<void> _toggleAudioAndAnimation() async {
     if (_isPlaying) {
       await _audioPlayer.pause();
+      _controller.stop(); // ✅ Stop animation when paused
     } else {
       await _audioPlayer.play(AssetSource('square_breathing.wav'));
+      _controller.repeat(); // ✅ Start animation when playing
     }
     setState(() {
       _isPlaying = !_isPlaying;
@@ -70,32 +56,58 @@ class _BreathingExercisesState extends State<BreathingExercises>
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/bottomOrange_background.png'),
-                fit: BoxFit.cover,
+          // ✅ Background Image
+          Positioned.fill(
+            child: Image.asset(
+              'assets/bottomOrange_background.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          // ✅ Home Button (Passes UID)
+          Positioned(
+            top: screenHeight * 0.06,
+            right: screenWidth * 0.05,
+            child: SizedBox(
+              width: 100,
+              height: 35,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFF9720),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 5,
+                ),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            Home(uid: widget.uid)), // ✅ Pass UID
+                  );
+                },
+                child: Text(
+                  "Home",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
           ),
 
-          // Back to Home Button
+          // ✅ Breathing Exercise Text
           Positioned(
-            top: 30,
-            left: 30,
-            child: ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('Back'),
-            ),
-          ),
-
-          // Text Positioned Independently
-          Positioned(
-            top: 150,
+            top: screenHeight * 0.2,
             left: 0,
             right: 0,
             child: Text(
@@ -109,7 +121,7 @@ class _BreathingExercisesState extends State<BreathingExercises>
             ),
           ),
 
-          // Centered Breathing Animation
+          // ✅ Centered Breathing Animation (Only Moves When Started)
           Center(
             child: AnimatedBuilder(
               animation: _animation,
@@ -156,15 +168,22 @@ class _BreathingExercisesState extends State<BreathingExercises>
             ),
           ),
 
-          // Start/Pause Button Positioned at Bottom
+          // ✅ Start/Pause Button Positioned at Bottom
           Positioned(
-            bottom: 30,
+            bottom: screenHeight * 0.08,
             left: 0,
             right: 0,
             child: Center(
               child: ElevatedButton(
-                onPressed: _toggleAudio,
-                child: Text(_isPlaying ? 'Pause' : 'Start'),
+                onPressed: _toggleAudioAndAnimation,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                ),
+                child: Text(
+                  _isPlaying ? 'Pause' : 'Start',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ),

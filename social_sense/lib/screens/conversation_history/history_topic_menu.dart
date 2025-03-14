@@ -27,10 +27,9 @@ class _ConversationHistoryState extends State<ConversationHistory> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          HistoryConvoMenu(uid: widget.uid, topic: "greeting")),
+                  MaterialPageRoute(builder: (context) => HistoryConvoMenu(uid: widget.uid, topic: "greeting")),
                 );
+
               }, // Placeholder action
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blueAccent,
@@ -45,17 +44,15 @@ class _ConversationHistoryState extends State<ConversationHistory> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          HistoryConvoMenu(uid: widget.uid, topic: "askHelp")),
+                  MaterialPageRoute(builder: (context) => HistoryConvoMenu(uid: widget.uid, topic: "askHelp")),
                 );
-              },
+
+              }, 
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.greenAccent,
                 padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
               ),
-              child: Text("Asking for Help History",
-                  style: TextStyle(fontSize: 18)),
+              child: Text("Asking for Help History", style: TextStyle(fontSize: 18)),
             ),
             SizedBox(height: 20),
 
@@ -64,36 +61,30 @@ class _ConversationHistoryState extends State<ConversationHistory> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          HistoryConvoMenu(uid: widget.uid, topic: "game")),
+                  MaterialPageRoute(builder: (context) => HistoryConvoMenu(uid: widget.uid, topic: "game")),
                 );
-              },
+              }, 
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orangeAccent,
                 padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
               ),
-              child: Text("Being a Good Sport History",
-                  style: TextStyle(fontSize: 18)),
+              child: Text("Being a Good Sport History", style: TextStyle(fontSize: 18)),
             ),
             SizedBox(height: 20),
 
             // Button 4
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
+              Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => HistoryConvoMenu(
-                          uid: widget.uid, topic: "boundaries")),
+                  MaterialPageRoute(builder: (context) => HistoryConvoMenu(uid: widget.uid, topic: "boundaries")),
                 );
-              },
+              }, 
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.redAccent,
                 padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
               ),
-              child: Text("Setting Boundaries History",
-                  style: TextStyle(fontSize: 18)),
+              child: Text("Setting Boundaries History", style: TextStyle(fontSize: 18)),
             ),
           ],
         ),

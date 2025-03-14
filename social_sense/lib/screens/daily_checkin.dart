@@ -1,92 +1,41 @@
-// import 'package:flutter/material.dart';
-// import 'package:social_sense/screens/breathing_exercises.dart';
-
-// class DailyCheckInScreen extends StatelessWidget {
-//   final String uid;
-//   const DailyCheckInScreen({super.key, required this.uid});
-
-//   void _handleEmotionSelection(BuildContext context, String emotion) {
-//     if (emotion == "Sad" || emotion == "Angry") {
-//       Navigator.push(
-//         context,
-//         MaterialPageRoute(builder: (context) => BreathingExercises()),
-//       );
-//     } else {
-//       // Handle other cases if needed
-//       Navigator.of(context).pop();
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Daily Check-In'),
-//         backgroundColor: Colors.brown[400],
-//       ),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             Text(
-//               'How are you feeling today?',
-//               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-//             ),
-//             SizedBox(height: 20),
-//             ElevatedButton(
-//               onPressed: () => _handleEmotionSelection(context, "Happy"),
-//               child: Text('Happy'),
-//             ),
-//             ElevatedButton(
-//               onPressed: () => _handleEmotionSelection(context, "Sad"),
-//               child: Text('Sad'),
-//             ),
-//             ElevatedButton(
-//               onPressed: () => _handleEmotionSelection(context, "Angry"),
-//               child: Text('Angry'),
-//             ),
-//             ElevatedButton(
-//               onPressed: () => _handleEmotionSelection(context, "Calm"),
-//               child: Text('Calm'),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:social_sense/screens/breathing_exercises.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
-//import 'package:flutter_arc_text/flutter_arc_text.dart';
+import 'package:social_sense/screens/home/home.dart';
 
+// Utility function for consistent scaling across different screen sizes
+double scaleWidth(BuildContext context, double size) {
+  double screenWidth = MediaQuery.of(context).size.width;
+  return (size / 400.0) * screenWidth; // 400 is base reference width
+}
+
+// ArcText widget for displaying the curved question text
 class ArcText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
       painter: ArcTextPainter(),
-      child: SizedBox(height: 50, width: 350), // Adjust size for box as needed
+      child: SizedBox(height: 50, width: 350),
     );
   }
 }
 
+// Custom painter to draw the arc text
 class ArcTextPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     const String text = "How are you feeling today?";
-    const double fontSize = 28;
-    const double radius = 180; // Adjust for curvature
-    const double verticalOffset = -200; // Moves the whole arc higher
+    const double fontSize = 32;
+    const double radius = 180;
+    const double verticalOffset = -200;
 
     final textStyle = TextStyle(
       fontSize: fontSize,
-      fontWeight: FontWeight.w900, // Extra bold text
+      fontWeight: FontWeight.w900,
       color: Colors.black,
     );
 
-    // Measure total width of the text
     double totalTextWidth = 0;
     List<double> charWidths = [];
 
@@ -100,10 +49,9 @@ class ArcTextPainter extends CustomPainter {
       totalTextWidth += textPainter.width;
     }
 
-    double totalAngle = pi * 0.7; // Curvature
-    double startAngle = totalAngle / 0.83; // Centering text
-
-    double currentAngle = startAngle; // Track the angle dynamically
+    double totalAngle = pi * 0.7;
+    double startAngle = totalAngle / 0.83;
+    double currentAngle = startAngle;
 
     for (int i = 0; i < text.length; i++) {
       String char = text[i];
@@ -124,9 +72,8 @@ class ArcTextPainter extends CustomPainter {
           canvas, Offset(-textPainter.width / 9, -textPainter.height / 2));
       canvas.restore();
 
-      // Update the angle based on the actual character width
       double charAngle = (charWidths[i] / totalTextWidth) * totalAngle;
-      currentAngle -= charAngle; // Move leftward along the arc
+      currentAngle -= charAngle;
     }
   }
 
@@ -134,6 +81,7 @@ class ArcTextPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
+// Main Daily Check-in Screen
 class DailyCheckInScreen extends StatelessWidget {
   final String uid;
   const DailyCheckInScreen({super.key, required this.uid});
@@ -146,10 +94,10 @@ class DailyCheckInScreen extends StatelessWidget {
     if (emotion == "Sad" || emotion == "Angry" || emotion == "Frustrated") {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => BreathingExercises()),
+        MaterialPageRoute(builder: (context) => BreathingExercises(uid: uid)),
       );
     } else {
-      Navigator.pop(context); // Go back to home after check-in
+      Navigator.pop(context);
     }
   }
 
@@ -157,62 +105,105 @@ class DailyCheckInScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        // Ensures content is below the status bar
-        child: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/topYellow_background.png'),
-              fit: BoxFit.cover,
+        child: Stack(
+          children: [
+            // ✅ Background Image
+            Positioned.fill(
+              child: Image.asset(
+                'assets/topYellow_background.png',
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.only(top: 1.0), // Moves everything down
-            child: Column(
-              mainAxisAlignment:
-                  MainAxisAlignment.start, // Align items from the top
-              children: [
-                Image.asset(
-                  'assets/animal_Sloth.png',
-                  width: double.infinity,
-                  height: 350, // Adjust height as needed
-                  fit: BoxFit.contain,
-                ),
 
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: ArcText(),
-                ),
-                const SizedBox(height: 0), // Space between text and buttons
-                // Feelings Grid
-                Expanded(
-                  child: GridView.count(
-                    crossAxisCount: 2, // Two columns
-                    crossAxisSpacing:
-                        25, // Feelings button spacing left & right
-                    mainAxisSpacing:
-                        25, // Feelings button spacing above & under
-                    padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                    shrinkWrap: true, // Prevents excessive height use
-                    childAspectRatio: 1.4, // Makes buttons more square
-                    children: [
-                      _buildEmotionButton(
-                          context, "Happy", const Color(0xFFFFEE6A)),
-                      _buildEmotionButton(
-                          context, "Sad", const Color(0xFF99BEEE)),
-                      _buildEmotionButton(
-                          context, "Angry", const Color(0xFFB45E5E)),
-                      _buildEmotionButton(
-                          context, "Calm", const Color(0xFFFFFFFF)),
-                      _buildEmotionButton(
-                          context, "Excited", const Color(0xFF75CE54)),
-                      _buildEmotionButton(
-                          context, "Frustrated", const Color(0xFFB192CC)),
-                    ],
+            Padding(
+              padding: const EdgeInsets.only(top: 1.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  // ✅ Home Button (Top Right)
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        top: scaleWidth(context, 16),
+                        right: scaleWidth(context, 16),
+                      ),
+                      child: SizedBox(
+                        width: scaleWidth(context, 100),
+                        height: scaleWidth(context, 35),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFF9720),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            elevation: 5,
+                          ),
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Home(uid: uid)),
+                            );
+                          },
+                          child: Text(
+                            "Home",
+                            style: TextStyle(
+                              fontSize: scaleWidth(context, 16),
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ],
+
+                  // ✅ Sloth Image
+                  Image.asset(
+                    'assets/animal_Sloth.png',
+                    width: double.infinity,
+                    height: 350,
+                    fit: BoxFit.contain,
+                  ),
+
+                  // ✅ Arc Text (Curved Question)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: ArcText(),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // ✅ Feelings Grid
+                  Expanded(
+                    child: GridView.count(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 25,
+                      mainAxisSpacing: 25,
+                      padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                      shrinkWrap: true,
+                      childAspectRatio: 1.4,
+                      children: [
+                        _buildEmotionButton(
+                            context, "Happy", const Color(0xFFFFEE6A)),
+                        _buildEmotionButton(
+                            context, "Sad", const Color(0xFF99BEEE)),
+                        _buildEmotionButton(
+                            context, "Angry", const Color(0xFFB45E5E)),
+                        _buildEmotionButton(
+                            context, "Calm", const Color(0xFFFFFFFF)),
+                        _buildEmotionButton(
+                            context, "Excited", const Color(0xFF75CE54)),
+                        _buildEmotionButton(
+                            context, "Frustrated", const Color(0xFFB192CC)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -221,16 +212,23 @@ class DailyCheckInScreen extends StatelessWidget {
   Widget _buildEmotionButton(
       BuildContext context, String emotion, Color bgColor) {
     return SizedBox(
+      height: 80, // Adjust height as needed
+      width: 180, // Adjust width as needed
       child: ElevatedButton(
         onPressed: () => _handleEmotionSelection(context, emotion),
         style: ElevatedButton.styleFrom(
           backgroundColor: bgColor,
           foregroundColor: Colors.black,
-          padding: EdgeInsets.zero, // Ensures button does not expand
-          textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+          padding: const EdgeInsets.symmetric(
+              vertical: 15, horizontal: 10), // Ensures text doesn't overflow
+          minimumSize: const Size(
+              150, 60), // Ensures button is not constrained to square
+          textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(6.0),
-            side: const BorderSide(color: Colors.black, width: 1.5),
+            borderRadius: BorderRadius.circular(
+                20.0), // 🔥 Increase for more rounded buttons
+            side: const BorderSide(
+                color: Color.fromARGB(255, 137, 130, 130), width: 9.5),
           ),
         ),
         child: Text(emotion, textAlign: TextAlign.center),

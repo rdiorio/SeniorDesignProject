@@ -289,12 +289,10 @@ class _ChangeBuddyState extends State<ChangeBuddy> {
               onPressed: () {
                 _dbService.updateBuddyInfo(
                     selectedBuddy, buddyName, selectedVoice, selectedGender);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Home(
-                          uid: widget.uid)), // Use Home instead of HomeScreen
-                );
+                 Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => Home(uid: widget.uid)),
+                  );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[400],
