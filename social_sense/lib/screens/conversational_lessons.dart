@@ -188,7 +188,7 @@ class ConversationalLessons extends StatelessWidget {
 
   /// ✅ **Lesson Button Data**
   final List<Map<String, String>> lessonButtons = [
-    {"title": "Greeting Conversation", "topic": "greeting"},
+    {"title": "Practice Greeting!", "topic": "greeting"},
     {"title": "Practice Asking for Help!", "topic": "askHelp"},
     {"title": "Practice Setting Boundaries!", "topic": "boundaries"},
     {"title": "Practice Being a Good Sport!", "topic": "game"},

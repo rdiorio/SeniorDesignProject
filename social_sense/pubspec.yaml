@@ -92,6 +92,10 @@ flutter:
     - assets/star.png
     - assets/pieChart.png
     - assets/user_avatar.png
+    - assets/animal_Bear_talking.png
+    - assets/animal_Lion_talking.png
+    - assets/animal_Pig_talking.png
+    - assets/animal_Sloth_talking.png
 
   fonts:
     - family: Modak

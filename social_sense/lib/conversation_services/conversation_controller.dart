@@ -77,10 +77,10 @@ class ConversationController {
   }
 
   //Handles User Input (Text or Speech)
-  Future<String> handleUserInput(String userInput) async {
+  Future<String> handleUserInput(String userInput, String topic) async {
     conversation.add({"role": "user", "content": userInput});
 
-    final response = await _apiService.sendMessage(conversation);
+    final response = await _apiService.sendMessage(conversation, topic);
     conversation.add({"role": "assistant", "content": response});
 
     return response;

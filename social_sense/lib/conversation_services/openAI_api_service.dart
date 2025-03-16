@@ -4,8 +4,8 @@ import 'package:http/http.dart' as http;
 
 class AIAPIService {
   final DatabaseService _dbService;
-  final String modelId =
-      "ft:gpt-4o-mini-2024-07-18:personal:fix-extraposneut1:B4C9Wouh";
+  /*final String modelId =
+      "ft:gpt-4o-mini-2024-07-18:personal:fix-extraposneut1:B4C9Wouh"; */
   String? apiKey;
 
   // Constructor to initialize DatabaseService and fetch the API key
@@ -22,12 +22,19 @@ class AIAPIService {
   }
 
   // Sends a message to the OpenAI API
-  Future<String> sendMessage(List<Map<String, String>> conversation) async {
+  Future<String> sendMessage(List<Map<String, String>> conversation, String topic) async {
     // Ensure the API key is available
     if (apiKey == null) {
       throw Exception("API Key is not initialized.");
     }
-
+    String modelId = "ft:gpt-4o-mini-2024-07-18:personal:greeting:BBAIUWMu";
+    if (topic == "askHelp"){
+      modelId = "ft:gpt-4o-mini-2024-07-18:personal:help:BBAM4h3B";
+    }else if (topic == "game"){
+      modelId = "ft:gpt-4o-mini-2024-07-18:personal:game:BBALjAFN";
+    }else if (topic == "boundaries"){
+      modelId = "ft:gpt-4o-mini-2024-07-18:personal:boundaries:BBANpG52";
+    }
     final url = Uri.parse("https://api.openai.com/v1/chat/completions");
 
     final response = await http.post(
