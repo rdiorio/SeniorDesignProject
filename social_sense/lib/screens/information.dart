@@ -34,7 +34,7 @@ class _InformationScreenState extends State<InformationScreen> {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/topOrange_background.png'),
+                image: AssetImage('assets/bottomYellow_background.png'),
                 fit: BoxFit.cover,
               ),
             ),

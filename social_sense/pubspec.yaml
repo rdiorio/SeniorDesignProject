@@ -82,6 +82,7 @@ flutter:
     - assets/bottomRed_background.png
     - assets/bottomPurple_background.png
     - assets/bottomOrange_background.png
+    - assets/bottomYellow_background.png
     - assets/topYellow_background.png
     - assets/animal_Lion.png
     - assets/animal_Sloth.png

@@ -156,16 +156,12 @@ class Home extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  buildHomeButton(context, "Emotion", LessonsPage(uid: uid)),
+                  buildHomeButton(context, "Emotion Practice", LessonsPage(uid: uid)),
+                  buildHomeButton(context, "Conversational Lessons", ConversationalLessons(uid: uid)),
+                  buildHomeButton(context, "Breathing Exercise", BreathingExercises(uid: uid)),
+                  buildHomeButton(context, "Pick your Buddy", ChangeBuddy(uid: uid)),
                   buildHomeButton(context, "Profile", ProfilePage(uid: uid)),
-                  buildHomeButton(context, "Conversational Lessons",
-                      ConversationalLessons(uid: uid)),
-                  buildHomeButton(
-                      context, "Pick your Buddy", ChangeBuddy(uid: uid)),
-                  buildHomeButton(
-                      context, "Daily Check-In", DailyCheckInScreen(uid: uid)),
-                  buildHomeButton(context, "Breathing Exercise",
-                      BreathingExercises(uid: uid)),
+                  buildHomeButton(context, "Daily Check-In", DailyCheckInScreen(uid: uid)),
                 ],
               ),
             ),

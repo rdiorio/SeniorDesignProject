@@ -103,6 +103,9 @@ class DailyCheckInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -129,8 +132,8 @@ class DailyCheckInScreen extends StatelessWidget {
                         right: scaleWidth(context, 16),
                       ),
                       child: SizedBox(
-                        width: scaleWidth(context, 100),
-                        height: scaleWidth(context, 35),
+                        width: screenWidth * 0.25,
+                        height: screenHeight * 0.05,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFFF9720),
@@ -149,7 +152,7 @@ class DailyCheckInScreen extends StatelessWidget {
                           child: Text(
                             "Home",
                             style: TextStyle(
-                              fontSize: scaleWidth(context, 16),
+                              fontSize: screenWidth * 0.04,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
@@ -162,14 +165,15 @@ class DailyCheckInScreen extends StatelessWidget {
                   // ✅ Sloth Image
                   Image.asset(
                     'assets/animal_Sloth.png',
-                    width: double.infinity,
-                    height: 350,
+                    width: screenWidth * 0.9,
+                    height: screenHeight * 0.30,
                     fit: BoxFit.contain,
                   ),
 
                   // ✅ Arc Text (Curved Question)
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                     child: ArcText(),
                   ),
 
@@ -179,23 +183,24 @@ class DailyCheckInScreen extends StatelessWidget {
                   Expanded(
                     child: GridView.count(
                       crossAxisCount: 2,
-                      crossAxisSpacing: 25,
-                      mainAxisSpacing: 25,
-                      padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                      crossAxisSpacing: screenWidth * 0.05,
+                      mainAxisSpacing: screenHeight * 0.02,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
                       shrinkWrap: true,
-                      childAspectRatio: 1.4,
+                      childAspectRatio: 1.2,
                       children: [
-                        _buildEmotionButton(
+                        buildEmotionButton(
                             context, "Happy", const Color(0xFFFFEE6A)),
-                        _buildEmotionButton(
+                        buildEmotionButton(
                             context, "Sad", const Color(0xFF99BEEE)),
-                        _buildEmotionButton(
+                        buildEmotionButton(
                             context, "Angry", const Color(0xFFB45E5E)),
-                        _buildEmotionButton(
+                        buildEmotionButton(
                             context, "Calm", const Color(0xFFFFFFFF)),
-                        _buildEmotionButton(
+                        buildEmotionButton(
                             context, "Excited", const Color(0xFF75CE54)),
-                        _buildEmotionButton(
+                        buildEmotionButton(
                             context, "Frustrated", const Color(0xFFB192CC)),
                       ],
                     ),
@@ -209,26 +214,31 @@ class DailyCheckInScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmotionButton(
+  /// ✅ **Function to Create Emotion Buttons**
+  Widget buildEmotionButton(
       BuildContext context, String emotion, Color bgColor) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return SizedBox(
-      height: 80, // Adjust height as needed
-      width: 180, // Adjust width as needed
+      height: screenHeight * 0.12, // Scale dynamically
+      width: screenWidth * 0.35, // Scale dynamically
       child: ElevatedButton(
         onPressed: () => _handleEmotionSelection(context, emotion),
         style: ElevatedButton.styleFrom(
           backgroundColor: bgColor,
           foregroundColor: Colors.black,
-          padding: const EdgeInsets.symmetric(
-              vertical: 15, horizontal: 10), // Ensures text doesn't overflow
-          minimumSize: const Size(
-              150, 60), // Ensures button is not constrained to square
-          textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
+          padding: EdgeInsets.symmetric(vertical: screenHeight * 0.015),
+          textStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: screenWidth * 0.06, // Scale text size dynamically
+          ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-                20.0), // 🔥 Increase for more rounded buttons
-            side: const BorderSide(
-                color: Color.fromARGB(255, 137, 130, 130), width: 9.5),
+            borderRadius: BorderRadius.circular(20.0),
+            side: BorderSide(
+              color: const Color.fromARGB(255, 137, 130, 130),
+              width: screenWidth * 0.008,
+            ),
           ),
         ),
         child: Text(emotion, textAlign: TextAlign.center),
