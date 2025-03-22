@@ -5,6 +5,7 @@ import 'package:social_sense/screens/profile.dart';
 import 'package:social_sense/services/database.dart';
 import 'package:social_sense/screens/home/home.dart';
 import 'dart:math';
+import 'package:google_fonts/google_fonts.dart';
 
 class ChangeBuddy extends StatefulWidget {
   final String uid;
@@ -154,156 +155,172 @@ class _ChangeBuddyState extends State<ChangeBuddy> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Change Buddy')),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Buddy Name Section with Edit & Random Button
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Your buddy's name: $buddyName",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                IconButton(
-                  icon: Icon(Icons.edit, color: Colors.orange),
-                  onPressed: _showEditNameDialog, // Open name editor
-                ),
-                SizedBox(width: 5), // Adjust spacing
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
-                // Wrap button in Flexible to prevent overflow
-                Flexible(
-                  child: IconButton(
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+                'assets/bottomPurple_background.png'), // replace with your actual image asset
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.05, vertical: screenHeight * 0.06),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: Text(
+                      "Your buddy's name: $buddyName",
+                      style: GoogleFonts.sniglet(
+                        fontSize: screenWidth * 0.05,
+                        fontWeight: FontWeight.w100,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.edit,
+                        color: Colors.orange, size: screenWidth * 0.06),
+                    onPressed: _showEditNameDialog,
+                  ),
+                  IconButton(
                     icon: Icon(Icons.casino,
-                        color: Colors.red[300], size: 30), // 🎲 Dice icon
+                        color: Colors.red[300], size: screenWidth * 0.06),
                     onPressed: () {
                       setState(() {
-                        buddyName =
-                            selectRandomName(); // Randomize name on click
+                        buddyName = selectRandomName();
                       });
                     },
-                    tooltip:
-                        "Randomize Name", // Shows tooltip on hover (useful on web)
                   ),
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.001),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: screenWidth > 600 ? 4 : 2,
+                  crossAxisSpacing: screenWidth * 0.05,
+                  mainAxisSpacing: screenHeight * 0.03,
+                  childAspectRatio: 0.8,
                 ),
-              ],
-            ),
-
-            SizedBox(height: 20),
-
-            // Buddy Selection Grid
-            GridView.builder(
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20,
-              ),
-              itemCount: buddies.length,
-              itemBuilder: (context, index) {
-                bool isSelected = buddies[index]['name'] == selectedBuddy;
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedBuddy = buddies[index]['name']!;
-                    });
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: isSelected ? Colors.blue : Colors.transparent,
-                        width: 3,
+                itemCount: buddies.length,
+                itemBuilder: (context, index) {
+                  bool isSelected = buddies[index]['name'] == selectedBuddy;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedBuddy = buddies[index]['name']!;
+                      });
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(screenWidth * 0.02),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: isSelected ? Colors.blue : Colors.transparent,
+                          width: 3,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        color: const Color.fromARGB(75, 241, 175, 247),
                       ),
-                      borderRadius: BorderRadius.circular(12),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            buddies[index]['image']!,
+                            width: screenWidth * 0.35,
+                            height: screenWidth * 0.35,
+                          ),
+                          SizedBox(height: screenHeight * 0.01),
+                          Text(
+                            buddies[index]['name']!,
+                            style: GoogleFonts.sniglet(
+                                fontSize: screenWidth * 0.04),
+                          ),
+                        ],
+                      ),
                     ),
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          buddies[index]['image']!,
-                          width: 100,
-                          height: 100,
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          buddies[index]['name']!,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-
-            SizedBox(height: 20),
-
-            // Voice Selection Section
-            Text(
-              "Your buddy's voice:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-
-            SizedBox(height: 10),
-
-            // Voice Buttons with Selection
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: voices.map((voice) {
-                bool isSelected = voice["name"] == selectedVoice;
-
-                return ElevatedButton(
-                  onPressed: () {
-                    _playPreview(voice["name"]!, voice["gender"]!);
-                    setState(() {
-                      selectedVoice = voice["name"]!;
-                      selectedGender = voice["gender"]!;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        isSelected ? Colors.blueAccent : Colors.grey[200],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    voice["name"]!,
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black,
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-
-            SizedBox(height: 20),
-
-            // Save Button
-            ElevatedButton(
-              onPressed: () {
-                _dbService.updateBuddyInfo(
-                    selectedBuddy, buddyName, selectedVoice, selectedGender);
-                 Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => Home(uid: widget.uid)),
                   );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green[400],
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                },
               ),
-              child: Text(
-                "Save",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              SizedBox(height: screenHeight * 0.03),
+              Text(
+                "Your buddy's voice:",
+                style: GoogleFonts.sniglet(
+                    fontSize: screenWidth * 0.045, fontWeight: FontWeight.w100),
               ),
-            ),
-          ],
+              SizedBox(height: screenHeight * 0.02),
+              Wrap(
+                spacing: screenWidth * 0.02,
+                runSpacing: screenHeight * 0.015,
+                alignment: WrapAlignment.center,
+                children: voices.map((voice) {
+                  bool isSelected = voice["name"] == selectedVoice;
+                  return ElevatedButton(
+                    onPressed: () {
+                      _playPreview(voice["name"]!, voice["gender"]!);
+                      setState(() {
+                        selectedVoice = voice["name"]!;
+                        selectedGender = voice["gender"]!;
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isSelected
+                          ? const Color.fromARGB(255, 171, 121, 236)
+                          : const Color(0xFFFF9720),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: screenWidth * 0.04,
+                        vertical: screenHeight * 0.015,
+                      ),
+                    ),
+                    child: Text(
+                      voice["name"]!,
+                      style: GoogleFonts.sniglet(
+                        color: isSelected
+                            ? const Color.fromARGB(255, 0, 0, 0)
+                            : Colors.black,
+                        fontSize: screenWidth * 0.038,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              SizedBox(height: screenHeight * 0.025),
+              ElevatedButton(
+                onPressed: () {
+                  _dbService.updateBuddyInfo(
+                      selectedBuddy, buddyName, selectedVoice, selectedGender);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Home(uid: widget.uid)),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFF9720),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.2,
+                      vertical: screenHeight * 0.018),
+                ),
+                child: Text("Save",
+                    style: GoogleFonts.sniglet(
+                        fontSize: screenWidth * 0.045,
+                        fontWeight: FontWeight.w900,
+                        color: const Color.fromARGB(255, 255, 255, 255))),
+              ),
+            ],
+          ),
         ),
       ),
     );

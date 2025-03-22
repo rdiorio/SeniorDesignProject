@@ -14,11 +14,16 @@ class DatabaseService {
       await userCollection.doc(uid).set({
         'First Name': '',
         'Last Name': '',
-        'scores': {'easy': 0, 'medium': 0, 'hard': 0},
+        'scores': {
+          'easy': 0,
+          'medium': 0,
+          'hard': 0,
+          'stars': 0,
+          'totalPoints': 0
+        },
         'voice': {'name': 'Leda', 'gender': 'FEMALE'},
         'buddy': 'Bear',
         'buddyName': 'No Name'
-
       });
     } catch (e) {
       print('Error creating user profile: $e');
@@ -50,6 +55,14 @@ class DatabaseService {
 
   // Update user profile (e.g., first name & last name)
   Future<void> updateUserData(String firstName, String lastName) async {
+    if (firstName.isNotEmpty) {
+      firstName =
+          firstName[0].toUpperCase() + firstName.substring(1).toLowerCase();
+    }
+    if (lastName.isNotEmpty) {
+      lastName =
+          lastName[0].toUpperCase() + lastName.substring(1).toLowerCase();
+    }
     try {
       await userCollection.doc(uid).update({
         'First Name': firstName,
@@ -434,79 +447,76 @@ class DatabaseService {
   }
 
   Future<Map<String, dynamic>?> getScoresandStars(String userId) async {
-  try {
-    // Reference to Firestore user document
-    DocumentSnapshot userDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .get();
+    try {
+      // Reference to Firestore user document
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
 
-    if (userDoc.exists) {
-      // Extracting scores field
-      Map<String, dynamic>? scores = userDoc.get('scores');
-      if (scores != null) {
-        return {
-          "totalPoints": scores["totalPoints"] ?? 0,
-          "stars": scores["stars"] ?? 0,
-        };
+      if (userDoc.exists) {
+        // Extracting scores field
+        Map<String, dynamic>? scores = userDoc.get('scores');
+        if (scores != null) {
+          return {
+            "totalPoints": scores["totalPoints"] ?? 0,
+            "stars": scores["stars"] ?? 0,
+          };
+        }
       }
+    } catch (e) {
+      print("Error fetching user scores: $e");
     }
-  } catch (e) {
-    print("Error fetching user scores: $e");
+    return null;
   }
-  return null;
-}
 
-Future<void> updateUserScores(String userId, int pointsToAdd) async {
-  try {
-    DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(userId);
-    
-    // Run transaction to update safely
-    await FirebaseFirestore.instance.runTransaction((transaction) async {
-      DocumentSnapshot userDoc = await transaction.get(userRef);
-      
-      if (!userDoc.exists) {
-        print("User document does not exist.");
-        return;
-      }
+  Future<void> updateUserScores(String userId, int pointsToAdd) async {
+    try {
+      DocumentReference userRef =
+          FirebaseFirestore.instance.collection('users').doc(userId);
 
-      Map<String, dynamic>? scores = userDoc.get('scores');
+      // Run transaction to update safely
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        DocumentSnapshot userDoc = await transaction.get(userRef);
 
-      if (scores == null) {
-        print("Scores field does not exist.");
-        return;
-      }
+        if (!userDoc.exists) {
+          print("User document does not exist.");
+          return;
+        }
 
-      int currentPoints = scores["totalPoints"] ?? 0;
-      int currentStars = scores["stars"] ?? 0;
+        Map<String, dynamic>? scores = userDoc.get('scores');
 
-      // Add new points
-      int newTotalPoints = currentPoints + pointsToAdd;
-      int newStars = currentStars;
+        if (scores == null) {
+          print("Scores field does not exist.");
+          return;
+        }
 
-      // Check if totalPoints exceeded threshold (10 points)
-      if (newTotalPoints >= 10) {
-        newStars += newTotalPoints ~/ 10;  // Increase stars by the number of times threshold is met
-        newTotalPoints = newTotalPoints % 10; // Keep the remainder as new totalPoints
-      }
+        int currentPoints = scores["totalPoints"] ?? 0;
+        int currentStars = scores["stars"] ?? 0;
 
-      // Update Firestore
-      transaction.update(userRef, {
-        "scores.totalPoints": newTotalPoints,
-        "scores.stars": newStars,
+        // Add new points
+        int newTotalPoints = currentPoints + pointsToAdd;
+        int newStars = currentStars;
+
+        // Check if totalPoints exceeded threshold (10 points)
+        if (newTotalPoints >= 10) {
+          newStars += newTotalPoints ~/
+              10; // Increase stars by the number of times threshold is met
+          newTotalPoints =
+              newTotalPoints % 10; // Keep the remainder as new totalPoints
+        }
+
+        // Update Firestore
+        transaction.update(userRef, {
+          "scores.totalPoints": newTotalPoints,
+          "scores.stars": newStars,
+        });
+
+        print(
+            "Updated Scores -> Total Points: $newTotalPoints, Stars: $newStars");
       });
-
-      print("Updated Scores -> Total Points: $newTotalPoints, Stars: $newStars");
-    });
-  } catch (e) {
-    print("Error updating user scores: $e");
+    } catch (e) {
+      print("Error updating user scores: $e");
+    }
   }
-}
-
-
-
-
-
-
-
 }

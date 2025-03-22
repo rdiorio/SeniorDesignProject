@@ -25,7 +25,7 @@ class _ConversationResultsState extends State<ConversationResults> {
   int updatedTotalPoints = 0;
   int updatedStars = 0;
   bool isLoading = true;
-  double progress = 0.0; // ✅ Progress for the progress bar
+  double progress = 0.0; 
 
   @override
   void initState() {
@@ -41,7 +41,7 @@ class _ConversationResultsState extends State<ConversationResults> {
     }
 
     try {
-      // ✅ Step 1: Get Initial Scores
+      // Get Initial Scores
       DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(userUid).get();
       if (userDoc.exists && userDoc.data() != null) {
         Map<String, dynamic>? scores = (userDoc.data() as Map<String, dynamic>)["scores"];
@@ -53,11 +53,11 @@ class _ConversationResultsState extends State<ConversationResults> {
         }
       }
 
-      // ✅ Step 2: Update Scores
+      //Step 2: Update Scores
       DatabaseService dbService = DatabaseService(uid: userUid!);
       await dbService.updateUserScores(userUid!, widget.conversationScore);
 
-      // ✅ Step 3: Fetch Updated Scores
+      //Fetch Updated Scores
       DocumentSnapshot updatedDoc = await FirebaseFirestore.instance.collection('users').doc(userUid).get();
       if (updatedDoc.exists && updatedDoc.data() != null) {
         Map<String, dynamic>? updatedScores = (updatedDoc.data() as Map<String, dynamic>)["scores"];

@@ -10,6 +10,8 @@ import 'package:social_sense/screens/change_buddy.dart';
 import 'package:social_sense/screens/breathing_exercises.dart';
 import 'package:social_sense/screens/progress_bar.dart';
 import 'package:social_sense/screens/ArcTextPainter.dart' as arc;
+import 'package:social_sense/services/database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 
 class Home extends StatelessWidget {
@@ -19,7 +21,9 @@ class Home extends StatelessWidget {
   Home({required this.uid});
 
   Future<Map<String, dynamic>?> _getUserData() async {
-    return null; // Replace with Firestore user fetch logic if needed
+    DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    return userDoc.exists ? userDoc.data() as Map<String, dynamic> : null;
   }
 
   @override
@@ -36,73 +40,130 @@ class Home extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          Positioned(
-            top: screenHeight * 0.1,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  CircularProgressBar(
-                    progress: 0.7, // Replace with actual progress value
-                    size: screenWidth * 0.65,
-                    strokeWidth: screenWidth * 0.045,
-                  ),
-                  Image.asset(
-                    'assets/animal_Bear.png',
-                    width: screenWidth * 0.6,
-                    height: screenHeight * 0.3,
-                    fit: BoxFit.contain,
-                  ),
-                ],
-              ),
-            ),
-          ),
+
+          //Fetch user data
           FutureBuilder(
             future: _getUserData(),
-            builder: (context, snapshot) {
-              String userName = "User"; // Default username
+            builder: (context, AsyncSnapshot<Map<String, dynamic>?> snapshot) {
+              String userName = "User";
+              String buddy = "Bear"; // Default buddy
+              double progressScore = 0.0;
+              int stars = 0;
 
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasData) {
-                var userData = snapshot.data as Map<String, dynamic>?;
+                var userData = snapshot.data;
                 if (userData != null && userData.containsKey('First Name')) {
                   userName = userData['First Name'];
+                  buddy = userData['buddy'] ?? "Bear";
+                  progressScore =
+                      (userData['scores']['totalPoints'] % 10) / 10.0;
+                  stars = userData['scores']['stars'];
                 }
               }
 
-              return Positioned(
-                top: screenHeight * 0.1 +
-                    (screenWidth * 0.65) / 2 +
-                    screenWidth * 0.05,
-                left: 0,
-                right: 0,
-                child: SizedBox(
-                  width: double.infinity,
-                  height: screenWidth * 0.15,
-                  child: CustomPaint(
-                    painter: arc.ArcTextPainter(
-                      text: "Welcome $userName!",
-                      radius: (screenWidth * 0.65) / 2 + screenWidth * 0.05,
-                      verticalOffset: screenWidth * -0.1,
-                      fontSize: screenWidth * 0.08,
-                      arcSpan: pi - pi / 2 + .3,
-                      startAngle: pi - pi / 2,
-                      isClockwise: true,
+              //Update the buddy image & progress bar dynamically
+              return Stack(
+                children: [
+                  //Updated buddy image & progress bar
+                  Positioned(
+                    top: screenHeight *
+                        0.12, // Moves everything slightly down to avoid the app bar overlap
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        alignment: Alignment.center,
+                        children: [
+                          /// ✅ Circular Progress Bar (Behind the Buddy)
+                          CircularProgressBar(
+                            progress: progressScore,
+                            size: screenWidth * 0.65,
+                            strokeWidth: screenWidth * 0.045,
+                          ),
+
+                          /// ✅ Dynamic buddy image
+                          Image.asset(
+                            'assets/animal_$buddy.png',
+                            width: screenWidth * 0.6,
+                            height: screenHeight * 0.3,
+                            fit: BoxFit.contain,
+                          ),
+
+                          /// ⭐ Positioned Star & Score
+                          Positioned(
+                            top: screenHeight *
+                                -0.025, // Slightly lower to avoid getting cut off
+                            child: Container(
+                              // Ensures star doesn't get clipped
+                              width:
+                                  screenWidth * 0.15, // Matches the star's size
+                              height: screenHeight * 0.06,
+                              alignment: Alignment.center,
+                              child: Stack(
+                                clipBehavior: Clip.none,
+                                alignment: Alignment.center,
+                                children: [
+                                  Image.asset(
+                                    'assets/star.png',
+                                    width: screenWidth *
+                                        0.15, // Adjusted star size
+                                    height: screenHeight * 0.06,
+                                  ),
+                                  Text(
+                                    '$stars',
+                                    style: TextStyle(
+                                      fontSize: screenWidth * 0.06,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
+
+                  //"Welcome User!" Text
+                  Positioned(
+                    top: screenHeight * 0.1 +
+                        (screenWidth * 0.65) / 2 +
+                        screenWidth * 0.05,
+                    left: 0,
+                    right: 0,
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: screenWidth * 0.15,
+                      child: CustomPaint(
+                        painter: arc.ArcTextPainter(
+                          text: "Welcome $userName!",
+                          radius: (screenWidth * 0.65) / 2 + screenWidth * 0.05,
+                          verticalOffset: screenWidth * -0.1,
+                          fontSize: screenWidth * 0.08,
+                          arcSpan: pi - pi / 2 + .3,
+                          startAngle: pi - pi / 2,
+                          isClockwise: true,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               );
             },
           ),
+
+          //Logout Button
           Positioned(
             top: screenHeight * 0.06,
             right: screenWidth * 0.05,
             child: SizedBox(
               width: screenWidth * 0.25,
-              height: screenHeight * 0.05,
+              height: screenHeight * 0.035,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFF9720),
@@ -130,6 +191,8 @@ class Home extends StatelessWidget {
               ),
             ),
           ),
+
+          //Settings Button
           Positioned(
             top: screenHeight * 0.06,
             left: screenWidth * 0.05,
@@ -156,12 +219,17 @@ class Home extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  buildHomeButton(context, "Emotion Practice", LessonsPage(uid: uid)),
-                  buildHomeButton(context, "Conversational Lessons", ConversationalLessons(uid: uid)),
-                  buildHomeButton(context, "Breathing Exercise", BreathingExercises(uid: uid)),
-                  buildHomeButton(context, "Pick your Buddy", ChangeBuddy(uid: uid)),
+                  buildHomeButton(
+                      context, "Emotion Practice", LessonsPage(uid: uid)),
+                  buildHomeButton(context, "Conversational Lessons",
+                      ConversationalLessons(uid: uid)),
+                  buildHomeButton(context, "Breathing Exercise",
+                      BreathingExercises(uid: uid)),
+                  buildHomeButton(
+                      context, "Pick your Buddy", ChangeBuddy(uid: uid)),
                   buildHomeButton(context, "Profile", ProfilePage(uid: uid)),
-                  buildHomeButton(context, "Daily Check-In", DailyCheckInScreen(uid: uid)),
+                  buildHomeButton(
+                      context, "Daily Check-In", DailyCheckInScreen(uid: uid)),
                 ],
               ),
             ),

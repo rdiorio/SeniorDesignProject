@@ -4,7 +4,7 @@ import 'package:social_sense/screens/conversation_history/history_convo_menu.dar
 import 'package:social_sense/screens/profile.dart';
 
 class ConversationHistory extends StatefulWidget {
-  final String uid; // UID parameter
+  final String uid;
 
   ConversationHistory({required this.uid});
 
@@ -21,31 +21,71 @@ class _ConversationHistoryState extends State<ConversationHistory> {
     return Scaffold(
       body: Stack(
         children: [
-          // Background image
-          Positioned.fill(
+          // Background image using SizedBox.expand
+          SizedBox.expand(
             child: Image.asset(
               'assets/bottomOrange_background.png',
               fit: BoxFit.cover,
             ),
           ),
-          // Content
+
+          // Main content
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(height: 20),
-                buildButton(context, 'Greeting History', HistoryConvoMenu(uid: widget.uid, topic: "greeting")),
+                buildButton(context, 'Greeting History',
+                    HistoryConvoMenu(uid: widget.uid, topic: "greeting")),
                 SizedBox(height: 20),
-                buildButton(context, 'Asking for Help History', HistoryConvoMenu(uid: widget.uid, topic: "askHelp")),
+                buildButton(context, 'Asking for Help History',
+                    HistoryConvoMenu(uid: widget.uid, topic: "askHelp")),
                 SizedBox(height: 20),
-                buildButton(context, 'Being a Good Sport History', HistoryConvoMenu(uid: widget.uid, topic: "game")),
+                buildButton(context, 'Being a Good Sport History',
+                    HistoryConvoMenu(uid: widget.uid, topic: "game")),
                 SizedBox(height: 20),
-                buildButton(context, 'Setting Boundaries History', HistoryConvoMenu(uid: widget.uid, topic: "boundaries")),
+                buildButton(context, 'Setting Boundaries History',
+                    HistoryConvoMenu(uid: widget.uid, topic: "boundaries")),
               ],
             ),
           ),
-          // "Back to Home" Button
+
+          // Home button
+          Positioned(
+            top: screenHeight * 0.06,
+            left: screenWidth * 0.05,
+            child: SizedBox(
+              width: screenWidth * 0.25,
+              height: screenHeight * 0.05,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFF8815),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 5,
+                ),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Home(uid: widget.uid)),
+                  );
+                },
+                child: Text(
+                  "Home",
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.04,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Back button
           Positioned(
             top: screenHeight * 0.06,
             right: screenWidth * 0.05,
@@ -63,39 +103,8 @@ class _ConversationHistoryState extends State<ConversationHistory> {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => Home(uid: widget.uid)),
-                  );
-                },
-                child: Text(
-                  "Home",
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.04,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // "Back" (to Profile) Button
-          Positioned(
-            top: screenHeight * 0.06,
-            left: screenWidth * 0.05,
-            child: SizedBox(
-              width: screenWidth * 0.25,
-              height: screenHeight * 0.05,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 248, 129, 88),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  elevation: 5,
-                ),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => ProfilePage(uid: widget.uid)),
+                    MaterialPageRoute(
+                        builder: (context) => ProfilePage(uid: widget.uid)),
                   );
                 },
                 child: Text(

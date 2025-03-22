@@ -25,200 +25,217 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double buttonHeight = screenHeight * 0.10;
 
     return Scaffold(
       body: Stack(
-          children: [
-            // Background Image
-            Positioned.fill(
-              child: Image.asset(
-                'assets/bottomRed_background.png',
-                fit: BoxFit.cover,
+        children: [
+          // Background Image
+          Positioned.fill(
+            child: Image.asset(
+              'assets/bottomRed_background.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          // Profile Title
+          Positioned(
+            top: screenHeight * 0.1,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Text(
+                'Profile',
+                style: TextStyle(
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
             ),
+          ),
 
-            // Profile Title (Dynamically Positioned)
-            Positioned(
-              top: screenHeight * 0.1,
-              left: 0,
-              right: 0,
-              child: Center(
+          // Home Button
+          Positioned(
+            top: screenHeight * 0.06,
+            right: screenWidth * 0.05,
+            child: SizedBox(
+              width: screenWidth * 0.25,
+              height: screenHeight * 0.05,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFF9720),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 5,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Home(uid: uid)),
+                  );
+                },
                 child: Text(
-                  'Profile',
+                  "Home",
                   style: TextStyle(
-                    fontSize: 35,
+                    fontSize: screenWidth * 0.04,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: Colors.white,
                   ),
                 ),
               ),
             ),
+          ),
 
-            // 🐻 Bear Image with Circular Progress Bar
-            Positioned(
-              top: screenHeight * 0.17,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    CircularProgressBar(
-                      progress: 0.7, // Replace with actual progress value
-                      size: screenWidth * 0.65,
-                      strokeWidth: 18,
-                    ),
-                    Image.asset(
-                      'assets/animal_Bear.png',
-                      width: screenWidth * 0.6,
-                      height: screenHeight * 0.3,
-                      fit: BoxFit.contain,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          // Fetch User Data
+          FutureBuilder(
+            future: _getUserData(),
+            builder: (context, AsyncSnapshot<Map<String, dynamic>?> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (!snapshot.hasData) {
+                return const Center(child: Text('No user data found.'));
+              }
+              var userData = snapshot.data!;
 
-            // "Home" Button (Top Right, Adjusted for SafeArea)
-            Positioned(
-              top: screenHeight * 0.06,
-              right: screenWidth * 0.05,
-              child: SizedBox(
-                width: scaleWidth(context, 100),
-                height: scaleWidth(context, 35),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFF9720),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: EdgeInsets.zero,
-                    elevation: 5,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Home(uid: uid)),
-                    );
-                  },
-                  child: Text(
-                    "Home",
-                    style: TextStyle(
-                      fontSize: screenWidth * 0.04, // Scales text size dynamically
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+              // Extract user details
+              String userName =
+                  "${userData['First Name']} ${userData['Last Name']}";
+              String buddy = userData['buddy'] ?? "Bear"; // Default buddy
+              int stars = userData['scores']['stars'] ?? 0;
+              int totalPoints = userData['scores']['totalPoints'] ?? 0;
+              double progress = (totalPoints % 10) / 10.0;
 
-            // Profile Content
-            FutureBuilder(
-              future: _getUserData(),
-              builder: (context, AsyncSnapshot<Map<String, dynamic>?> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                if (!snapshot.hasData) {
-                  return Center(child: Text('No user data found.'));
-                }
-                var userData = snapshot.data!;
-
-                return Positioned(
-                  top: screenHeight * 0.5, // ✅ Adjust dynamically
-                  left: 0,
-                  right: 0,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '${userData['First Name']} ${userData['Last Name']}',
-                        style: TextStyle(fontSize: screenWidth * 0.06, fontWeight: FontWeight.bold, color: Colors.black),
-                      ),
-
-                      SizedBox(height: 20),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+              return Stack(
+                children: [
+                  // Profile Content
+                  Positioned(
+                    top: screenHeight * 0.17,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: Stack(
+                        alignment: Alignment.center,
                         children: [
-                          Column(
-                            children: [
-                              Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Image.asset(
-                                    'assets/star.png',
-                                    width: 50,
-                                    height: 50,
-                                  ),
-                                  Text(
-                                    '2',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                'Stars',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                          CircularProgressBar(
+                            progress: progress, // ✅ Dynamic progress value
+                            size: screenWidth * 0.65,
+                            strokeWidth: 18,
                           ),
-                          SizedBox(width: 40),
-                          Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(top: 10, bottom: 11),
-                                child: Text(
-                                  '25',
+                          Image.asset(
+                            'assets/animal_$buddy.png', // ✅ Dynamic buddy image
+                            width: screenWidth * 0.6,
+                            height: screenHeight * 0.3,
+                            fit: BoxFit.contain,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Profile Info Section
+                  Positioned(
+                    top: screenHeight * 0.5,
+                    left: 0,
+                    right: 0,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          userName,
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.06,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Stars & Total Points Row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
+                              children: [
+                                Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Image.asset(
+                                      'assets/star.png',
+                                      width: 50,
+                                      height: 50,
+                                    ),
+                                    Text(
+                                      '$stars',
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Text(
+                                  'Stars',
                                   style: TextStyle(
-                                    fontSize: 22,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              ),
-                              Text(
-                                'Total Points',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                              ],
+                            ),
+                            const SizedBox(width: 40),
+                            Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 10, bottom: 11),
+                                  child: Text(
+                                    '$totalPoints',
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      
-                      // New Row for the message until next star
-                      SizedBox(height: 10), // Adds some spacing
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Reach 100 points and unlock a star! \n You can do it!', 
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: screenWidth * 0.05, fontWeight: FontWeight.bold, color: Colors.black),
-                          ),
-                        ],
-                      ),
+                                const Text(
+                                  'Total Points',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
 
-                      SizedBox(height: 15),
-                      buildButton(context, 'View Rewards', RewardsPage(uid: uid)),
-                      buildButton(context, 'View Conversation History', ConversationHistory(uid: uid))
-                    ],
+                        // Message for next star
+                        const SizedBox(height: 10),
+                        Text(
+                          'Earn ${10 - (totalPoints % 10)} more points to get another star!\nYou can do it!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.05,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+
+                        const SizedBox(height: 15),
+                        buildButton(
+                            context, 'View Rewards', RewardsScreen(uid: uid)),
+                        buildButton(context, 'View Conversation History',
+                            ConversationHistory(uid: uid)),
+                      ],
+                    ),
                   ),
-                );
-              },
-            ),
-          ],
+                ],
+              );
+            },
+          ),
+        ],
       ),
     );
   }

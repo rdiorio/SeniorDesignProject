@@ -86,7 +86,7 @@ class ConversationController {
     return response;
   }
 
-  /// **Starts Listening for Speech**
+  //Starts Listening for Speech
   Future<void> startListening(Function(String) onResult) async {
     if (!_isListening) {
       bool available = await _speech.initialize(
@@ -110,7 +110,7 @@ class ConversationController {
     }
   }
 
-  /// **Stops Listening**
+  //Stops Listening
   Future<void> stopListening() async {
     if (_isListening) {
       _isListening = false;
@@ -118,7 +118,7 @@ class ConversationController {
     }
   }
 
-  /// **Ends the Conversation Based on Thresholds**
+  //Ends the Conversation Based on Thresholds
   Future<bool> endConversation(String response) async {
     String? classification = extractClassification(response);
 

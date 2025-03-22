@@ -27,7 +27,6 @@ class _PieChartScreenState extends State<PieChartScreen> {
     _loadClassificationData();
   }
 
-  // Fetch classification data from Firestore
   Future<void> _loadClassificationData() async {
     DatabaseService dbService = DatabaseService(uid: widget.userId);
     Map<String, dynamic>? conversationData =
@@ -53,59 +52,105 @@ class _PieChartScreenState extends State<PieChartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Conversation Analysis")),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: isLoading
-            ? Center(child: CircularProgressIndicator())
-            : classificationData == null
-                ? Center(
-                    child: Text(
-                      "No classification data found.",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  )
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Classification Breakdown",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.purple,
-                        ),
-                      ),
-                      SizedBox(height: 20),
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
 
-                      // Pie Chart
-                      Expanded(
-                        child: PieChart(
-                          PieChartData(
-                            sectionsSpace: 2,
-                            centerSpaceRadius: 40,
-                            sections: _generatePieChartSections(),
+    return Scaffold(
+      body: Stack(
+        children: [
+          // Background image
+          SizedBox.expand(
+            child: Image.asset(
+              "assets/bottomPurple_background.png",
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          // Back button in top right corner (scalable and consistent)
+          Positioned(
+            top: screenHeight * 0.06,
+            right: screenWidth * 0.05,
+            child: SizedBox(
+              width: screenWidth * 0.25,
+              height: screenHeight * 0.05,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFF9720),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 5,
+                ),
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  "Back",
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.04,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Main chart content
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 60.0),
+            child: isLoading
+                ? Center(child: CircularProgressIndicator())
+                : classificationData == null
+                    ? Center(
+                        child: Text(
+                          "No classification data found.",
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Classification Breakdown",
+                            style: TextStyle(
+                              fontSize: 38,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: 20), //move text up and down
+                          SizedBox(
+                            height: 700,
+                            child: PieChart(
+                              PieChartData(
+                                sectionsSpace: 2,
+                                centerSpaceRadius: 40,
+                                sections: _generatePieChartSections(),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 180),
+                        ],
                       ),
-                    ],
-                  ),
+          ),
+        ],
       ),
     );
   }
 
-  // Generate Pie Chart Data
   List<PieChartSectionData> _generatePieChartSections() {
     if (classificationData == null) return [];
 
     Map<String, Color> categoryColors = {
       "positive": Colors.green,
       "neutral": Colors.blue,
-      "off-topic": Colors.orange,
+      "off_topic": Colors.orange,
       "inappropriate": Colors.red,
-      "non-responsive": Colors.grey,
+      "non_responsive": Colors.grey,
     };
 
     return classificationData!.entries.map((entry) {
@@ -116,9 +161,9 @@ class _PieChartScreenState extends State<PieChartScreen> {
         color: categoryColors[category] ?? Colors.black,
         value: value.toDouble(),
         title: "$category\n$value",
-        radius: 80,
+        radius: 180,
         titleStyle: TextStyle(
-          fontSize: 14,
+          fontSize: 18,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),

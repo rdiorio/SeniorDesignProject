@@ -29,7 +29,6 @@ class _ConversationLogState extends State<ConversationLog> {
     _initializeData();
   }
 
-  //Loads both conversation data and user/buddy info before showing UI
   void _initializeData() async {
     await Future.wait([
       _loadConversationData(),
@@ -40,7 +39,6 @@ class _ConversationLogState extends State<ConversationLog> {
     });
   }
 
-  // Fetch full conversation data
   Future<void> _loadConversationData() async {
     DatabaseService dbService = DatabaseService(uid: widget.userId);
     Map<String, dynamic>? fetchedData = await dbService.getConversationData(
@@ -56,7 +54,6 @@ class _ConversationLogState extends State<ConversationLog> {
     }
   }
 
-  // Fetch user and buddy info
   Future<void> _loadUserData() async {
     DatabaseService dbService = DatabaseService(uid: widget.userId);
     Map<String, String> buddyData = await dbService.getBuddyInfo();
@@ -73,156 +70,186 @@ class _ConversationLogState extends State<ConversationLog> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      appBar: AppBar(title: Text("Conversation Log")),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: isLoading
-            ? Center(
-                child:
-                    CircularProgressIndicator()) // Show loading indicator until all data is ready
-            : conversationData == null
-                ? Center(
-                    child: Text(
-                      "No conversation data found.",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  )
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Header with Date, Topic, and Score
-                      Text(
-                        widget.topic,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.purple,
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Text(
-                        "Score: ${conversationData!["score"] ?? "N/A"}",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.redAccent,
-                        ),
-                      ),
-                      SizedBox(height: 10),
+      body: Stack(
+        children: [
+          // Background image
+          SizedBox.expand(
+            child: Image.asset(
+              "assets/bottomRed_background.png",
+              fit: BoxFit.cover,
+            ),
+          ),
 
-                      // Conversation Log
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount:
-                              conversationData!["conversationLog"]?.length ?? 0,
-                          itemBuilder: (context, index) {
-                            Map<String, dynamic> message =
-                                conversationData!["conversationLog"][index];
-                            bool isUser = message["role"] == "user";
-                            String speakerName = isUser ? userName : buddyName;
-                            String speakerAvatar = isUser
-                                ? "assets/user_avatar.png"
-                                : "assets/animal_${buddyType}.png";
-
-                            return Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: isUser
-                                  ? MainAxisAlignment.end
-                                  : MainAxisAlignment.start,
-                              children: [
-                                // **Buddy Avatar & Name (LEFT)**
-                                if (!isUser)
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      CircleAvatar(
-                                        backgroundImage:
-                                            AssetImage(speakerAvatar),
-                                        radius: 25,
-                                      ),
-                                      SizedBox(height: 3),
-                                      Text(
-                                        speakerName,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey[700],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                if (!isUser)
-                                  SizedBox(
-                                      width:
-                                          10), // Space between buddy's avatar and message
-
-                                // Speech Bubble
-                                Flexible(
-                                  child: Container(
-                                    margin: EdgeInsets.symmetric(vertical: 5),
-                                    padding: EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: isUser
-                                          ? Colors.purple[300]
-                                          : Colors.purple[100],
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(15),
-                                        topRight: Radius.circular(15),
-                                        bottomLeft: isUser
-                                            ? Radius.circular(15)
-                                            : Radius.zero,
-                                        bottomRight: isUser
-                                            ? Radius.zero
-                                            : Radius.circular(15),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      message["content"] ?? "",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                if (isUser)
-                                  SizedBox(
-                                      width:
-                                          10), // Space between user message and avatar
-
-                                // **User Avatar & Name (RIGHT)**
-                                if (isUser)
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      CircleAvatar(
-                                        backgroundImage:
-                                            AssetImage(speakerAvatar),
-                                        radius: 25,
-                                      ),
-                                      SizedBox(height: 3),
-                                      Text(
-                                        speakerName,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey[700],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                    ],
+          // Scalable Back button (top right)
+          Positioned(
+            top: screenHeight * 0.06,
+            right: screenWidth * 0.05,
+            child: SizedBox(
+              width: screenWidth * 0.25,
+              height: screenHeight * 0.05,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFF9720),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
+                  elevation: 5,
+                ),
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  "Back",
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.04,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Conversation content
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: isLoading
+                ? Center(child: CircularProgressIndicator())
+                : conversationData == null
+                    ? Center(
+                        child: Text(
+                          "No conversation data found.",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 100),
+                          Text(
+                            widget.topic,
+                            style: TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: 40),
+                          Text(
+                            "Score: ${conversationData!["score"] ?? "N/A"}",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: const Color.fromARGB(255, 86, 100, 249),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: conversationData!["conversationLog"]
+                                      ?.length ??
+                                  0,
+                              itemBuilder: (context, index) {
+                                Map<String, dynamic> message =
+                                    conversationData!["conversationLog"][index];
+                                bool isUser = message["role"] == "user";
+                                String speakerName =
+                                    isUser ? userName : buddyName;
+                                String speakerAvatar = isUser
+                                    ? "assets/user_avatar.png"
+                                    : "assets/animal_${buddyType}.png";
+
+                                return Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: isUser
+                                      ? MainAxisAlignment.end
+                                      : MainAxisAlignment.start,
+                                  children: [
+                                    if (!isUser)
+                                      Column(
+                                        children: [
+                                          CircleAvatar(
+                                            backgroundImage:
+                                                AssetImage(speakerAvatar),
+                                            radius: 25,
+                                          ),
+                                          SizedBox(height: 3),
+                                          Text(
+                                            speakerName,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    if (!isUser) SizedBox(width: 10),
+                                    Flexible(
+                                      child: Container(
+                                        margin:
+                                            EdgeInsets.symmetric(vertical: 5),
+                                        padding: EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: isUser
+                                              ? Colors.purple[300]
+                                              : Colors.purple[100],
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(15),
+                                            topRight: Radius.circular(15),
+                                            bottomLeft: isUser
+                                                ? Radius.circular(15)
+                                                : Radius.zero,
+                                            bottomRight: isUser
+                                                ? Radius.zero
+                                                : Radius.circular(15),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          message["content"] ?? "",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    if (isUser) SizedBox(width: 10),
+                                    if (isUser)
+                                      Column(
+                                        children: [
+                                          CircleAvatar(
+                                            backgroundImage:
+                                                AssetImage(speakerAvatar),
+                                            radius: 25,
+                                          ),
+                                          SizedBox(height: 3),
+                                          Text(
+                                            speakerName,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+          ),
+        ],
       ),
     );
   }

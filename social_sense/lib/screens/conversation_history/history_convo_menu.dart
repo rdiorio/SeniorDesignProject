@@ -62,13 +62,13 @@ class _HistoryConvoMenuState extends State<HistoryConvoMenu> {
           // "Back to Home" Button
           Positioned(
             top: screenHeight * 0.06,
-            right: screenWidth * 0.05,
+            left: screenWidth * 0.05,
             child: SizedBox(
               width: screenWidth * 0.25,
               height: screenHeight * 0.05,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF9720),
+                  backgroundColor: const Color(0xFFFF88158),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -77,7 +77,8 @@ class _HistoryConvoMenuState extends State<HistoryConvoMenu> {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => Home(uid: widget.uid)),
+                    MaterialPageRoute(
+                        builder: (context) => Home(uid: widget.uid)),
                   );
                 },
                 child: Text(
@@ -95,13 +96,13 @@ class _HistoryConvoMenuState extends State<HistoryConvoMenu> {
           // "Back" (to History Topic Menu) Button
           Positioned(
             top: screenHeight * 0.06,
-            left: screenWidth * 0.05,
+            right: screenWidth * 0.05,
             child: SizedBox(
               width: screenWidth * 0.25,
               height: screenHeight * 0.05,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 248, 129, 88),
+                  backgroundColor: const Color(0xFFFF9720),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -110,7 +111,9 @@ class _HistoryConvoMenuState extends State<HistoryConvoMenu> {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => ConversationHistory(uid: widget.uid)),
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ConversationHistory(uid: widget.uid)),
                   );
                 },
                 child: Text(
@@ -149,7 +152,8 @@ class _HistoryConvoMenuState extends State<HistoryConvoMenu> {
                     child: ListView.builder(
                       itemCount: conversations.length,
                       itemBuilder: (context, index) {
-                        Map<String, dynamic> conversation = conversations[index];
+                        Map<String, dynamic> conversation =
+                            conversations[index];
 
                         String formattedDate = "Unknown Date";
                         if (conversation["timestamp"] != null &&
@@ -288,8 +292,9 @@ class _HistoryConvoMenuState extends State<HistoryConvoMenu> {
                 SizedBox(height: screenHeight * 0.04),
 
                 // View Progression Button
-                buildButton(context, 'View Progression', ProgressionScreen(scores: scores)),
-                
+                buildButton(context, 'View Progression',
+                    ProgressionScreen(scores: scores)),
+
                 SizedBox(height: screenHeight * 0.02),
               ],
             ),

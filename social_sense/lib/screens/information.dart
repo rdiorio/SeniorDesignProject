@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:social_sense/services/database.dart';
 import 'package:social_sense/screens/home/home.dart';
+import 'package:social_sense/screens/change_buddy.dart';
 
 class InformationScreen extends StatefulWidget {
   final String uid;
@@ -24,6 +25,24 @@ class _InformationScreenState extends State<InformationScreen> {
     _firstNameController.dispose();
     _lastNameController.dispose();
     super.dispose();
+  }
+
+  Future<void> _checkAndRedirect() async {
+    var userData = await _getUserData();
+
+    if (userData?['buddyName'] == "No Name") {
+      //no buddy, go to change buddy
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => ChangeBuddy(uid: widget.uid)),
+      );
+    } else {
+      //existing user, go home
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Home(uid: widget.uid)),
+      );
+    }
   }
 
   @override
@@ -76,42 +95,47 @@ class _InformationScreenState extends State<InformationScreen> {
                           controller: _firstNameController,
                           decoration: InputDecoration(
                             labelText: 'First Name',
-                            labelStyle: TextStyle(fontFamily: "Modak", fontSize: 25),
+                            labelStyle:
+                                TextStyle(fontFamily: "Modak", fontSize: 25),
                             border: OutlineInputBorder(),
                             filled: true,
                             fillColor: Colors.white,
                           ),
-                          validator: (val) => val!.isEmpty ? 'Enter your first name' : null,
+                          validator: (val) =>
+                              val!.isEmpty ? 'Enter your first name' : null,
                         ),
                       ),
                       SizedBox(height: 20),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 10.0),
                         child: TextFormField(
                           controller: _lastNameController,
                           decoration: InputDecoration(
                             labelText: 'Last Name',
-                            labelStyle: TextStyle(fontFamily: "Modak", fontSize: 25),
+                            labelStyle:
+                                TextStyle(fontFamily: "Modak", fontSize: 25),
                             border: OutlineInputBorder(),
                             filled: true,
                             fillColor: Colors.white,
                           ),
-                          validator: (val) => val!.isEmpty ? 'Enter your last name' : null,
+                          validator: (val) =>
+                              val!.isEmpty ? 'Enter your last name' : null,
                         ),
                       ),
                       SizedBox(height: 20),
                       ElevatedButton(
-                        child: Text('Save', style: TextStyle(fontFamily: "Modak", color: Colors.black)),  
+                        child: Text('Save',
+                            style: TextStyle(
+                                fontFamily: "Modak", color: Colors.black)),
                         onPressed: () async {
-                          if (_formKey.currentState!.validate()) {  
-                            await DatabaseService(uid: widget.uid).updateUserData(
+                          if (_formKey.currentState!.validate()) {
+                            await DatabaseService(uid: widget.uid)
+                                .updateUserData(
                               _firstNameController.text,
                               _lastNameController.text,
                             );
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => Home(uid: widget.uid)),
-                            );
+                            _checkAndRedirect();
                           }
                         },
                       ),
@@ -129,11 +153,14 @@ class _InformationScreenState extends State<InformationScreen> {
                 backgroundColor: Colors.white,
                 minimumSize: Size(100, 50),
               ),
-              child: Text('Back to Home', style: TextStyle(fontFamily: "Modak", fontSize: 20, color: Colors.black)),
+              child: Text('Back to Home',
+                  style: TextStyle(
+                      fontFamily: "Modak", fontSize: 20, color: Colors.black)),
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => Home(uid: widget.uid)),
+                  MaterialPageRoute(
+                      builder: (context) => Home(uid: widget.uid)),
                 );
               },
             ),

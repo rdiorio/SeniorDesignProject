@@ -51,6 +51,7 @@ dependencies:
   flutter_arc_text: ^0.6.0
   intl: ^0.20.2
   fl_chart: ^0.63.0
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -97,6 +98,18 @@ flutter:
     - assets/animal_Lion_talking.png
     - assets/animal_Pig_talking.png
     - assets/animal_Sloth_talking.png
+    - assets/hatFlower.png
+    - assets/hatFrog.png
+    - assets/hatSmile.png
+    - assets/hatCrown.png
+    - assets/hatCowboy.png
+    - assets/hatParty.png
+    - assets/glasses3D.png
+    - assets/glassesHeart.png
+    - assets/glassesPink.png
+    - assets/glassesStar.png
+    - assets/glassesColorful.png
+    - assets/glassesOrange.png
 
   fonts:
     - family: Modak
