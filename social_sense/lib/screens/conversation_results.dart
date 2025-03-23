@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:social_sense/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_sense/screens/progress_bar.dart'; // Import custom progress bar
+import 'package:social_sense/screens/progress_bar.dart';
+import 'package:confetti/confetti.dart';
+import 'package:audioplayers/audioplayers.dart';
+
 
 class ConversationResults extends StatefulWidget {
   final String buddyType;
@@ -24,55 +27,65 @@ class _ConversationResultsState extends State<ConversationResults> {
   int initialStars = 0;
   int updatedTotalPoints = 0;
   int updatedStars = 0;
+  double progress = 0.0;
+  int earnedStars = 0;
   bool isLoading = true;
-  double progress = 0.0; 
+  late ConfettiController _confettiController;
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
 
   @override
   void initState() {
     super.initState();
+    _confettiController = ConfettiController(duration: Duration(seconds: 2));
     _initializeUserAndUpdateScores();
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
   }
 
   void _initializeUserAndUpdateScores() async {
     userUid = FirebaseAuth.instance.currentUser?.uid;
-    if (userUid == null) {
-      print("Error: No user signed in.");
-      return;
-    }
+    if (userUid == null) return;
 
     try {
-      // Get Initial Scores
+      // Step 1: Get initial scores
       DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(userUid).get();
       if (userDoc.exists && userDoc.data() != null) {
         Map<String, dynamic>? scores = (userDoc.data() as Map<String, dynamic>)["scores"];
         if (scores != null) {
-          setState(() {
-            initialTotalPoints = scores["totalPoints"] ?? 0;
-            initialStars = scores["stars"] ?? 0;
-          });
+          initialTotalPoints = scores["totalPoints"] ?? 0;
+          initialStars = scores["stars"] ?? 0;
         }
       }
 
-      //Step 2: Update Scores
-      DatabaseService dbService = DatabaseService(uid: userUid!);
-      await dbService.updateUserScores(userUid!, widget.conversationScore);
+      // Step 2: Update scores
+      await DatabaseService(uid: userUid!).updateUserScores(userUid!, widget.conversationScore);
 
-      //Fetch Updated Scores
+      // Step 3: Get updated scores
       DocumentSnapshot updatedDoc = await FirebaseFirestore.instance.collection('users').doc(userUid).get();
       if (updatedDoc.exists && updatedDoc.data() != null) {
         Map<String, dynamic>? updatedScores = (updatedDoc.data() as Map<String, dynamic>)["scores"];
         if (updatedScores != null) {
-          int newTotalPoints = updatedScores["totalPoints"] ?? 0;
-          int newStars = updatedScores["stars"] ?? 0;
+          updatedTotalPoints = updatedScores["totalPoints"] ?? 0;
+          updatedStars = updatedScores["stars"] ?? 0;
+          earnedStars = updatedStars - initialStars;
+          progress = (updatedTotalPoints % 10) / 10.0;
 
-          setState(() {
-            updatedTotalPoints = newTotalPoints;
-            updatedStars = newStars;
-            progress = (newTotalPoints % 10) / 10; // ✅ Normalize progress (0.0 - 1.0)
-            isLoading = false; // Stop loading
-          });
+          if (earnedStars > 0) {
+            _confettiController.play();
+              _confettiController.play();
+            await _audioPlayer.play(AssetSource('star_earned.wav'));
+          }
         }
       }
+
+      setState(() {
+        isLoading = false;
+      });
     } catch (e) {
       print("Error fetching/updating scores: $e");
     }
@@ -80,85 +93,134 @@ class _ConversationResultsState extends State<ConversationResults> {
 
   @override
   Widget build(BuildContext context) {
-    String buddyAsset = "assets/animal_${widget.buddyType}.png";
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final buddyAsset = "assets/animal_${widget.buddyType}.png";
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Conversation Results"),
-      ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator()) // ✅ Show loading spinner
-          : Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Great job!",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.purple[400]),
-                  ),
-                  SizedBox(height: 20),
+      body: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+                    SizedBox.expand(
+            child: Image.asset(
+              'assets/bottomPurple_background.png',
+              fit: BoxFit.cover,
+            ),
+          ),
 
-                  // ✅ Show the buddy
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      CircularProgressBar(
-                        progress: progress, // ✅ Show real progress
-                        size: 160,
-                        strokeWidth: 12,
+          if (isLoading)
+            Center(child: CircularProgressIndicator())
+          else
+            Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // 🎉 First line (always centered)
+                    Text(
+                      earnedStars > 0
+                          ? "Wow! You earned $earnedStars ${earnedStars == 1 ? 'star' : 'stars'}!"
+                          : "Awesome job!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: const Color.fromARGB(255, 0, 0, 0),
                       ),
-                      Image.asset(buddyAsset, width: 120, height: 120),
-                    ],
-                  ),
-
-                  SizedBox(height: 20),
-
-                  // ✅ Display the conversation score
-                  Text(
-                    "Your Score: ${widget.conversationScore}",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-
-                  SizedBox(height: 30),
-
-                  // ✅ Show Initial Scores
-                  Text(
-                    "Previous Total Points: $initialTotalPoints",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  Text(
-                    "Previous Stars: $initialStars",
-                    style: TextStyle(fontSize: 18),
-                  ),
-
-                  SizedBox(height: 20),
-
-                  // ✅ Show Updated Scores
-                  Text(
-                    "New Total Points: $updatedTotalPoints",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green),
-                  ),
-                  Text(
-                    "New Stars: $updatedStars",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.orange),
-                  ),
-
-                  SizedBox(height: 40),
-
-                  // ✅ Add a button to go back home
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context); // Go back to previous screen
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple[400],
-                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                     ),
-                    child: Text("Back to Home", style: TextStyle(fontSize: 18, color: Colors.white)),
-                  ),
-                ],
+
+                    // 🎉 Second line (only if no stars were earned)
+                    if (earnedStars == 0)
+                      Text(
+                        "${10 - updatedTotalPoints} ${10 - updatedTotalPoints == 1 ? 'point' : 'points'} until your next star!",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.normal,
+                          color: const Color.fromARGB(255, 0, 0, 0),
+                        ),
+                      ),
+                       SizedBox(height: 25),
+
+
+                    // 🐻 Buddy + Progress Bar + Star
+                    Stack(
+                      clipBehavior: Clip.none,
+                      alignment: Alignment.center,
+                      children: [
+                        CircularProgressBar(
+                          progress: progress,
+                          size: screenWidth * 0.65,
+                          strokeWidth: screenWidth * 0.045,
+                        ),
+                        Image.asset(
+                          buddyAsset,
+                          width: screenWidth * 0.6,
+                          height: screenHeight * 0.3,
+                          fit: BoxFit.contain,
+                        ),
+                        Positioned(
+                          top: screenHeight * -0.025,
+                          child: Container(
+                            width: screenWidth * 0.15,
+                            height: screenHeight * 0.06,
+                            alignment: Alignment.center,
+                            child: Stack(
+                              clipBehavior: Clip.none,
+                              alignment: Alignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/star.png',
+                                  width: screenWidth * 0.15,
+                                  height: screenHeight * 0.06,
+                                ),
+                                Text(
+                                  '$updatedStars',
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.06,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+
+                    // ✅ Score
+                    Text(
+                      "Your Score: ${widget.conversationScore}",
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 30),
+
+                    // ✅ Home Button
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.purple[400],
+                        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                      ),
+                      child: Text("Back to Home", style: TextStyle(fontSize: 18, color: Colors.white)),
+                    ),
+                  ],
+                ),
               ),
             ),
+
+          // 🎉 Confetti Animation
+          ConfettiWidget(
+            confettiController: _confettiController,
+            blastDirectionality: BlastDirectionality.explosive,
+            shouldLoop: false,
+            numberOfParticles: 30,
+            gravity: 0.3,
+          ),
+        ],
+      ),
     );
   }
 }
