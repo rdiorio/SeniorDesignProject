@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_sense/services/database.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class RewardsScreen extends StatefulWidget {
   final String uid; 
@@ -21,6 +22,8 @@ class _RewardsScreenState extends State<RewardsScreen> {
   bool showCloset = false; // Toggle between store and closet
   String? wearingGlasses = "";
   String? wearingHat = "";
+  int stars = 0;
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
 
 
@@ -31,7 +34,8 @@ class _RewardsScreenState extends State<RewardsScreen> {
     "Flower",
     "Smile",
     "Cowboy",
-    "Party"
+    "Party",
+    "Sombrero"
   ];
 
   // List of available glasses
@@ -41,7 +45,8 @@ class _RewardsScreenState extends State<RewardsScreen> {
     "Heart",
     "Orange",
     "Pink",
-    "Star"
+    "Star",
+    "Disguise"
   ];
 
   @override
@@ -61,6 +66,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
         buddyName = userDoc["buddyName"] ?? "no name"; 
         wearingHat = userDoc['currentHat'];
         wearingGlasses = userDoc['currentGlasses'];
+        stars = userDoc['scores']['stars'];
       });
     }
 
@@ -327,17 +333,34 @@ SingleChildScrollView(
           await DatabaseService(uid: widget.uid).updateCurrentAccessories(
             hat: selectedHat != null ? 'hat$selectedHat' : null,
             glasses: selectedGlasses != null ? 'glasses$selectedGlasses' : null,
+            
           );
-
+          await _audioPlayer.play(AssetSource('zipClothes.wav'));
 
           } else {
-            if (selectedHat != null) {
+            if (selectedHat != null && selectedGlasses != null && stars >= 10) {
+              await DatabaseService(uid: widget.uid).deductStars(10);
               await DatabaseService(uid: widget.uid)
                   .addToOwnedAccessory('ownedHats', 'hat$selectedHat');
-            }
-            if (selectedGlasses != null) {
               await DatabaseService(uid: widget.uid)
                   .addToOwnedAccessory('ownedGlasses', 'glasses$selectedGlasses');
+              selectedGlasses = null;
+              selectedHat = null;
+              await _audioPlayer.play(AssetSource('buy.wav'));
+            }
+            else if (selectedGlasses != null && stars >= 5) {
+              await DatabaseService(uid: widget.uid).deductStars(5);
+              await DatabaseService(uid: widget.uid)
+                  .addToOwnedAccessory('ownedGlasses', 'glasses$selectedGlasses');
+              selectedGlasses = null;
+              await _audioPlayer.play(AssetSource('buy.wav'));
+            }
+            else if (selectedHat != null && stars >= 5){
+              await DatabaseService(uid: widget.uid).deductStars(5);
+                        await DatabaseService(uid: widget.uid)
+                  .addToOwnedAccessory('ownedHats', 'hat$selectedHat');
+                selectedHat = null;
+                await _audioPlayer.play(AssetSource('buy.wav'));
             }
             await DatabaseService(uid: widget.uid).updateCurrentAccessories(
             hat: selectedHat != null ? 'hat$selectedHat' : null,

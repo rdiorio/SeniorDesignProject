@@ -22,6 +22,9 @@ class _ConversationLogState extends State<ConversationLog> {
   String userName = "";
   String buddyName = "";
   String buddyType = "";
+  String? currentHat;
+  String? currentGlasses;
+
 
   @override
   void initState() {
@@ -64,7 +67,10 @@ class _ConversationLogState extends State<ConversationLog> {
         buddyName = buddyData["buddyName"] ?? "Buddy";
         buddyType = buddyData["buddy"] ?? "Bear";
         userName = userData?["First Name"] ?? "User";
+        currentHat = userData?['currentHat'];
+        currentGlasses = userData?['currentGlasses'];
       });
+
     }
   }
 
@@ -174,11 +180,12 @@ class _ConversationLogState extends State<ConversationLog> {
                                     if (!isUser)
                                       Column(
                                         children: [
-                                          CircleAvatar(
-                                            backgroundImage:
-                                                AssetImage(speakerAvatar),
-                                            radius: 25,
-                                          ),
+                                          SizedBox(
+                                              width: 50,
+                                              height: 50,
+                                              child: buildBuddyAvatar(50),
+                                            ),
+
                                           SizedBox(height: 3),
                                           Text(
                                             speakerName,
@@ -253,4 +260,32 @@ class _ConversationLogState extends State<ConversationLog> {
       ),
     );
   }
+
+  Widget buildBuddyAvatar(double size) {
+  return Stack(
+    alignment: Alignment.center,
+    children: [
+      Image.asset("assets/animal_$buddyType.png", width: size, height: size),
+      if (currentHat != null && currentHat!.isNotEmpty)
+        Positioned(
+          top: size * -0.05,
+          child: Image.asset(
+            "assets/$currentHat.png",
+            width: size * 0.9,
+            height: size * 0.3,
+          ),
+        ),
+      if (currentGlasses != null && currentGlasses!.isNotEmpty)
+        Positioned(
+          top: size * 0.1,
+          child: Image.asset(
+            "assets/$currentGlasses.png",
+            width: size * 0.5,
+            height: size * 0.45,
+          ),
+        ),
+    ],
+  );
+}
+
 }

@@ -110,13 +110,17 @@ flutter:
     - assets/hatCrown.png
     - assets/hatCowboy.png
     - assets/hatParty.png
+    - assets/hatSombrero.png
     - assets/glasses3D.png
     - assets/glassesHeart.png
     - assets/glassesPink.png
     - assets/glassesStar.png
     - assets/glassesColorful.png
     - assets/glassesOrange.png
+    - assets/glassesDisguise.png
     - assets/star_earned.wav
+    - assets/zipClothes.wav
+    - assets/buy.wav
 
   fonts:
     - family: Modak

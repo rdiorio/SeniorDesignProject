@@ -556,6 +556,35 @@ Future<List<String>> getOwnedItems(String field) async {
     }
   }
 
+  //Deduct stars
+  Future<bool> deductStars(int amount) async {
+  DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(uid);
+
+  try {
+    return FirebaseFirestore.instance.runTransaction((transaction) async {
+      DocumentSnapshot snapshot = await transaction.get(userRef);
+      Map<String, dynamic> scores = snapshot.get('scores');
+      int currentStars = scores['stars'] ?? 0;
+
+      if (currentStars < amount) {
+        return false; 
+      }
+
+      int updatedStars = currentStars - amount;
+
+      transaction.update(userRef, {
+        'scores.stars': updatedStars,
+      });
+
+      return true;
+    });
+  } catch (e) {
+    print("Failed to deduct stars: $e");
+    return false;
+  }
+}
+
+
 
 
 }

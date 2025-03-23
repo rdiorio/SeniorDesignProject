@@ -10,9 +10,7 @@ import 'dart:math';
 
 class LessonsPage extends StatefulWidget {
   final String uid;
-
   LessonsPage({required this.uid});
-
   @override
   _LessonsPageState createState() => _LessonsPageState();
 }
@@ -44,12 +42,11 @@ class _LessonsPageState extends State<LessonsPage> {
           FutureBuilder(
             future: _getUserData(),
             builder: (context, AsyncSnapshot<Map<String, dynamic>?> snapshot) {
-              String buddy = "Bear"; // Default buddy
+              String buddy = "Bear";
               double progressScore = 0.0;
               int stars = 0;
               String? hat;
               String? glasses;
-
 
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -57,21 +54,17 @@ class _LessonsPageState extends State<LessonsPage> {
                 var userData = snapshot.data;
                 if (userData != null) {
                   buddy = userData['buddy'] ?? "Bear";
-                  progressScore =
-                      (userData['scores']['totalPoints'] % 10) / 10.0;
+                  progressScore = (userData['scores']['totalPoints'] % 10) / 10.0;
                   stars = userData['scores']['stars'] ?? 0;
                   hat = userData['currentHat'];
                   glasses = userData['currentGlasses'];
-
                 }
               }
 
               return Stack(
                 children: [
-                  // 🐻 Buddy Image with Progress Bar
                   Positioned(
-                    top: screenHeight *
-                        0.15, // Moves everything slightly down to avoid the app bar overlap
+                    top: screenHeight * 0.15,
                     left: 0,
                     right: 0,
                     child: Center(
@@ -79,61 +72,29 @@ class _LessonsPageState extends State<LessonsPage> {
                         clipBehavior: Clip.none,
                         alignment: Alignment.center,
                         children: [
-                          /// ✅ Circular Progress Bar (Behind the Buddy)
                           CircularProgressBar(
                             progress: progressScore,
                             size: screenWidth * 0.65,
                             strokeWidth: screenWidth * 0.045,
                           ),
-
-                          /// ✅ Dynamic buddy image
-                          Image.asset(
-                            'assets/animal_$buddy.png',
-                            width: screenWidth * 0.6,
-                            height: screenHeight * 0.3,
-                            fit: BoxFit.contain,
+                          BuddyAvatar(
+                            buddy: buddy,
+                            hat: hat,
+                            glasses: glasses,
+                            scale: screenWidth / 300,
                           ),
-                          if (hat != null && hat.isNotEmpty)
-                            Positioned(
-                              top: screenHeight * 0.02, // adjust for your buddy asset
-                              child: Image.asset(
-                                'assets/$hat.png',
-                                width: screenWidth * 0.25,
-                                height: screenHeight * 0.05,
-                              ),
-                            ),
-
-                          if (glasses != null && glasses.isNotEmpty)
-                            Positioned(
-                              top: screenHeight * 0.08,
-                              child: Image.asset(
-                                'assets/$glasses.png',
-                                width: screenWidth * 0.5, // ✅ Increase width (adjust as needed)
-                                height: screenHeight * 0.05, // Optional: increase height too
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-
-
-
-                          /// ⭐ Positioned Star & Score
                           Positioned(
-                            top: screenHeight *
-                                -0.025, // Slightly lower to avoid getting cut off
+                            top: screenHeight * -0.025,
                             child: Container(
-                              // Ensures star doesn't get clipped
-                              width:
-                                  screenWidth * 0.15, // Matches the star's size
+                              width: screenWidth * 0.15,
                               height: screenHeight * 0.06,
                               alignment: Alignment.center,
                               child: Stack(
-                                clipBehavior: Clip.none,
                                 alignment: Alignment.center,
                                 children: [
                                   Image.asset(
                                     'assets/star.png',
-                                    width: screenWidth *
-                                        0.15, // Adjusted star size
+                                    width: screenWidth * 0.15,
                                     height: screenHeight * 0.06,
                                   ),
                                   Text(
@@ -153,11 +114,8 @@ class _LessonsPageState extends State<LessonsPage> {
                     ),
                   ),
 
-                  // ✅ Arc Text Below Progress Bar
                   Positioned(
-                    top: screenHeight * 0.15 +
-                        (screenWidth * 0.65) / 2 +
-                        screenWidth * 0.05,
+                    top: screenHeight * 0.15 + (screenWidth * 0.65) / 2 + screenWidth * 0.05,
                     left: 0,
                     right: 0,
                     child: SizedBox(
@@ -181,7 +139,6 @@ class _LessonsPageState extends State<LessonsPage> {
             },
           ),
 
-          // "Back to Home" Button
           Positioned(
             top: screenHeight * 0.06,
             right: screenWidth * 0.05,
@@ -199,8 +156,7 @@ class _LessonsPageState extends State<LessonsPage> {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => Home(uid: widget.uid)),
+                    MaterialPageRoute(builder: (context) => Home(uid: widget.uid)),
                   );
                 },
                 child: Text(
@@ -215,7 +171,6 @@ class _LessonsPageState extends State<LessonsPage> {
             ),
           ),
 
-          // ✅ Emotion Lesson Buttons (Full Width, Matching Design)
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -227,21 +182,9 @@ class _LessonsPageState extends State<LessonsPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  buildLessonButton(
-                      context,
-                      "Easy Emotions",
-                      "Learn basic emotions with examples.",
-                      EasyEmotionsPage()),
-                  buildLessonButton(
-                      context,
-                      "Medium Emotions",
-                      "Emotions with color and picture representations.",
-                      MediumEmotionsPage()),
-                  buildLessonButton(
-                      context,
-                      "Hard Emotions",
-                      "Identify emotions from only pictures.",
-                      HardEmotionsPage()),
+                  buildLessonButton(context, "Easy Emotions", "Learn basic emotions with examples.", EasyEmotionsPage()),
+                  buildLessonButton(context, "Medium Emotions", "Emotions with color and picture representations.", MediumEmotionsPage()),
+                  buildLessonButton(context, "Hard Emotions", "Identify emotions from only pictures.", HardEmotionsPage()),
                 ],
               ),
             ),
@@ -251,33 +194,27 @@ class _LessonsPageState extends State<LessonsPage> {
     );
   }
 
-  /// ✅ **Function to Create a Lesson Button**
-  Widget buildLessonButton(
-      BuildContext context, String title, String subtitle, Widget targetPage) {
+  Widget buildLessonButton(BuildContext context, String title, String subtitle, Widget targetPage) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return Padding(
-      padding: EdgeInsets.symmetric(
-          vertical: screenHeight * 0.008), // Adjust space between buttons
+      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.008),
       child: SizedBox(
-        width: screenWidth * 0.9, // Scale width dynamically
-        height: screenHeight * 0.1, // Scale height dynamically
+        width: screenWidth * 0.9,
+        height: screenHeight * 0.1,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(
-                255, 221, 202, 235), // Light purple background
+            backgroundColor: const Color.fromARGB(255, 221, 202, 235),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
               side: BorderSide(
-                color: const Color.fromARGB(200, 248, 232, 83), // Yellow border
+                color: const Color.fromARGB(200, 248, 232, 83),
                 width: screenWidth * 0.015,
               ),
             ),
             elevation: 5,
-            padding: EdgeInsets.symmetric(
-                vertical:
-                    screenHeight * 0.015), // Adjust text padding inside button
+            padding: EdgeInsets.symmetric(vertical: screenHeight * 0.015),
           ),
           onPressed: () {
             Navigator.push(
@@ -308,6 +245,48 @@ class _LessonsPageState extends State<LessonsPage> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class BuddyAvatar extends StatelessWidget {
+  final String buddy;
+  final String? hat;
+  final String? glasses;
+  final double scale;
+
+  const BuddyAvatar({
+    super.key,
+    required this.buddy,
+    this.hat,
+    this.glasses,
+    this.scale = 1.0,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.scale(
+      scale: scale,
+      child: SizedBox(
+        width: 200,
+        height: 200,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.asset('assets/animal_$buddy.png', width: 200, height: 200),
+            if (hat != null && hat!.isNotEmpty)
+              Positioned(
+                top: 10,
+                child: Image.asset('assets/$hat.png', width: 100, height: 40),
+              ),
+            if (glasses != null && glasses!.isNotEmpty)
+              Positioned(
+                top: 50,
+                child: Image.asset('assets/$glasses.png', width: 80, height: 40),
+              ),
+          ],
         ),
       ),
     );

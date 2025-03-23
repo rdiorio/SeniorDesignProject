@@ -49,6 +49,8 @@ class Home extends StatelessWidget {
               String buddy = "Bear"; // Default buddy
               double progressScore = 0.0;
               int stars = 0;
+              String? hat;
+              String? glasses;
 
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -60,6 +62,8 @@ class Home extends StatelessWidget {
                   progressScore =
                       (userData['scores']['totalPoints'] % 10) / 10.0;
                   stars = userData['scores']['stars'];
+                  hat = userData['currentHat'];
+                  glasses = userData['currentGlasses'];
                 }
               }
 
@@ -77,22 +81,22 @@ class Home extends StatelessWidget {
                         clipBehavior: Clip.none,
                         alignment: Alignment.center,
                         children: [
-                          /// ✅ Circular Progress Bar (Behind the Buddy)
+                          // Circular Progress Bar (Behind the Buddy)
                           CircularProgressBar(
                             progress: progressScore,
                             size: screenWidth * 0.65,
                             strokeWidth: screenWidth * 0.045,
                           ),
 
-                          /// ✅ Dynamic buddy image
-                          Image.asset(
-                            'assets/animal_$buddy.png',
-                            width: screenWidth * 0.6,
-                            height: screenHeight * 0.3,
-                            fit: BoxFit.contain,
+                          //Dynamic buddy image
+                          BuddyAvatar(
+                            buddy: buddy,
+                            hat: hat,
+                            glasses: glasses,
+                            scale: screenWidth / 300,
                           ),
 
-                          /// ⭐ Positioned Star & Score
+                          // Positioned Star & Score
                           Positioned(
                             top: screenHeight *
                                 -0.025, // Slightly lower to avoid getting cut off
@@ -274,6 +278,48 @@ class Home extends StatelessWidget {
               color: Colors.black,
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class BuddyAvatar extends StatelessWidget {
+  final String buddy;
+  final String? hat;
+  final String? glasses;
+  final double scale;
+
+  const BuddyAvatar({
+    super.key,
+    required this.buddy,
+    this.hat,
+    this.glasses,
+    this.scale = 1.0,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.scale(
+      scale: scale,
+      child: SizedBox(
+        width: 200,
+        height: 200,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.asset('assets/animal_$buddy.png', width: 200, height: 200),
+            if (hat != null && hat!.isNotEmpty)
+              Positioned(
+                top: 10,
+                child: Image.asset('assets/$hat.png', width: 100, height: 40),
+              ),
+            if (glasses != null && glasses!.isNotEmpty)
+              Positioned(
+                top: 50,
+                child: Image.asset('assets/$glasses.png', width: 80, height: 40),
+              ),
+          ],
         ),
       ),
     );

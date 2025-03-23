@@ -43,6 +43,9 @@ class ConversationScreenState extends State<ConversationScreen> {
   String voiceGender = "FEMALE";
   String buddyName = "";
   String buddyType = "Bear";
+  String? currentHat;
+  String? currentGlasses;
+
 
   // Variable to store the most recent user input
   String _currentUserInput = "";
@@ -78,13 +81,18 @@ class ConversationScreenState extends State<ConversationScreen> {
     try {
       DatabaseService dbService = DatabaseService(uid: userUid!);
       Map<String, String> buddyData = await dbService.getBuddyInfo();
+      Map<String, dynamic>? userData = await dbService.getUserData();
 
       setState(() {
         buddyName = buddyData["buddyName"] ?? "Buddy";
         buddyType = buddyData["buddy"] ?? "Bear";
+        currentHat = userData?["currentHat"];
+        currentGlasses = userData?["currentGlasses"];
         isBuddyLoaded = true;
         _checkLoadingState();
       });
+      print("current hat $currentHat");
+      print("current glasses $currentGlasses");
     } catch (e) {
       print("Error loading user data: $e");
     }
@@ -292,7 +300,32 @@ class ConversationScreenState extends State<ConversationScreen> {
                           child: Text(conversationLog.lastWhere((message) => message["role"] == "assistant")["content"]!, style: TextStyle(color: Colors.white, fontSize: 18)),
                         ),
                       SizedBox(height: 10),
-                      Image.asset(buddyImage, width: 400, height: 400),
+                      Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Image.asset(buddyImage, width: 400, height: 400),
+
+                                if (currentHat != null && currentHat!.isNotEmpty)
+                                  Positioned(
+                                    top: 40,
+                                    child: Image.asset(
+                                      "assets/$currentHat.png",
+                                      width: 150,
+                                      height: 70,
+                                    ),
+                                  ),
+
+                                if (currentGlasses != null && currentGlasses!.isNotEmpty)
+                                  Positioned(
+                                    top: 100,
+                                    child: Image.asset(
+                                      "assets/$currentGlasses.png",
+                                      width: 160,
+                                      height: 90,
+                                    ),
+                                  ),
+                              ],
+                            ),
                     ],
                   ),
                 ),

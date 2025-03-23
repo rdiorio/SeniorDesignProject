@@ -33,6 +33,8 @@ class _ResultsPageState extends State<ResultsPage> {
   int earnedStars = 0;
   double progress = 0.0;
   String buddy = "Bear";
+  String? hat;
+  String? glasses;
   bool isLoading = true;
   int maxScore = 0;
 final List<String> emotions = ["Happy 😄", " Sad 🥺", "Angry 😠" ];
@@ -65,6 +67,8 @@ final List<String> emotions = ["Happy 😄", " Sad 🥺", "Angry 😠" ];
           initialStars = scores['stars'] ?? 0;
           buddy = data['buddy'] ?? "Bear";
           maxScore = scores[widget.difficulty] ?? 0;
+          hat = userDoc['currentHat'];
+          glasses = userDoc['currentGlasses'];
         });
         if (maxScore < widget.points){
            await DatabaseService(uid: widget.uid).updateUserScore(widget.difficulty, widget.points);
@@ -147,44 +151,72 @@ final List<String> emotions = ["Happy 😄", " Sad 🥺", "Angry 😠" ];
                             ),
                           const SizedBox(height: 25),
                           Stack(
-                            clipBehavior: Clip.none,
-                            alignment: Alignment.center,
-                            children: [
-                              CircularProgressBar(
-                                progress: progress,
-                                size: screenWidth * 0.65,
-                                strokeWidth: screenWidth * 0.045,
-                              ),
-                              Image.asset(
-                                buddyAsset,
-                                width: screenWidth * 0.6,
-                                height: screenHeight * 0.3,
-                                fit: BoxFit.contain,
-                              ),
-                              Positioned(
-                                top: screenHeight * -0.025,
-                                child: Container(
-                                  width: screenWidth * 0.15,
-                                  height: screenHeight * 0.06,
-                                  alignment: Alignment.center,
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Image.asset(
-                                        'assets/star.png',
-                                        width: screenWidth * 0.15,
-                                        height: screenHeight * 0.06,
-                                      ),
-                                      Text(
-                                        '$updatedStars',
-                                        style: TextStyle(
-                                          fontSize: screenWidth * 0.06,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+  clipBehavior: Clip.none,
+  alignment: Alignment.center,
+  children: [
+    CircularProgressBar(
+      progress: progress,
+      size: screenWidth * 0.65,
+      strokeWidth: screenWidth * 0.045,
+    ),
+
+    /// 🐻 Buddy
+    Image.asset(
+      buddyAsset,
+      width: screenWidth * 0.6,
+      height: screenHeight * 0.3,
+      fit: BoxFit.contain,
+    ),
+
+    /// 🧢 Hat (if any)
+    if (hat != null && hat!.isNotEmpty)
+      Positioned(
+        top: screenHeight * 0.02,
+        child: Image.asset(
+          'assets/$hat.png',
+          width: screenWidth * 0.25,
+          height: screenHeight * 0.05,
+          fit: BoxFit.contain,
+        ),
+      ),
+
+    /// 🕶️ Glasses (if any)
+    if (glasses != null && glasses!.isNotEmpty)
+      Positioned(
+        top: screenHeight * 0.06,
+        child: Image.asset(
+          'assets/$glasses.png',
+          width: screenWidth * 0.3, // Scale width for more accurate size
+          height: screenHeight * 0.1,
+          fit: BoxFit.contain,
+        ),
+      ),
+
+    /// ⭐ Star Counter
+    Positioned(
+      top: screenHeight * -0.025,
+      child: Container(
+        width: screenWidth * 0.15,
+        height: screenHeight * 0.06,
+        alignment: Alignment.center,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.asset(
+              'assets/star.png',
+              width: screenWidth * 0.15,
+              height: screenHeight * 0.06,
+            ),
+            Text(
+              '$updatedStars',
+              style: TextStyle(
+                fontSize: screenWidth * 0.06,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+          ],
+        ),
                                 ),
                               ),
                             ],
