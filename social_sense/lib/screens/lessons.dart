@@ -47,6 +47,9 @@ class _LessonsPageState extends State<LessonsPage> {
               String buddy = "Bear"; // Default buddy
               double progressScore = 0.0;
               int stars = 0;
+              String? hat;
+              String? glasses;
+
 
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -57,6 +60,9 @@ class _LessonsPageState extends State<LessonsPage> {
                   progressScore =
                       (userData['scores']['totalPoints'] % 10) / 10.0;
                   stars = userData['scores']['stars'] ?? 0;
+                  hat = userData['currentHat'];
+                  glasses = userData['currentGlasses'];
+
                 }
               }
 
@@ -87,6 +93,28 @@ class _LessonsPageState extends State<LessonsPage> {
                             height: screenHeight * 0.3,
                             fit: BoxFit.contain,
                           ),
+                          if (hat != null && hat.isNotEmpty)
+                            Positioned(
+                              top: screenHeight * 0.02, // adjust for your buddy asset
+                              child: Image.asset(
+                                'assets/$hat.png',
+                                width: screenWidth * 0.25,
+                                height: screenHeight * 0.05,
+                              ),
+                            ),
+
+                          if (glasses != null && glasses.isNotEmpty)
+                            Positioned(
+                              top: screenHeight * 0.08,
+                              child: Image.asset(
+                                'assets/$glasses.png',
+                                width: screenWidth * 0.5, // ✅ Increase width (adjust as needed)
+                                height: screenHeight * 0.05, // Optional: increase height too
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+
+
 
                           /// ⭐ Positioned Star & Score
                           Positioned(

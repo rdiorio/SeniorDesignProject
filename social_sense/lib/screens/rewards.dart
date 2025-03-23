@@ -134,7 +134,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
 
           SizedBox(height: 20),
 
-  // 🧢 Hat Selection
+  // Hat Selection
 Text("Choose a Hat", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
 SizedBox(height: 10),
 SingleChildScrollView(
@@ -226,7 +226,7 @@ SingleChildScrollView(
 
           SizedBox(height: 20),
 
-// 🕶️ Glasses Selection
+// Glasses Selection
 Text("Choose Glasses", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
 SizedBox(height: 10),
 SingleChildScrollView(
