@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_sense/services/database.dart';
 
 class RewardsScreen extends StatefulWidget {
-  final String uid; // ✅ Require UID when instantiating
+  final String uid; 
 
   const RewardsScreen({super.key, required this.uid});
 
@@ -12,10 +13,18 @@ class RewardsScreen extends StatefulWidget {
 
 class _RewardsScreenState extends State<RewardsScreen> {
   String buddyType = "Bear"; // Default buddy type
+  String buddyName ="";
   String? selectedHat; // Currently worn hat
   String? selectedGlasses; // Currently worn glasses
+  List<String> ownedHats = [];
+  List<String> ownedGlasses = [];
+  bool showCloset = false; // Toggle between store and closet
+  String? wearingGlasses = "";
+  String? wearingHat = "";
 
-  // ✅ List of available hats
+
+
+  // List of available hats
   final List<String> hats = [
     "Frog",
     "Crown",
@@ -25,7 +34,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
     "Party"
   ];
 
-  // ✅ List of available glasses
+  // List of available glasses
   final List<String> glasses = [
     "3D",
     "Colorful",
@@ -41,62 +50,66 @@ class _RewardsScreenState extends State<RewardsScreen> {
     _loadUserData();
   }
 
-  // ✅ Load user's selected buddy, hat, and glasses from Firestore
+
+
+  //  Load user's selected buddy, hat, and glasses from Firestore
   Future<void> _loadUserData() async {
     DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(widget.uid).get();
     if (userDoc.exists && userDoc.data() != null) {
       setState(() {
         buddyType = userDoc["buddy"] ?? "Bear"; // Load buddy type
-      /*  List<dynamic>? selectedClothes = userDoc["selectedClothes"];
-        
-        if (selectedClothes != null) {
-          // Check if the saved clothes contain a hat or glasses
-          for (String item in selectedClothes) {
-            if (hats.contains(item)) selectedHat = item;
-            if (glasses.contains(item)) selectedGlasses = item;
-          }
-        }*/
+        buddyName = userDoc["buddyName"] ?? "no name"; 
+        wearingHat = userDoc['currentHat'];
+        wearingGlasses = userDoc['currentGlasses'];
       });
     }
+
+     // Fetch owned items
+  ownedHats = await DatabaseService(uid: widget.uid).getOwnedItems("ownedHats");
+  ownedGlasses = await DatabaseService(uid: widget.uid).getOwnedItems("ownedGlasses");
+  setState(() {}); // trigger rebuild with owned data
+
   }
 
-  // ✅ Toggle hat selection
+  // Toggle hat selection
   void _toggleHat(String hat) {
     setState(() {
       selectedHat = (selectedHat == hat) ? null : hat; // Remove if selected again
     });
   }
 
-  // ✅ Toggle glasses selection
+  // Toggle glasses selection
   void _toggleGlasses(String glassesType) {
     setState(() {
       selectedGlasses = (selectedGlasses == glassesType) ? null : glassesType; // Remove if selected again
     });
   }
 
-  // ✅ Save selected accessories to Firestore
-  Future<void> _saveSelection() async {
-    List<String> selectedItems = [];
-    if (selectedHat != null) selectedItems.add(selectedHat!);
-    if (selectedGlasses != null) selectedItems.add(selectedGlasses!);
 
-    await FirebaseFirestore.instance.collection("users").doc(widget.uid).update({
-      "selectedClothes": selectedItems,
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(selectedItems.isNotEmpty ? "Selection saved!" : "No accessories selected.")),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Rewards Store")),
+      appBar: AppBar(
+  title: Text(showCloset ? "My Closet" : "Rewards Store"),
+  actions: [
+    IconButton(
+      icon: Icon(showCloset ? Icons.storefront : Icons.checkroom),
+      onPressed: () {
+        setState(() {
+          showCloset = !showCloset;
+          selectedHat = null;
+          selectedGlasses = null;
+        });
+      },
+      tooltip: showCloset ? "Go to Store" : "Go to Closet",
+    ),
+  ],
+),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("Your Buddy", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          Text(buddyName, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
           SizedBox(height: 20),
 
           // ✅ Buddy with optional hat & glasses
@@ -114,107 +127,233 @@ class _RewardsScreenState extends State<RewardsScreen> {
               if (selectedGlasses != null)
                 Positioned(
                   top: 22, // Adjust glasses position
-                  child: Image.asset("assets/glasses$selectedGlasses.png", width: 90, height: 85),
+                  child: Image.asset("assets/glasses$selectedGlasses.png", width: 80, height: 95),
                 ),
             ],
           ),
 
           SizedBox(height: 20),
 
-          // ✅ Hat Selection Row
-          Text("Choose a Hat", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          SizedBox(height: 10),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: hats.map((hat) {
-                bool isSelected = selectedHat == hat; // Check if selected
-                return GestureDetector(
-                  onTap: () => _toggleHat(hat),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    child: Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: isSelected ? Colors.purple : Colors.transparent,
-                              width: 4,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Image.asset("assets/hat$hat.png", width: 80, height: 80),
+  // 🧢 Hat Selection
+Text("Choose a Hat", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+SizedBox(height: 10),
+SingleChildScrollView(
+  scrollDirection: Axis.horizontal,
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: showCloset
+        ? ownedHats.map((hatKey) {
+            final String hat = hatKey.replaceFirst("hat", "");
+            final bool isSelected = selectedHat == hat;
+            return GestureDetector(
+              onTap: () => _toggleHat(hat),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: isSelected ? Colors.purple : Colors.transparent,
+                          width: 4,
                         ),
-                        SizedBox(height: 5),
-                        Text(
-                          hat,
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "5 ⭐", // ✅ Display Price
-                          style: TextStyle(fontSize: 14, color: Colors.orange),
-                        ),
-                      ],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Image.asset("assets/$hatKey.png", width: 80, height: 80),
                     ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
+                    SizedBox(height: 5),
+                    Text(
+                      (wearingHat == "hat$hat") ? "Wearing" : hat,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: (wearingHat == "hat$hat") ? Colors.green : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList()
+        : hats.map((hat) {
+            final String hatKey = "hat$hat";
+            final bool isOwned = ownedHats.contains(hatKey);
+            final bool isSelected = selectedHat == hat;
+
+            return GestureDetector(
+              onTap: isOwned ? null : () => _toggleHat(hat),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: isOwned ? Colors.grey[300] : null,
+                        border: Border.all(
+                          color: isSelected ? Colors.purple : Colors.transparent,
+                          width: 4,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Image.asset("assets/$hatKey.png", width: 80, height: 80),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      hat,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: isOwned ? Colors.grey : Colors.black,
+                      ),
+                    ),
+                    Text(
+                      isOwned ? "SOLD" : "5 ⭐",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: isOwned ? Colors.red : Colors.orange,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+  ),
+),
+
+
 
           SizedBox(height: 20),
 
-          // ✅ Glasses Selection Row
-          Text("Choose Glasses", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          SizedBox(height: 10),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: glasses.map((glassesType) {
-                bool isSelected = selectedGlasses == glassesType; // Check if selected
-                return GestureDetector(
-                  onTap: () => _toggleGlasses(glassesType),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    child: Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: isSelected ? Colors.blue : Colors.transparent,
-                              width: 4,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Image.asset("assets/glasses$glassesType.png", width: 80, height: 40),
+// 🕶️ Glasses Selection
+Text("Choose Glasses", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+SizedBox(height: 10),
+SingleChildScrollView(
+  scrollDirection: Axis.horizontal,
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: showCloset
+        ? ownedGlasses.map((glassesKey) {
+            final String glassesType = glassesKey.replaceFirst("glasses", "");
+            final bool isSelected = selectedGlasses == glassesType;
+
+            return GestureDetector(
+              onTap: () => _toggleGlasses(glassesType),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: isSelected ? Colors.blue : Colors.transparent,
+                          width: 4,
                         ),
-                        SizedBox(height: 5),
-                        Text(
-                          glassesType,
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "5 ⭐", // ✅ Display Price
-                          style: TextStyle(fontSize: 14, color: Colors.orange),
-                        ),
-                      ],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Image.asset("assets/$glassesKey.png", width: 80, height: 40),
                     ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
+                    SizedBox(height: 5),
+                    Text(
+                      (wearingGlasses == "glasses$glassesType") ? "Wearing" : glassesType,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: (wearingGlasses == "glasses$glassesType") ? Colors.green : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList()
+        : glasses.map((glassesType) {
+            final String glassesKey = "glasses$glassesType";
+            final bool isOwned = ownedGlasses.contains(glassesKey);
+            final bool isSelected = selectedGlasses == glassesType;
+
+            return GestureDetector(
+              onTap: isOwned ? null : () => _toggleGlasses(glassesType),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: isOwned ? Colors.grey[300] : null,
+                        border: Border.all(
+                          color: isSelected ? Colors.blue : Colors.transparent,
+                          width: 4,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Image.asset("assets/$glassesKey.png", width: 80, height: 40),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      glassesType,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: isOwned ? Colors.grey : Colors.black,
+                      ),
+                    ),
+                    Text(
+                      isOwned ? "SOLD" : "5 ⭐",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: isOwned ? Colors.red : Colors.orange,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+  ),
+),
+
+
 
           SizedBox(height: 20),
 
-          // ✅ Save Selection Button
-          ElevatedButton(
-            onPressed: null, //ADD SAVE FUNCTIONALITY
-            child: Text("Buy Selection"),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-          ),
+          // Save Selection Button
+ ElevatedButton(
+  onPressed: (selectedHat != null || selectedGlasses != null)
+      ? () async {
+          if (showCloset) {
+          await DatabaseService(uid: widget.uid).updateCurrentAccessories(
+            hat: selectedHat != null ? 'hat$selectedHat' : null,
+            glasses: selectedGlasses != null ? 'glasses$selectedGlasses' : null,
+          );
+
+
+          } else {
+            if (selectedHat != null) {
+              await DatabaseService(uid: widget.uid)
+                  .addToOwnedAccessory('ownedHats', 'hat$selectedHat');
+            }
+            if (selectedGlasses != null) {
+              await DatabaseService(uid: widget.uid)
+                  .addToOwnedAccessory('ownedGlasses', 'glasses$selectedGlasses');
+            }
+            await DatabaseService(uid: widget.uid).updateCurrentAccessories(
+            hat: selectedHat != null ? 'hat$selectedHat' : null,
+            glasses: selectedGlasses != null ? 'glasses$selectedGlasses' : null,
+          );
+
+          }
+          _loadUserData();
+
+        }
+      : null,
+  child: Text(showCloset ? "Wear Selection" : "Buy Selection"),
+  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+)
+
+
         ],
       ),
     );

@@ -519,4 +519,43 @@ class DatabaseService {
       print("Error updating user scores: $e");
     }
   }
+
+Future<void> addToOwnedAccessory(String category, String item) async {
+  try {
+    DocumentReference userDocRef = FirebaseFirestore.instance.collection('users').doc(uid);
+
+    await userDocRef.update({
+      category: FieldValue.arrayUnion([item])
+    });
+  } catch (e) {
+    print('Error adding item to $category: $e');
+  }
+}
+
+Future<List<String>> getOwnedItems(String field) async {
+  try {
+    DocumentSnapshot doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    if (doc.exists && doc.data() != null) {
+      final data = doc.data() as Map<String, dynamic>;
+      return List<String>.from(data[field] ?? []);
+    }
+  } catch (e) {
+    print("Error fetching $field: $e");
+  }
+  return [];
+}
+
+//Update currently equipped accessories
+  Future<void> updateCurrentAccessories({String? hat, String? glasses}) async {
+    Map<String, dynamic> updates = {};
+    if (hat != null) updates['currentHat'] = hat;
+    if (glasses != null) updates['currentGlasses'] = glasses;
+
+    if (updates.isNotEmpty) {
+      await userCollection.doc(uid).update(updates);
+    }
+  }
+
+
+
 }
