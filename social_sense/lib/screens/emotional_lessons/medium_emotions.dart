@@ -148,14 +148,14 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
       });
 
       // Save score after the user gets it right
-      String? userUid = FirebaseAuth.instance.currentUser?.uid;
+    /*  String? userUid = FirebaseAuth.instance.currentUser?.uid;
       if (userUid != null) {
         Map<String, dynamic>? scores =
             await DatabaseService(uid: userUid).getUserScores();
         int previousScore = scores?['medium'] ?? 0;
         await DatabaseService(uid: userUid)
             .updateUserScore('medium', previousScore + lessonPoints);
-      }
+      } */
 
       // Move to next question after a short delay
       if (currentStep < emotions.length - 1) {
@@ -178,7 +178,8 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
               builder: (context) => ResultsPage(
                 attempts: attemptsPerQuestion,
                 points: totalLessonPoints,
-                uid: userUid, // ✅ Now userUid is guaranteed to be non-null
+                uid: userUid!, 
+                difficulty: 'medium',// ✅ Now userUid is guaranteed to be non-null
               ),
             ),
           );

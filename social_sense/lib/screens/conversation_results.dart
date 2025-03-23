@@ -199,12 +199,12 @@ class _ConversationResultsState extends State<ConversationResults> {
 
                     // ✅ Home Button
                     ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () { Navigator.pop(context); Navigator.pop(context);},
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.purple[400],
                         padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                       ),
-                      child: Text("Back to Home", style: TextStyle(fontSize: 18, color: Colors.white)),
+                      child: Text("Back to Lessons", style: TextStyle(fontSize: 18, color: Colors.white)),
                     ),
                   ],
                 ),
