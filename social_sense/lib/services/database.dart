@@ -23,7 +23,9 @@ class DatabaseService {
         },
         'voice': {'name': 'Leda', 'gender': 'FEMALE'},
         'buddy': 'Bear',
-        'buddyName': 'No Name'
+        'buddyName': 'No Name',
+        'currentHat' : "",
+        'currentGlasses' : ""
       });
     } catch (e) {
       print('Error creating user profile: $e');

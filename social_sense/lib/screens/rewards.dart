@@ -112,8 +112,10 @@ class _RewardsScreenState extends State<RewardsScreen> {
     ),
   ],
 ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      body:SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+  child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(buddyName, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
           SizedBox(height: 20),
@@ -146,7 +148,7 @@ SizedBox(height: 10),
 SingleChildScrollView(
   scrollDirection: Axis.horizontal,
   child: Row(
-    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.center,
     children: showCloset
         ? ownedHats.map((hatKey) {
             final String hat = hatKey.replaceFirst("hat", "");
@@ -238,7 +240,7 @@ SizedBox(height: 10),
 SingleChildScrollView(
   scrollDirection: Axis.horizontal,
   child: Row(
-    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.center,
     children: showCloset
         ? ownedGlasses.map((glassesKey) {
             final String glassesType = glassesKey.replaceFirst("glasses", "");
@@ -321,9 +323,34 @@ SingleChildScrollView(
   ),
 ),
 
-
+  
 
           SizedBox(height: 20),
+if (showCloset)
+  Padding(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: ElevatedButton.icon(
+      onPressed: () async {
+        await DatabaseService(uid: widget.uid).updateCurrentAccessories(
+          hat: "",
+          glasses: "",
+        );
+        await _audioPlayer.play(AssetSource('zipClothes.wav'));
+        setState(() {
+          selectedHat = null;
+          selectedGlasses = null;
+          wearingHat = null;
+          wearingGlasses = null;
+        });
+      },
+      icon: Icon(Icons.remove_circle_outline),
+      label: Text("Remove All Items"),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red[300],
+      ),
+    ),
+  ),
+
 
           // Save Selection Button
  ElevatedButton(
@@ -331,8 +358,8 @@ SingleChildScrollView(
       ? () async {
           if (showCloset) {
           await DatabaseService(uid: widget.uid).updateCurrentAccessories(
-            hat: selectedHat != null ? 'hat$selectedHat' : null,
-            glasses: selectedGlasses != null ? 'glasses$selectedGlasses' : null,
+            hat: selectedHat != null ? 'hat$selectedHat' : "",
+            glasses: selectedGlasses != null ? 'glasses$selectedGlasses' : "",
             
           );
           await _audioPlayer.play(AssetSource('zipClothes.wav'));
@@ -379,6 +406,7 @@ SingleChildScrollView(
 
         ],
       ),
+      )
     );
   }
 }
