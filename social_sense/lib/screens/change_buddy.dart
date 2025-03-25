@@ -308,16 +308,23 @@ class _ChangeBuddyState extends State<ChangeBuddy> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF9720),
+                  backgroundColor: const Color.fromARGB(255, 242, 231, 249),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20), 
+                    side: BorderSide(
+                      color: const Color.fromARGB(255, 248, 129, 74), 
+                      width: screenWidth * 0.01,
+                    ),
+                  ),
                   padding: EdgeInsets.symmetric(
-                      horizontal: screenWidth * 0.2,
-                      vertical: screenHeight * 0.018),
+                      horizontal: screenWidth * 0.1, // Changes width of button
+                      vertical: screenHeight * 0.01),
                 ),
                 child: Text("Save",
                     style: GoogleFonts.sniglet(
-                        fontSize: screenWidth * 0.045,
+                        fontSize: screenWidth * 0.047,
                         fontWeight: FontWeight.w900,
-                        color: const Color.fromARGB(255, 255, 255, 255))),
+                        color: Colors.black)),
               ),
             ],
           ),

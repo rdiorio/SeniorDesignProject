@@ -178,9 +178,9 @@ class _InformationScreenState extends State<InformationScreen> {
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.005), 
+      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01), 
       child: SizedBox(
-        width: screenWidth * 0.25,
+        width: screenWidth * 0.3,
         height: screenHeight * 0.05, 
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
@@ -208,7 +208,7 @@ class _InformationScreenState extends State<InformationScreen> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: screenWidth * 0.047,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w900,
               color: Colors.black,
             ),
           ),
