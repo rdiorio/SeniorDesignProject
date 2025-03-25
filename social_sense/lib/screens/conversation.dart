@@ -270,8 +270,11 @@ class ConversationScreenState extends State<ConversationScreen> {
         : "assets/animal_$buddyType.png"; // ✅ Closed-mouth version
 
     return Scaffold(
+      extendBodyBehindAppBar: true, // Allows content to go behind the app bar
       appBar: AppBar(
-        title: Text(widget.conversationTopic.toUpperCase()),
+        backgroundColor: Colors.transparent, // Transparent app bar
+        elevation: 0, // Removes shadow
+        shadowColor: Colors.transparent,
         actions: [
           IconButton(
             icon: Icon(isTTSActive ? Icons.volume_up : Icons.volume_off),
@@ -280,89 +283,166 @@ class ConversationScreenState extends State<ConversationScreen> {
           ),
         ],
       ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Column(
-                    children: [
-                      Text(
-                        buddyName,
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.purple[400]),
-                      ),
-                      SizedBox(height: 5),
-                      if (conversationLog.isNotEmpty)
-                        Container(
-                          padding: EdgeInsets.all(12.0),
-                          decoration: BoxDecoration(color: Colors.purple[300], borderRadius: BorderRadius.circular(20)),
-                          child: Text(conversationLog.lastWhere((message) => message["role"] == "assistant")["content"]!, style: TextStyle(color: Colors.white, fontSize: 18)),
-                        ),
-                      SizedBox(height: 10),
-                      Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Image.asset(buddyImage, width: 400, height: 400),
+      body: Stack(
+        children: [
+          // Background Image
+          Positioned.fill(
+            child: Image.asset(
+              "assets/bottomPurple_background.png", // Change to your actual background image path
+              fit: BoxFit.cover, // Covers the entire screen
+            ),
+          ),
 
-                                if (currentHat != null && currentHat!.isNotEmpty)
-                                  Positioned(
-                                    top: 40,
-                                    child: Image.asset(
-                                      "assets/$currentHat.png",
-                                      width: 150,
-                                      height: 70,
-                                    ),
-                                  ),
-
-                                if (currentGlasses != null && currentGlasses!.isNotEmpty)
-                                  Positioned(
-                                    top: 100,
-                                    child: Image.asset(
-                                      "assets/$currentGlasses.png",
-                                      width: 160,
-                                      height: 90,
-                                    ),
-                                  ),
-                              ],
+          // Foreground Content
+          isLoading
+              ? Center(child: CircularProgressIndicator())
+              : Column(
+                  children: [
+                    SizedBox(height: kToolbarHeight + 100), // Push content below AppBar
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Column(
+                        children: [
+                          Text(
+                            buddyName,
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.purple[400]),
+                          ),
+                          SizedBox(height: 5),
+                          if (conversationLog.isNotEmpty)
+                            Container(
+                              padding: EdgeInsets.all(12.0),
+                              decoration: BoxDecoration(color: Colors.purple[300], borderRadius: BorderRadius.circular(20)),
+                              child: Text(conversationLog.lastWhere((message) => message["role"] == "assistant")["content"]!, style: TextStyle(color: Colors.white, fontSize: 18)),
                             ),
-                    ],
-                  ),
-                ),
-                Spacer(),
-
-                if (!isConversationEnded) ...[
-                  GestureDetector(
-                    onTap: _showTextInputDialog,
-                    child: Container(padding: EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.purple[100], borderRadius: BorderRadius.circular(20)), child: Text(_currentUserInput.isEmpty ? "Touch to type..." : _currentUserInput, style: TextStyle(fontSize: 18, color: Colors.black))),
-                  ),
-                  SizedBox(height: 10),
-                  FloatingActionButton(
-                    backgroundColor: Colors.purple[400],
-                    onPressed: () {
-                      _controller.startListening((recognizedText) {
-                        setState(() {
-                          _sendUserMessage(recognizedText);
-                        });
-                      });
-                    },
-                    child: Icon(Icons.mic, color: Colors.white, size: 30),
-                  ),
-                ] else ...[
-                  ElevatedButton(onPressed: () {
-                     Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ConversationResults(
-                        buddyType: buddyType, // ✅ Pass buddy type
-                        conversationScore: conversationScore, // ✅ Pass score
+                          SizedBox(height: 10),
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset(buddyImage, width: 400, height: 400),
+                              if (currentHat != null && currentHat!.isNotEmpty)
+                                Positioned(
+                                  top: 40,
+                                  child: Image.asset(
+                                    "assets/$currentHat.png",
+                                    width: 150,
+                                    height: 70,
+                                  ),
+                                ),
+                              if (currentGlasses != null && currentGlasses!.isNotEmpty)
+                                Positioned(
+                                  top: 100,
+                                  child: Image.asset(
+                                    "assets/$currentGlasses.png",
+                                    width: 160,
+                                    height: 90,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                );
-                  }, child: Text("View Results")),
-                ],
-              ],
+                    Spacer(),
+
+                    if (!isConversationEnded) ...[
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 40), // Moves it up
+                        child: GestureDetector(
+                          onTap: _showTextInputDialog,
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 246, 239, 250), 
+                              borderRadius: BorderRadius.circular(20), // Rounded corners
+                              border: Border.all(
+                                color: const Color.fromARGB(255, 248, 129, 74), 
+                                width: 4,
+                              ),
+                            ),
+                            child: Text(
+                              _currentUserInput.isEmpty ? "Touch to type..." : _currentUserInput,
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold, 
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+
+                      // Move Mic Icon Up
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 80), // Moves it up
+                        child: FloatingActionButton(
+                          backgroundColor: Colors.purple[400],
+                          onPressed: () {
+                            _controller.startListening((recognizedText) {
+                              setState(() {
+                                _sendUserMessage(recognizedText);
+                              });
+                            });
+                          },
+                          child: Icon(Icons.mic, color: Colors.white, size: 30),
+                        ),
+                      ),
+                    ] else ...[
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 75), // Adjust as needed
+                        child: buildButton(
+                          context,
+                          'View Results',
+                          ConversationResults(
+                            buddyType: buddyType,
+                            conversationScore: conversationScore,
+                          ),
+                        ),
+                      )
+                    ],
+                  ],
+                ),
+        ],
+      ),
+    );
+  }
+  Widget buildButton(BuildContext context, String text, Widget targetScreen) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(
+          vertical: screenHeight * 0.005), // Reduced space between buttons
+      child: SizedBox(
+        width: screenWidth * 0.9, // Scales width dynamically
+        height: screenHeight * 0.075, // Scales height dynamically
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 242, 231, 249),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(
+                  color: const Color.fromARGB(255, 248, 129, 74),
+                  width: screenWidth * 0.015
+              ),
             ),
+            elevation: 5,
+          ),
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => targetScreen));
+          },
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: screenWidth * 0.06, // Scales text size dynamically
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

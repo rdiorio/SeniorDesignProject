@@ -75,8 +75,8 @@ class _BreathingExercisesState extends State<BreathingExercises>
             top: screenHeight * 0.06,
             right: screenWidth * 0.05,
             child: SizedBox(
-              width: 100,
-              height: 35,
+              width: screenWidth * 0.25,
+              height: screenHeight * 0.05,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFF9720),
@@ -96,7 +96,7 @@ class _BreathingExercisesState extends State<BreathingExercises>
                 child: Text(
                   "Home",
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: screenWidth * 0.04,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -170,14 +170,18 @@ class _BreathingExercisesState extends State<BreathingExercises>
 
           // ✅ Start/Pause Button Positioned at Bottom
           Positioned(
-            bottom: screenHeight * 0.08,
+            bottom: screenHeight * 0.13,
             left: 0,
             right: 0,
             child: Center(
               child: ElevatedButton(
                 onPressed: _toggleAudioAndAnimation,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
+                  backgroundColor: const Color.fromARGB(255, 242, 231, 249),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: BorderSide(color: const Color.fromARGB(255, 248, 129, 74), width: screenWidth * 0.01),
+                  ),
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
                 child: Text(

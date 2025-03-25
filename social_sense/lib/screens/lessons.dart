@@ -127,8 +127,6 @@ class _LessonsPageState extends State<LessonsPage> {
                           radius: (screenWidth * 0.65) / 2 + screenWidth * 0.05,
                           verticalOffset: screenWidth * -0.1,
                           fontSize: screenWidth * 0.08,
-                          arcSpan: pi - pi / 2 + .3,
-                          startAngle: pi - pi / 2,
                           isClockwise: true,
                         ),
                       ),
@@ -175,16 +173,43 @@ class _LessonsPageState extends State<LessonsPage> {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: EdgeInsets.only(
-                bottom: screenHeight * 0.09,
+                bottom: screenHeight * 0.075,
                 left: screenWidth * 0.05,
                 right: screenWidth * 0.05,
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  buildLessonButton(context, "Easy Emotions", "Learn basic emotions with examples.", EasyEmotionsPage()),
-                  buildLessonButton(context, "Medium Emotions", "Emotions with color and picture representations.", MediumEmotionsPage()),
-                  buildLessonButton(context, "Hard Emotions", "Identify emotions from only pictures.", HardEmotionsPage()),
+                  // Subheading for Easy Lessons
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    child: Text(
+                      "Learn basic emotions with examples.",
+                      style: TextStyle(fontSize: screenWidth * 0.035, fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+                  ),
+                  buildLessonButton(context, "Easy Emotions", EasyEmotionsPage()),
+
+                  // Subheading for Medium Lessons
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    child: Text(
+                      "Emotions with color and picture representations.",
+                      style: TextStyle(fontSize: screenWidth * 0.035, fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+                  ),
+                  buildLessonButton(context, "Medium Emotions", MediumEmotionsPage()),
+
+                  // Subheading for Hard Lessons
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    child: Text(
+                      "Identify emotions from only pictures.",
+                      style: TextStyle(fontSize: screenWidth * 0.035, fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+                  ),
+                  buildLessonButton(context, "Hard Emotions", HardEmotionsPage()),
                 ],
               ),
             ),
@@ -194,15 +219,15 @@ class _LessonsPageState extends State<LessonsPage> {
     );
   }
 
-  Widget buildLessonButton(BuildContext context, String title, String subtitle, Widget targetPage) {
+  Widget buildLessonButton(BuildContext context, String title, Widget targetPage) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.008),
+      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.009),
       child: SizedBox(
         width: screenWidth * 0.9,
-        height: screenHeight * 0.1,
+        height: screenHeight * 0.075,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 221, 202, 235),
@@ -222,28 +247,14 @@ class _LessonsPageState extends State<LessonsPage> {
               MaterialPageRoute(builder: (context) => targetPage),
             );
           },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: screenWidth * 0.06,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-              SizedBox(height: screenHeight * 0.005),
-              Text(
-                subtitle,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: screenWidth * 0.03,
-                  color: Colors.black87,
-                ),
-              ),
-            ],
+          child: Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: screenWidth * 0.06,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
           ),
         ),
       ),

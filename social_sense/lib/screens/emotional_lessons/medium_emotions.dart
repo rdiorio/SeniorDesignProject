@@ -208,10 +208,10 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
       child: ElevatedButton(
         onPressed: () => _checkAnswer(emotion),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.purple[200],
+          backgroundColor: const Color.fromARGB(255, 242, 231, 249),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
-            side: const BorderSide(color: Colors.black, width: 3),
+            side: const BorderSide(color: const Color.fromARGB(255, 248, 129, 74), width: 3),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         ),

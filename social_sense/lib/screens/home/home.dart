@@ -135,7 +135,7 @@ class Home extends StatelessWidget {
 
                   //"Welcome User!" Text
                   Positioned(
-                    top: screenHeight * 0.1 +
+                    top: screenHeight * 0.11 +
                         (screenWidth * 0.65) / 2 +
                         screenWidth * 0.05,
                     left: 0,
@@ -149,8 +149,6 @@ class Home extends StatelessWidget {
                           radius: (screenWidth * 0.65) / 2 + screenWidth * 0.05,
                           verticalOffset: screenWidth * -0.1,
                           fontSize: screenWidth * 0.08,
-                          arcSpan: pi - pi / 2 + .3,
-                          startAngle: pi - pi / 2,
                           isClockwise: true,
                         ),
                       ),
@@ -167,7 +165,7 @@ class Home extends StatelessWidget {
             right: screenWidth * 0.05,
             child: SizedBox(
               width: screenWidth * 0.25,
-              height: screenHeight * 0.035,
+              height: screenHeight * 0.05,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFF9720),

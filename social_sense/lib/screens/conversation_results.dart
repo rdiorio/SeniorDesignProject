@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_sense/screens/progress_bar.dart';
 import 'package:confetti/confetti.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:social_sense/screens/conversational_lessons.dart';
 
 
 class ConversationResults extends StatefulWidget {
@@ -149,77 +150,77 @@ class _ConversationResultsState extends State<ConversationResults> {
 
 
                     // 🐻 Buddy + Progress Bar + Star
-Stack(
-  clipBehavior: Clip.none,
-  alignment: Alignment.center,
-  children: [
-    CircularProgressBar(
-      progress: progress,
-      size: screenWidth * 0.65,
-      strokeWidth: screenWidth * 0.045,
-    ),
+                    Stack(
+                      clipBehavior: Clip.none,
+                      alignment: Alignment.center,
+                      children: [
+                        CircularProgressBar(
+                          progress: progress,
+                          size: screenWidth * 0.65,
+                          strokeWidth: screenWidth * 0.045,
+                        ),
 
-    /// 🐻 Buddy
-    Image.asset(
-      buddyAsset,
-      width: screenWidth * 0.6,
-      height: screenHeight * 0.3,
-      fit: BoxFit.contain,
-    ),
+                        /// 🐻 Buddy
+                        Image.asset(
+                          buddyAsset,
+                          width: screenWidth * 0.6,
+                          height: screenHeight * 0.3,
+                          fit: BoxFit.contain,
+                        ),
 
-    /// 🧢 Hat (if any)
-    if (hat != null && hat!.isNotEmpty)
-      Positioned(
-        top: screenHeight * 0.02,
-        child: Image.asset(
-          'assets/$hat.png',
-          width: screenWidth * 0.25,
-          height: screenHeight * 0.05,
-          fit: BoxFit.contain,
-        ),
-      ),
+                        /// 🧢 Hat (if any)
+                        if (hat != null && hat!.isNotEmpty)
+                          Positioned(
+                            top: screenHeight * 0.02,
+                            child: Image.asset(
+                              'assets/$hat.png',
+                              width: screenWidth * 0.25,
+                              height: screenHeight * 0.05,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
 
-    /// 🕶️ Glasses (if any)
-    if (glasses != null && glasses!.isNotEmpty)
-      Positioned(
-        top: screenHeight * 0.06,
-        child: Image.asset(
-          'assets/$glasses.png',
-          width: screenWidth * 0.3, // Scale width for more accurate size
-          height: screenHeight * 0.1,
-          fit: BoxFit.contain,
-        ),
-      ),
+                        /// 🕶️ Glasses (if any)
+                        if (glasses != null && glasses!.isNotEmpty)
+                          Positioned(
+                            top: screenHeight * 0.06,
+                            child: Image.asset(
+                              'assets/$glasses.png',
+                              width: screenWidth * 0.3, // Scale width for more accurate size
+                              height: screenHeight * 0.1,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
 
-    /// ⭐ Star Counter
-    Positioned(
-      top: screenHeight * -0.025,
-      child: Container(
-        width: screenWidth * 0.15,
-        height: screenHeight * 0.06,
-        alignment: Alignment.center,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Image.asset(
-              'assets/star.png',
-              width: screenWidth * 0.15,
-              height: screenHeight * 0.06,
-            ),
-            Text(
-              '$updatedStars',
-              style: TextStyle(
-                fontSize: screenWidth * 0.06,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-  ],
-),
+                        /// ⭐ Star Counter
+                        Positioned(
+                          top: screenHeight * -0.025,
+                          child: Container(
+                            width: screenWidth * 0.15,
+                            height: screenHeight * 0.06,
+                            alignment: Alignment.center,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/star.png',
+                                  width: screenWidth * 0.15,
+                                  height: screenHeight * 0.06,
+                                ),
+                                Text(
+                                  '$updatedStars',
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.06,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
 
                     SizedBox(height: 20),
 
@@ -230,14 +231,11 @@ Stack(
                     ),
                     SizedBox(height: 30),
 
-                    // ✅ Home Button
-                    ElevatedButton(
-                      onPressed: () { Navigator.pop(context); Navigator.pop(context);},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purple[400],
-                        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                      ),
-                      child: Text("Back to Lessons", style: TextStyle(fontSize: 18, color: Colors.white)),
+                    // ✅ Back to Lessons Button
+                    buildButton(
+                      context, 'Back to Lessons', onPressed: () {
+                        Navigator.pop(context); Navigator.pop(context);
+                      },
                     ),
                   ],
                 ),
@@ -253,6 +251,44 @@ Stack(
             gravity: 0.3,
           ),
         ],
+      ),
+    );
+  }
+  Widget buildButton(BuildContext context, String text, {Widget? targetScreen, VoidCallback? onPressed}) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.005),
+      child: SizedBox(
+        width: screenWidth * 0.8,
+        height: screenHeight * 0.065,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 242, 231, 249),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(
+                  color: const Color.fromARGB(255, 248, 129, 74),
+                  width: screenWidth * 0.015),
+            ),
+            elevation: 5,
+          ),
+          onPressed: onPressed ?? () {
+            if (targetScreen != null) {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => targetScreen));
+            }
+          },
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: screenWidth * 0.06,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ),
       ),
     );
   }

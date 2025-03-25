@@ -6,8 +6,7 @@ class ArcTextPainter extends CustomPainter {
   final double radius;
   final double verticalOffset;
   final double fontSize;
-  final String fontFamily;
-  final double arcSpan;
+  final String fontFamily; 
   final double startAngle;
   final bool isClockwise;
 
@@ -16,57 +15,52 @@ class ArcTextPainter extends CustomPainter {
     required this.radius,
     required this.verticalOffset,
     required this.fontSize,
-    this.fontFamily = "Modak",
-    this.arcSpan = pi, // 180-degree arc at the bottom
-    this.startAngle = pi / 2, // Start at the exact bottom center
+    this.fontFamily = "Roboto",
+    this.startAngle = (pi * 0.7) / 0.83,
     this.isClockwise = true,
   });
-
+   
   @override
   void paint(Canvas canvas, Size size) {
     final textStyle = TextStyle(
       fontSize: fontSize,
-      fontWeight: FontWeight.w100,
+      fontWeight: FontWeight.w900,
       fontFamily: fontFamily,
       color: Colors.white,
     );
 
-    String reversedText = text.split('').reversed.join(); // ✅ Fix text order
-
-    double totalTextWidth = 10;
+    double totalTextWidth = 0;
     List<double> charWidths = [];
 
-    for (int i = 0; i < reversedText.length; i++) {
+    for (int i = 0; i < text.length; i++) {
       TextPainter textPainter = TextPainter(
-        text: TextSpan(text: reversedText[i], style: textStyle),
+        text: TextSpan(text: text[i], style: textStyle),
         textDirection: TextDirection.ltr,
       )..layout();
 
       charWidths.add(textPainter.width);
       totalTextWidth += textPainter.width;
-    }
+    }  
 
-    double currentAngle =
-        startAngle - arcSpan / 2 - .15; //adjust where the text is along the arc
+    double currentAngle = startAngle;
 
-    for (int i = 0; i < reversedText.length; i++) {
+    for (int i = 0; i < text.length; i++) {
       TextPainter textPainter = TextPainter(
-        text: TextSpan(text: reversedText[i], style: textStyle),
+        text: TextSpan(text: text[i], style: textStyle),
         textDirection: TextDirection.ltr,
       )..layout();
 
       double x = size.width / 2 + radius * cos(currentAngle);
-      double y = size.height / 2 + radius * sin(currentAngle) + verticalOffset;
+      double y = (size.height / 2 + radius * sin(currentAngle)) + verticalOffset;
 
       canvas.save();
       canvas.translate(x, y);
-      canvas.rotate(currentAngle - pi / 2); // ✅ Keeps letters upright
-      textPainter.paint(
-          canvas, Offset(-textPainter.width / 2, -textPainter.height / 2));
+      canvas.rotate(currentAngle - pi / 2);
+      textPainter.paint(canvas, Offset(-textPainter.width / 9, -textPainter.height / 2));
       canvas.restore();
 
-      double charAngle = (charWidths[i] / totalTextWidth) * arcSpan * 1.3;
-      currentAngle += charAngle * (isClockwise ? 1 : -1);
+      double charAngle = (charWidths[i] / totalTextWidth) * (pi * 0.7);
+      currentAngle -= charAngle;
     }
   }
 

@@ -59,7 +59,7 @@ class _HistoryConvoMenuState extends State<HistoryConvoMenu> {
             ),
           ),
 
-          // "Back to Home" Button
+          // "Home" Button
           Positioned(
             top: screenHeight * 0.06,
             left: screenWidth * 0.05,

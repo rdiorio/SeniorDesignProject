@@ -143,8 +143,6 @@ class _ConversationalLessonsState extends State<ConversationalLessons> {
                           radius: (screenWidth * 0.65) / 2 + screenWidth * 0.05,
                           verticalOffset: screenWidth * -0.1,
                           fontSize: screenWidth * 0.08,
-                          arcSpan: pi - pi / 2 + .3,
-                          startAngle: pi - pi / 2,
                           isClockwise: true,
                         ),
                       ),
@@ -155,13 +153,13 @@ class _ConversationalLessonsState extends State<ConversationalLessons> {
             },
           ),
 
-          // "Back to Home" Button
+          // "Home" Button
           Positioned(
             top: screenHeight * 0.06,
             right: screenWidth * 0.05,
             child: SizedBox(
-              width: screenWidth * 0.20,
-              height: screenHeight * 0.035,
+              width: screenWidth * 0.25,
+              height: screenHeight * 0.05,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFF9720),
@@ -225,11 +223,10 @@ class _ConversationalLessonsState extends State<ConversationalLessons> {
           vertical: screenHeight * 0.009), // Adjust space between buttons
       child: SizedBox(
         width: screenWidth * 0.9, // Scale width dynamically
-        height: screenHeight * 0.085, // Scale height dynamically
+        height: screenHeight * 0.08, // Scale height dynamically
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(
-                255, 221, 202, 235), // Light purple background
+            backgroundColor: const Color.fromARGB(255, 221, 202, 235), // Light purple background
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
               side: BorderSide(

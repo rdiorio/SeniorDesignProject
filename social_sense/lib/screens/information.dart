@@ -47,6 +47,8 @@ class _InformationScreenState extends State<InformationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Stack(
         children: [
@@ -84,7 +86,7 @@ class _InformationScreenState extends State<InformationScreen> {
                         'Change Information',
                         style: TextStyle(
                           fontFamily: "Modak",
-                          fontSize: 32, // Increase the font size
+                          fontSize: screenWidth * 0.08,
                           color: Colors.black,
                         ),
                       ),
@@ -96,7 +98,7 @@ class _InformationScreenState extends State<InformationScreen> {
                           decoration: InputDecoration(
                             labelText: 'First Name',
                             labelStyle:
-                                TextStyle(fontFamily: "Modak", fontSize: 25),
+                                TextStyle(fontFamily: "Modak", fontSize: screenWidth * 0.06),
                             border: OutlineInputBorder(),
                             filled: true,
                             fillColor: Colors.white,
@@ -114,7 +116,7 @@ class _InformationScreenState extends State<InformationScreen> {
                           decoration: InputDecoration(
                             labelText: 'Last Name',
                             labelStyle:
-                                TextStyle(fontFamily: "Modak", fontSize: 25),
+                                TextStyle(fontFamily: "Modak", fontSize: screenWidth * 0.06),
                             border: OutlineInputBorder(),
                             filled: true,
                             fillColor: Colors.white,
@@ -124,20 +126,9 @@ class _InformationScreenState extends State<InformationScreen> {
                         ),
                       ),
                       SizedBox(height: 20),
-                      ElevatedButton(
-                        child: Text('Save',
-                            style: TextStyle(
-                                fontFamily: "Modak", color: Colors.black)),
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            await DatabaseService(uid: widget.uid)
-                                .updateUserData(
-                              _firstNameController.text,
-                              _lastNameController.text,
-                            );
-                            _checkAndRedirect();
-                          }
-                        },
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 40),
+                        child: buildSaveButton(context),
                       ),
                     ],
                   ),
@@ -146,27 +137,84 @@ class _InformationScreenState extends State<InformationScreen> {
             ),
           ),
           Positioned(
-            bottom: 100,
-            right: 20,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                minimumSize: Size(100, 50),
-              ),
-              child: Text('Back to Home',
+            top: screenHeight * 0.06,
+            right: screenWidth * 0.05,
+            child: SizedBox(
+              width: screenWidth * 0.25,
+              height: screenHeight * 0.05,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFF9720),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 5,
+                ),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Home(uid: widget.uid)),
+                  );
+                },
+                child: Text(
+                  "Home",
                   style: TextStyle(
-                      fontFamily: "Modak", fontSize: 20, color: Colors.black)),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Home(uid: widget.uid)),
-                );
-              },
+                    fontSize: screenWidth * 0.04,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ),
           ),
         ],
       ),
     );
   }
+
+  Widget buildSaveButton(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.005), 
+      child: SizedBox(
+        width: screenWidth * 0.25,
+        height: screenHeight * 0.05, 
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 242, 231, 249), 
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20), 
+              side: BorderSide(
+                color: const Color.fromARGB(255, 248, 129, 74), 
+                width: screenWidth * 0.01,
+              ),
+            ),
+            elevation: 5,
+          ),
+          onPressed: () async {
+            if (_formKey.currentState!.validate()) {
+              await DatabaseService(uid: widget.uid).updateUserData(
+                _firstNameController.text,
+                _lastNameController.text,
+              );
+              _checkAndRedirect();
+            }
+          },
+          child: Text(
+            "Save",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: screenWidth * 0.047,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
 }
