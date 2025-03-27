@@ -52,21 +52,18 @@ class _PieChartScreenState extends State<PieChartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       body: Stack(
         children: [
-          // Background image
           SizedBox.expand(
             child: Image.asset(
               "assets/bottomPurple_background.png",
               fit: BoxFit.cover,
             ),
           ),
-
-          // Back button in top right corner (scalable and consistent)
           Positioned(
             top: screenHeight * 0.06,
             right: screenWidth * 0.05,
@@ -85,7 +82,7 @@ class _PieChartScreenState extends State<PieChartScreen> {
                 child: Text(
                   "Back",
                   style: TextStyle(
-                    fontSize: screenWidth * 0.04,
+                    fontSize: screenWidth * 0.045,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -93,10 +90,8 @@ class _PieChartScreenState extends State<PieChartScreen> {
               ),
             ),
           ),
-
-          // Main chart content
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 60.0),
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.08),
             child: isLoading
                 ? Center(child: CircularProgressIndicator())
                 : classificationData == null
@@ -104,36 +99,38 @@ class _PieChartScreenState extends State<PieChartScreen> {
                         child: Text(
                           "No classification data found.",
                           style: TextStyle(
-                            fontSize: 30,
+                            fontSize: screenWidth * 0.06,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       )
                     : Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          SizedBox(height: screenHeight * 0.2),
                           Text(
                             "Classification Breakdown",
                             style: TextStyle(
-                              fontSize: 38,
+                              fontSize: screenWidth * 0.075,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: const Color.fromARGB(255, 0, 0, 0),
                             ),
+                            textAlign: TextAlign.center,
                           ),
-                          SizedBox(height: 20), //move text up and down
-                          SizedBox(
-                            height: 700,
+                          SizedBox(height: screenHeight * 0.01),
+                          Expanded(
                             child: PieChart(
                               PieChartData(
                                 sectionsSpace: 2,
-                                centerSpaceRadius: 40,
-                                sections: _generatePieChartSections(),
+                                centerSpaceRadius: screenWidth * 0.1,
+                                sections:
+                                    _generatePieChartSections(screenWidth),
                               ),
                             ),
                           ),
-                          SizedBox(height: 180),
+                          SizedBox(height: screenHeight * 0.15),
                         ],
                       ),
           ),
@@ -142,7 +139,7 @@ class _PieChartScreenState extends State<PieChartScreen> {
     );
   }
 
-  List<PieChartSectionData> _generatePieChartSections() {
+  List<PieChartSectionData> _generatePieChartSections(double screenWidth) {
     if (classificationData == null) return [];
 
     Map<String, Color> categoryColors = {
@@ -161,9 +158,9 @@ class _PieChartScreenState extends State<PieChartScreen> {
         color: categoryColors[category] ?? Colors.black,
         value: value.toDouble(),
         title: "$category\n$value",
-        radius: 180,
+        radius: screenWidth * 0.3,
         titleStyle: TextStyle(
-          fontSize: 18,
+          fontSize: screenWidth * 0.04,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
