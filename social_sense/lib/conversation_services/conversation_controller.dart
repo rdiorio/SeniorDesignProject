@@ -68,11 +68,15 @@ class ConversationController {
 
 //Scores conversation
   int scoreConversation(Map<String, int> classificationCounts) {
-    int score = classificationCounts["positive"]! * 10 +
-        classificationCounts["neutral"]! * 5 +
-        classificationCounts["off-topic"]! * 2 +
-        classificationCounts["non-responsive"]! * 2 +
-        classificationCounts["inappropriate"]! * 2;
+    int score = classificationCounts["positive"]! * 30 +
+        classificationCounts["neutral"]! * 15 -
+        classificationCounts["off-topic"]! * 10 -
+        classificationCounts["non-responsive"]! * 10 -
+        classificationCounts["inappropriate"]! * 10;
+
+    if (score < 10) {
+      score = 10;
+    }
     return score;
   }
 

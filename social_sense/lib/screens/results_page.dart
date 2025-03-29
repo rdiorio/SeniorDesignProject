@@ -37,7 +37,7 @@ class _ResultsPageState extends State<ResultsPage> {
   String? glasses;
   bool isLoading = true;
   int maxScore = 0;
-final List<String> emotions = ["Happy 😄", " Sad 🥺", "Angry 😠" ];
+  final List<String> emotions = ["Happy 😄", " Sad 🥺", "Angry 😠"];
 
   late ConfettiController _confettiController;
   final AudioPlayer _audioPlayer = AudioPlayer();
@@ -57,7 +57,10 @@ final List<String> emotions = ["Happy 😄", " Sad 🥺", "Angry 😠" ];
 
   Future<void> _loadAndUpdateScores() async {
     try {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(widget.uid).get();
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.uid)
+          .get();
       if (userDoc.exists && userDoc.data() != null) {
         var data = userDoc.data() as Map<String, dynamic>;
         var scores = data['scores'] ?? {};
@@ -70,23 +73,27 @@ final List<String> emotions = ["Happy 😄", " Sad 🥺", "Angry 😠" ];
           hat = userDoc['currentHat'];
           glasses = userDoc['currentGlasses'];
         });
-        if (maxScore < widget.points){
-           await DatabaseService(uid: widget.uid).updateUserScore(widget.difficulty, widget.points);
+        if (maxScore < widget.points) {
+          await DatabaseService(uid: widget.uid)
+              .updateUserScore(widget.difficulty, widget.points);
         }
       }
 
-      await DatabaseService(uid: widget.uid).updateUserScores(widget.uid, widget.points);
+      await DatabaseService(uid: widget.uid)
+          .updateUserScores(widget.uid, widget.points);
 
-      DocumentSnapshot updatedDoc = await FirebaseFirestore.instance.collection('users').doc(widget.uid).get();
+      DocumentSnapshot updatedDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.uid)
+          .get();
       if (updatedDoc.exists && updatedDoc.data() != null) {
-        var updatedScores = (updatedDoc.data() as Map<String, dynamic>)['scores'];
+        var updatedScores =
+            (updatedDoc.data() as Map<String, dynamic>)['scores'];
         updatedTotalPoints = updatedScores['totalPoints'] ?? 0;
         updatedStars = updatedScores['stars'] ?? 0;
         earnedStars = updatedStars - initialStars;
-        progress = (updatedTotalPoints % 10) / 10.0;
+        progress = (updatedTotalPoints % 100) / 100.0;
         maxScore = updatedScores[widget.difficulty] ?? 0;
-
-     
 
         if (earnedStars > 0) {
           _confettiController.play();
@@ -100,7 +107,7 @@ final List<String> emotions = ["Happy 😄", " Sad 🥺", "Angry 😠" ];
     }
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -124,7 +131,8 @@ final List<String> emotions = ["Happy 😄", " Sad 🥺", "Angry 😠" ];
                 children: [
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -141,7 +149,7 @@ final List<String> emotions = ["Happy 😄", " Sad 🥺", "Angry 😠" ];
                           ),
                           if (earnedStars == 0)
                             Text(
-                              "${10 - ((initialTotalPoints + widget.points) % 10)} more to your next star!",
+                              "${100 - ((initialTotalPoints + widget.points) % 100)} more to your next star!",
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontSize: 18,
@@ -151,72 +159,73 @@ final List<String> emotions = ["Happy 😄", " Sad 🥺", "Angry 😠" ];
                             ),
                           const SizedBox(height: 25),
                           Stack(
-  clipBehavior: Clip.none,
-  alignment: Alignment.center,
-  children: [
-    CircularProgressBar(
-      progress: progress,
-      size: screenWidth * 0.65,
-      strokeWidth: screenWidth * 0.045,
-    ),
+                            clipBehavior: Clip.none,
+                            alignment: Alignment.center,
+                            children: [
+                              CircularProgressBar(
+                                progress: progress,
+                                size: screenWidth * 0.72,
+                                strokeWidth: screenWidth * 0.045,
+                              ),
 
-    /// 🐻 Buddy
-    Image.asset(
-      buddyAsset,
-      width: screenWidth * 0.6,
-      height: screenHeight * 0.3,
-      fit: BoxFit.contain,
-    ),
+                              /// 🐻 Buddy
+                              Image.asset(
+                                buddyAsset,
+                                width: screenWidth * 0.6,
+                                height: screenHeight * 0.3,
+                                fit: BoxFit.contain,
+                              ),
 
-    /// 🧢 Hat (if any)
-    if (hat != null && hat!.isNotEmpty)
-      Positioned(
-        top: screenHeight * 0.02,
-        child: Image.asset(
-          'assets/$hat.png',
-          width: screenWidth * 0.25,
-          height: screenHeight * 0.05,
-          fit: BoxFit.contain,
-        ),
-      ),
+                              /// 🧢 Hat (if any)
+                              if (hat != null && hat!.isNotEmpty)
+                                Positioned(
+                                  top: screenHeight * 0.02,
+                                  child: Image.asset(
+                                    'assets/$hat.png',
+                                    width: screenWidth * 0.25,
+                                    height: screenHeight * 0.05,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
 
-    /// 🕶️ Glasses (if any)
-    if (glasses != null && glasses!.isNotEmpty)
-      Positioned(
-        top: screenHeight * 0.06,
-        child: Image.asset(
-          'assets/$glasses.png',
-          width: screenWidth * 0.3, // Scale width for more accurate size
-          height: screenHeight * 0.1,
-          fit: BoxFit.contain,
-        ),
-      ),
+                              /// 🕶️ Glasses (if any)
+                              if (glasses != null && glasses!.isNotEmpty)
+                                Positioned(
+                                  top: screenHeight * 0.06,
+                                  child: Image.asset(
+                                    'assets/$glasses.png',
+                                    width: screenWidth *
+                                        0.3, // Scale width for more accurate size
+                                    height: screenHeight * 0.1,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
 
-    /// ⭐ Star Counter
-    Positioned(
-      top: screenHeight * -0.025,
-      child: Container(
-        width: screenWidth * 0.15,
-        height: screenHeight * 0.06,
-        alignment: Alignment.center,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Image.asset(
-              'assets/star.png',
-              width: screenWidth * 0.15,
-              height: screenHeight * 0.06,
-            ),
-            Text(
-              '$updatedStars',
-              style: TextStyle(
-                fontSize: screenWidth * 0.06,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-          ],
-        ),
+                              /// ⭐ Star Counter
+                              Positioned(
+                                top: screenHeight * -0.025,
+                                child: Container(
+                                  width: screenWidth * 0.15,
+                                  height: screenHeight * 0.06,
+                                  alignment: Alignment.center,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Image.asset(
+                                        'assets/star.png',
+                                        width: screenWidth * 0.15,
+                                        height: screenHeight * 0.06,
+                                      ),
+                                      Text(
+                                        '$updatedStars',
+                                        style: TextStyle(
+                                          fontSize: screenWidth * 0.06,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],
@@ -230,7 +239,8 @@ final List<String> emotions = ["Happy 😄", " Sad 🥺", "Angry 😠" ];
                               decoration: BoxDecoration(
                                 color: const Color.fromARGB(255, 220, 198, 255),
                                 borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.black, width: 3),
+                                border:
+                                    Border.all(color: Colors.black, width: 3),
                               ),
                               child: Text(
                                 '${emotions[index]}: Took ${widget.attempts[index]} ${widget.attempts[index] == 1 ? 'try' : 'tries'}',
@@ -265,16 +275,20 @@ final List<String> emotions = ["Happy 😄", " Sad 🥺", "Angry 😠" ];
                           ElevatedButton(
                             onPressed: () => Navigator.pushAndRemoveUntil(
                               context,
-                              MaterialPageRoute(builder: (context) => LessonsPage(uid: widget.uid)),
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      LessonsPage(uid: widget.uid)),
                               (route) => false,
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.purple[300],
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
-                                side: const BorderSide(color: Colors.black, width: 3),
+                                side: const BorderSide(
+                                    color: Colors.black, width: 3),
                               ),
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 12),
                             ),
                             child: const Text(
                               'Back to Lessons',
@@ -292,7 +306,6 @@ final List<String> emotions = ["Happy 😄", " Sad 🥺", "Angry 😠" ];
                 ],
               ),
             ),
-
           ConfettiWidget(
             confettiController: _confettiController,
             blastDirectionality: BlastDirectionality.explosive,

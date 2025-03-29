@@ -15,6 +15,90 @@ class ConversationalLessons extends StatefulWidget {
   _ConversationalLessonsState createState() => _ConversationalLessonsState();
 }
 
+// ArcText widget for displaying the curved question text
+class ArcText extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    return CustomPaint(
+      painter: ArcTextPainter(),
+      child: SizedBox(height: screenHeight * .02, width: screenWidth * .9),
+    );
+  }
+}
+
+class ArcTextPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    const String text = "Let's Learn Together!";
+    const double fontSize = 38;
+
+    // Adjust radius dynamically based on screen width
+    final double radius = size.width * 0.55;
+    final double verticalOffset = size.height * -0.15; // Adjust dynamically
+
+    final textStyle = TextStyle(
+      fontSize: fontSize,
+      fontWeight: FontWeight.w900,
+      color: Colors.white,
+    );
+
+    double totalTextWidth = 0;
+    List<double> charWidths = [];
+
+    for (int i = 0; i < text.length; i++) {
+      TextPainter textPainter = TextPainter(
+        text: TextSpan(text: text[i], style: textStyle),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      charWidths.add(textPainter.width);
+      totalTextWidth += textPainter.width;
+    }
+
+    double totalAngle = pi * 0.7;
+    double startAngle = totalAngle / 0.83;
+    double angleStep = totalAngle / (text.length - 1); // Use equal steps
+    double currentAngle = startAngle;
+
+    for (int i = 0; i < text.length; i++) {
+      String char = text[i];
+
+      TextPainter textPainter = TextPainter(
+        text: TextSpan(text: char, style: textStyle),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      double x = size.width / 2 + radius * cos(currentAngle);
+      double y =
+          (size.height / 2 + radius * sin(currentAngle)) + verticalOffset;
+
+      canvas.save();
+      canvas.translate(x, y);
+      canvas.rotate(currentAngle - pi / 2);
+      textPainter.paint(
+          canvas,
+          Offset(
+              -textPainter.width / 2, -textPainter.height / 2)); // Center align
+      canvas.restore();
+
+      //currentAngle -= angleStep; // Decrease angle by equal spacing
+      // Check if the *next* character is an apostrophe and reduce space
+      if (i < text.length - 1 && text[i + 1] == "'") {
+        currentAngle -= angleStep * 0.7; // Reduce spacing before apostrophe
+      } else if (char == "'") {
+        currentAngle -= angleStep * 0.7; // Reduce space for apostrophe
+      } else {
+        currentAngle -= angleStep; // Decrease angle by equal spacing
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
 class _ConversationalLessonsState extends State<ConversationalLessons> {
   Future<Map<String, dynamic>?> _getUserData() async {
     DocumentSnapshot userDoc = await FirebaseFirestore.instance
@@ -55,7 +139,7 @@ class _ConversationalLessonsState extends State<ConversationalLessons> {
                 if (userData != null) {
                   buddy = userData['buddy'] ?? "Bear";
                   progressScore =
-                      (userData['scores']['totalPoints'] % 10) / 10.0;
+                      (userData['scores']['totalPoints'] % 100) / 100.0;
                   stars = userData['scores']['stars'] ?? 0;
                   hat = userData['currentHat'];
                   glasses = userData['currentGlasses'];
@@ -67,7 +151,7 @@ class _ConversationalLessonsState extends State<ConversationalLessons> {
                   // 🐻 Buddy Image with Progress Bar
                   Positioned(
                     top: screenHeight *
-                        0.15, // Moves everything slightly down to avoid the app bar overlap
+                        0.12, // Moves everything slightly down to avoid the app bar overlap
                     left: 0,
                     right: 0,
                     child: Center(
@@ -78,12 +162,12 @@ class _ConversationalLessonsState extends State<ConversationalLessons> {
                           /// ✅ Circular Progress Bar (Behind the Buddy)
                           CircularProgressBar(
                             progress: progressScore,
-                            size: screenWidth * 0.65,
+                            size: screenWidth * 0.72,
                             strokeWidth: screenWidth * 0.045,
                           ),
 
                           /// ✅ Dynamic buddy image
-                         BuddyAvatar(
+                          BuddyAvatar(
                             buddy: buddy,
                             hat: hat,
                             glasses: glasses,
@@ -126,28 +210,6 @@ class _ConversationalLessonsState extends State<ConversationalLessons> {
                       ),
                     ),
                   ),
-
-                  // ✅ Arc Text Below Progress Bar
-                  Positioned(
-                    top: screenHeight * 0.15 +
-                        (screenWidth * 0.65) / 2 +
-                        screenWidth * 0.05,
-                    left: 0,
-                    right: 0,
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: screenWidth * 0.15,
-                      child: CustomPaint(
-                        painter: arc.ArcTextPainter(
-                          text: "Let's Learn Together!",
-                          radius: (screenWidth * 0.65) / 2 + screenWidth * 0.05,
-                          verticalOffset: screenWidth * -0.1,
-                          fontSize: screenWidth * 0.08,
-                          isClockwise: true,
-                        ),
-                      ),
-                    ),
-                  ),
                 ],
               );
             },
@@ -185,6 +247,13 @@ class _ConversationalLessonsState extends State<ConversationalLessons> {
                 ),
               ),
             ),
+          ),
+// ✅ Arc Text (Curved Question)
+          Positioned(
+            top: screenHeight * 0.26, // Adjust as needed to bring it into view
+            left: 0,
+            right: 0,
+            child: Center(child: ArcText()),
           ),
 
           // ✅ Lesson Buttons
@@ -226,7 +295,8 @@ class _ConversationalLessonsState extends State<ConversationalLessons> {
         height: screenHeight * 0.08, // Scale height dynamically
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 221, 202, 235), // Light purple background
+            backgroundColor: const Color.fromARGB(
+                255, 221, 202, 235), // Light purple background
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
               side: BorderSide(
@@ -267,6 +337,7 @@ class _ConversationalLessonsState extends State<ConversationalLessons> {
     {"title": "Practice Being a Good Sport!", "topic": "game"},
   ];
 }
+
 class BuddyAvatar extends StatelessWidget {
   final String buddy;
   final String? hat;
@@ -300,7 +371,8 @@ class BuddyAvatar extends StatelessWidget {
             if (glasses != null && glasses!.isNotEmpty)
               Positioned(
                 top: 50,
-                child: Image.asset('assets/$glasses.png', width: 80, height: 40),
+                child:
+                    Image.asset('assets/$glasses.png', width: 80, height: 40),
               ),
           ],
         ),

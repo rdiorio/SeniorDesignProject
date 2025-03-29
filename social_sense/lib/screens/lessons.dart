@@ -15,6 +15,90 @@ class LessonsPage extends StatefulWidget {
   _LessonsPageState createState() => _LessonsPageState();
 }
 
+// ArcText widget for displaying the curved question text
+class ArcText extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    return CustomPaint(
+      painter: ArcTextPainter(),
+      child: SizedBox(height: screenHeight * 0.1, width: screenWidth * .9),
+    );
+  }
+}
+
+class ArcTextPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    const String text = "Explore Emotions!";
+    const double fontSize = 38;
+
+    // Adjust radius dynamically based on screen width
+    final double radius = size.width * 0.55;
+    final double verticalOffset = size.height * -0.15; // Adjust dynamically
+
+    final textStyle = TextStyle(
+      fontSize: fontSize,
+      fontWeight: FontWeight.w900,
+      color: Colors.white,
+    );
+
+    double totalTextWidth = 0;
+    List<double> charWidths = [];
+
+    for (int i = 0; i < text.length; i++) {
+      TextPainter textPainter = TextPainter(
+        text: TextSpan(text: text[i], style: textStyle),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      charWidths.add(textPainter.width);
+      totalTextWidth += textPainter.width;
+    }
+
+    double totalAngle = pi * 0.7;
+    double startAngle = totalAngle / 0.855;
+    double angleStep = totalAngle / (text.length + 1); // Use equal steps
+    double currentAngle = startAngle;
+
+    for (int i = 0; i < text.length; i++) {
+      String char = text[i];
+
+      TextPainter textPainter = TextPainter(
+        text: TextSpan(text: char, style: textStyle),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      double x = size.width / 2 + radius * cos(currentAngle);
+      double y =
+          (size.height / 2 + radius * sin(currentAngle)) + verticalOffset;
+
+      canvas.save();
+      canvas.translate(x, y);
+      canvas.rotate(currentAngle - pi / 2);
+      textPainter.paint(
+          canvas,
+          Offset(
+              -textPainter.width / 2, -textPainter.height / 2)); // Center align
+      canvas.restore();
+
+      //currentAngle -= angleStep; // Decrease angle by equal spacing
+      // Check if the *next* character is an M and increase space
+      if (i < text.length - 1 && text[i + 1] == "m") {
+        currentAngle -= angleStep * 1.2; // Increase spacing before M
+      } else if (char == "m") {
+        currentAngle -= angleStep * 1.2; // Increase space for M
+      } else {
+        currentAngle -= angleStep; // Decrease angle by equal spacing
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
 class _LessonsPageState extends State<LessonsPage> {
   Future<Map<String, dynamic>?> _getUserData() async {
     DocumentSnapshot userDoc = await FirebaseFirestore.instance
@@ -38,7 +122,6 @@ class _LessonsPageState extends State<LessonsPage> {
               fit: BoxFit.cover,
             ),
           ),
-
           FutureBuilder(
             future: _getUserData(),
             builder: (context, AsyncSnapshot<Map<String, dynamic>?> snapshot) {
@@ -54,7 +137,8 @@ class _LessonsPageState extends State<LessonsPage> {
                 var userData = snapshot.data;
                 if (userData != null) {
                   buddy = userData['buddy'] ?? "Bear";
-                  progressScore = (userData['scores']['totalPoints'] % 10) / 10.0;
+                  progressScore =
+                      (userData['scores']['totalPoints'] % 100) / 100.0;
                   stars = userData['scores']['stars'] ?? 0;
                   hat = userData['currentHat'];
                   glasses = userData['currentGlasses'];
@@ -74,7 +158,7 @@ class _LessonsPageState extends State<LessonsPage> {
                         children: [
                           CircularProgressBar(
                             progress: progressScore,
-                            size: screenWidth * 0.65,
+                            size: screenWidth * 0.72,
                             strokeWidth: screenWidth * 0.045,
                           ),
                           BuddyAvatar(
@@ -113,30 +197,10 @@ class _LessonsPageState extends State<LessonsPage> {
                       ),
                     ),
                   ),
-
-                  Positioned(
-                    top: screenHeight * 0.15 + (screenWidth * 0.65) / 2 + screenWidth * 0.05,
-                    left: 0,
-                    right: 0,
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: screenWidth * 0.15,
-                      child: CustomPaint(
-                        painter: arc.ArcTextPainter(
-                          text: "Explore Emotions!",
-                          radius: (screenWidth * 0.65) / 2 + screenWidth * 0.05,
-                          verticalOffset: screenWidth * -0.1,
-                          fontSize: screenWidth * 0.08,
-                          isClockwise: true,
-                        ),
-                      ),
-                    ),
-                  ),
                 ],
               );
             },
           ),
-
           Positioned(
             top: screenHeight * 0.06,
             right: screenWidth * 0.05,
@@ -154,7 +218,8 @@ class _LessonsPageState extends State<LessonsPage> {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => Home(uid: widget.uid)),
+                    MaterialPageRoute(
+                        builder: (context) => Home(uid: widget.uid)),
                   );
                 },
                 child: Text(
@@ -168,48 +233,38 @@ class _LessonsPageState extends State<LessonsPage> {
               ),
             ),
           ),
-
+          Positioned(
+            top: screenHeight * 0.26, // Adjust as needed to bring it into view
+            left: 0,
+            right: 0,
+            child: Center(child: ArcText()),
+          ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: EdgeInsets.only(
-                bottom: screenHeight * 0.075,
+                bottom: screenHeight * 0.12,
                 left: screenWidth * 0.05,
                 right: screenWidth * 0.05,
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Subheading for Easy Lessons
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    child: Text(
+                  buildLessonButton(
+                      context,
+                      "Easy Emotions",
                       "Learn basic emotions with examples.",
-                      style: TextStyle(fontSize: screenWidth * 0.035, fontWeight: FontWeight.bold, color: Colors.black),
-                    ),
-                  ),
-                  buildLessonButton(context, "Easy Emotions", EasyEmotionsPage()),
-
-                  // Subheading for Medium Lessons
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    child: Text(
+                      EasyEmotionsPage()),
+                  buildLessonButton(
+                      context,
+                      "Medium Emotions",
                       "Emotions with color and picture representations.",
-                      style: TextStyle(fontSize: screenWidth * 0.035, fontWeight: FontWeight.bold, color: Colors.black),
-                    ),
-                  ),
-                  buildLessonButton(context, "Medium Emotions", MediumEmotionsPage()),
-
-                  // Subheading for Hard Lessons
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    child: Text(
+                      MediumEmotionsPage()),
+                  buildLessonButton(
+                      context,
+                      "Hard Emotions",
                       "Identify emotions from only pictures.",
-                      style: TextStyle(fontSize: screenWidth * 0.035, fontWeight: FontWeight.bold, color: Colors.black),
-                    ),
-                  ),
-                  buildLessonButton(context, "Hard Emotions", HardEmotionsPage()),
+                      HardEmotionsPage()),
                 ],
               ),
             ),
@@ -219,7 +274,8 @@ class _LessonsPageState extends State<LessonsPage> {
     );
   }
 
-  Widget buildLessonButton(BuildContext context, String title, Widget targetPage) {
+  Widget buildLessonButton(
+      BuildContext context, String title, String subtitle, Widget targetPage) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
@@ -227,14 +283,14 @@ class _LessonsPageState extends State<LessonsPage> {
       padding: EdgeInsets.symmetric(vertical: screenHeight * 0.009),
       child: SizedBox(
         width: screenWidth * 0.9,
-        height: screenHeight * 0.075,
+        height: screenHeight * 0.0955,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 221, 202, 235),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
               side: BorderSide(
-                color: const Color.fromARGB(200, 248, 232, 83),
+                color: const Color.fromARGB(202, 255, 240, 26),
                 width: screenWidth * 0.015,
               ),
             ),
@@ -247,14 +303,28 @@ class _LessonsPageState extends State<LessonsPage> {
               MaterialPageRoute(builder: (context) => targetPage),
             );
           },
-          child: Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: screenWidth * 0.06,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: screenWidth * 0.06,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              SizedBox(height: screenHeight * 0.005),
+              Text(
+                subtitle,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: screenWidth * 0.03,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -295,7 +365,8 @@ class BuddyAvatar extends StatelessWidget {
             if (glasses != null && glasses!.isNotEmpty)
               Positioned(
                 top: 50,
-                child: Image.asset('assets/$glasses.png', width: 80, height: 40),
+                child:
+                    Image.asset('assets/$glasses.png', width: 80, height: 40),
               ),
           ],
         ),

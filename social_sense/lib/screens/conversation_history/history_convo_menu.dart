@@ -62,13 +62,13 @@ class _HistoryConvoMenuState extends State<HistoryConvoMenu> {
           // "Home" Button
           Positioned(
             top: screenHeight * 0.06,
-            left: screenWidth * 0.05,
+            right: screenWidth * 0.05,
             child: SizedBox(
               width: screenWidth * 0.25,
               height: screenHeight * 0.05,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF88158),
+                  backgroundColor: const Color(0xFFFF9720),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -96,13 +96,13 @@ class _HistoryConvoMenuState extends State<HistoryConvoMenu> {
           // "Back" (to History Topic Menu) Button
           Positioned(
             top: screenHeight * 0.06,
-            right: screenWidth * 0.05,
+            left: screenWidth * 0.05,
             child: SizedBox(
               width: screenWidth * 0.25,
               height: screenHeight * 0.05,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF9720),
+                  backgroundColor: const Color.fromARGB(255, 239, 133, 57),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

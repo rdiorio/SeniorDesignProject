@@ -9,10 +9,95 @@ import 'package:social_sense/screens/conversational_lessons.dart';
 import 'package:social_sense/screens/change_buddy.dart';
 import 'package:social_sense/screens/breathing_exercises.dart';
 import 'package:social_sense/screens/progress_bar.dart';
-import 'package:social_sense/screens/ArcTextPainter.dart' as arc;
 import 'package:social_sense/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
+
+// ArcText widget for displaying the curved question text
+class ArcText extends StatelessWidget {
+  final String text; // Accept text as a parameter
+  const ArcText({Key? key, required this.text})
+      : super(key: key); // Constructor
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    return CustomPaint(
+      painter: ArcTextPainter(text),
+      child: SizedBox(height: screenHeight * 1, width: screenWidth * .9),
+    );
+  }
+}
+
+class ArcTextPainter extends CustomPainter {
+  final String text;
+  ArcTextPainter(this.text); // Constructor to receive the 'Welcome user' text
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const double fontSize = 38;
+
+    // Adjust radius dynamically based on screen width
+    final double radius = size.width * 0.55;
+    final double verticalOffset = size.height * -0.15; // Adjust dynamically
+
+    final textStyle = const TextStyle(
+      fontSize: fontSize,
+      fontWeight: FontWeight.w900,
+      color: Colors.white,
+    );
+
+    double totalAngle = pi * 0.7;
+    double startAngle = totalAngle / 0.9;
+    double angleStep = totalAngle / (text.length * 1.2); // Use equal steps
+    double currentAngle = startAngle;
+
+    for (int i = 0; i < text.length; i++) {
+      String char = text[i];
+
+      TextPainter textPainter = TextPainter(
+        text: TextSpan(text: char, style: textStyle),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      double x = size.width / 2 + radius * cos(currentAngle);
+      double y =
+          (size.height / 2 + radius * sin(currentAngle)) + verticalOffset;
+
+      canvas.save();
+      canvas.translate(x, y);
+      canvas.rotate(currentAngle - pi / 2);
+      textPainter.paint(
+          canvas,
+          Offset(
+              -textPainter.width / 2, -textPainter.height / 2)); // Center align
+      canvas.restore();
+
+      //currentAngle -= angleStep; // Decrease angle by equal spacing
+      if (i < text.length - 1 && text[i + 1] == "l") {
+        currentAngle -= angleStep * 0.8; // Reduce spacing before L
+      } else if (char == "l") {
+        currentAngle -= angleStep * 0.8; // Reduce space for L
+      } else if (i < text.length - 1 && text[i + 1] == "m") {
+        currentAngle -= angleStep * 1.2; // Increase spacing before M
+      } else if (char == "m") {
+        currentAngle -= angleStep * 1.2; // Increase space for M
+      } else if (i < text.length - 1 && text[i + 1] == "w") {
+        currentAngle -= angleStep * 1.2; // Increase spacing before W
+      } else if (char == "w") {
+        currentAngle -= angleStep * 1.2; // Increase space for W
+      } else if (char == "W") {
+        currentAngle -= angleStep * 1.2; // Increase space for uppercase W
+      } else {
+        currentAngle -= angleStep; // Decrease angle by equal spacing
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
 
 class Home extends StatelessWidget {
   final AuthService _auth = AuthService();
@@ -60,8 +145,10 @@ class Home extends StatelessWidget {
                   userName = userData['First Name'];
                   buddy = userData['buddy'] ?? "Bear";
                   progressScore =
-                      (userData['scores']['totalPoints'] % 10) / 10.0;
-                  stars = userData['scores']['stars'];
+                      ((userData['scores']['totalPoints'] ?? 0) % 100) / 100.0;
+
+                  stars = (userData['scores']['stars'] ?? 0);
+
                   hat = userData['currentHat'];
                   glasses = userData['currentGlasses'];
                 }
@@ -73,7 +160,7 @@ class Home extends StatelessWidget {
                   //Updated buddy image & progress bar
                   Positioned(
                     top: screenHeight *
-                        0.12, // Moves everything slightly down to avoid the app bar overlap
+                        0.10, // Moves everything slightly down to avoid the app bar overlap
                     left: 0,
                     right: 0,
                     child: Center(
@@ -84,7 +171,7 @@ class Home extends StatelessWidget {
                           // Circular Progress Bar (Behind the Buddy)
                           CircularProgressBar(
                             progress: progressScore,
-                            size: screenWidth * 0.65,
+                            size: screenWidth * 0.72,
                             strokeWidth: screenWidth * 0.045,
                           ),
 
@@ -135,23 +222,13 @@ class Home extends StatelessWidget {
 
                   //"Welcome User!" Text
                   Positioned(
-                    top: screenHeight * 0.11 +
-                        (screenWidth * 0.65) / 2 +
-                        screenWidth * 0.05,
+                    top: screenHeight * 0.21,
                     left: 0,
                     right: 0,
                     child: SizedBox(
                       width: double.infinity,
                       height: screenWidth * 0.15,
-                      child: CustomPaint(
-                        painter: arc.ArcTextPainter(
-                          text: "Welcome $userName!",
-                          radius: (screenWidth * 0.65) / 2 + screenWidth * 0.05,
-                          verticalOffset: screenWidth * -0.1,
-                          fontSize: screenWidth * 0.08,
-                          isClockwise: true,
-                        ),
-                      ),
+                      child: Center(child: ArcText(text: "Welcome $userName!")),
                     ),
                   ),
                 ],
@@ -185,7 +262,7 @@ class Home extends StatelessWidget {
                 child: Text(
                   "Logout",
                   style: TextStyle(
-                    fontSize: screenWidth * 0.04,
+                    fontSize: screenWidth * 0.0375,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -251,7 +328,7 @@ class Home extends StatelessWidget {
           vertical: screenHeight * 0.005), // Reduced space between buttons
       child: SizedBox(
         width: screenWidth * 0.9, // Scales width dynamically
-        height: screenHeight * 0.075, // Scales height dynamically
+        height: screenHeight * 0.070, // Scales height dynamically
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 242, 231, 249),
@@ -315,7 +392,8 @@ class BuddyAvatar extends StatelessWidget {
             if (glasses != null && glasses!.isNotEmpty)
               Positioned(
                 top: 50,
-                child: Image.asset('assets/$glasses.png', width: 80, height: 40),
+                child:
+                    Image.asset('assets/$glasses.png', width: 80, height: 40),
               ),
           ],
         ),

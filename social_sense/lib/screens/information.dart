@@ -15,9 +15,27 @@ class _InformationScreenState extends State<InformationScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
+  bool _isLoading = true;
 
   Future<Map<String, dynamic>?> _getUserData() async {
     return await DatabaseService(uid: widget.uid).getUserData();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    var userData = await DatabaseService(uid: widget.uid).getUserData();
+    if (userData != null) {
+      setState(() {
+        _firstNameController.text = userData['First Name'] ?? '';
+        _lastNameController.text = userData['Last Name'] ?? '';
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -62,79 +80,66 @@ class _InformationScreenState extends State<InformationScreen> {
           ),
           // Foreground content
           Center(
-            child: FutureBuilder(
-              future: _getUserData(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error loading user data'));
-                } else if (snapshot.hasData) {
-                  var userData = snapshot.data as Map<String, dynamic>?;
-                  if (userData != null) {
-                    _firstNameController.text = userData['First Name'] ?? '';
-                    _lastNameController.text = userData['Last Name'] ?? '';
-                  }
-                }
-
-                return Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      SizedBox(height: 150),
-                      Text(
-                        'Change Information',
-                        style: TextStyle(
-                          fontFamily: "Modak",
-                          fontSize: screenWidth * 0.08,
-                          color: Colors.black,
-                        ),
-                      ),
-                      SizedBox(height: 40),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: TextFormField(
-                          controller: _firstNameController,
-                          decoration: InputDecoration(
-                            labelText: 'First Name',
-                            labelStyle:
-                                TextStyle(fontFamily: "Modak", fontSize: screenWidth * 0.06),
-                            border: OutlineInputBorder(),
-                            filled: true,
-                            fillColor: Colors.white,
+            child: _isLoading
+                ? CircularProgressIndicator() // Show a loader while data loads
+                : Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        SizedBox(height: 150),
+                        Text(
+                          'Change Information',
+                          style: TextStyle(
+                            fontFamily: "Modak",
+                            fontSize: screenWidth * 0.08,
+                            color: Colors.black,
                           ),
-                          validator: (val) =>
-                              val!.isEmpty ? 'Enter your first name' : null,
                         ),
-                      ),
-                      SizedBox(height: 20),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 10.0),
-                        child: TextFormField(
-                          controller: _lastNameController,
-                          decoration: InputDecoration(
-                            labelText: 'Last Name',
-                            labelStyle:
-                                TextStyle(fontFamily: "Modak", fontSize: screenWidth * 0.06),
-                            border: OutlineInputBorder(),
-                            filled: true,
-                            fillColor: Colors.white,
+                        SizedBox(height: 40),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: TextFormField(
+                            controller: _firstNameController,
+                            decoration: InputDecoration(
+                              labelText: 'First Name',
+                              labelStyle: TextStyle(
+                                  fontFamily: "Modak",
+                                  fontSize: screenWidth * 0.06),
+                              border: OutlineInputBorder(),
+                              filled: true,
+                              fillColor: Colors.white,
+                            ),
+                            validator: (val) =>
+                                val!.isEmpty ? 'Enter your first name' : null,
                           ),
-                          validator: (val) =>
-                              val!.isEmpty ? 'Enter your last name' : null,
                         ),
-                      ),
-                      SizedBox(height: 20),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 40),
-                        child: buildSaveButton(context),
-                      ),
-                    ],
+                        SizedBox(height: 20),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 10.0),
+                          child: TextFormField(
+                            controller: _lastNameController,
+                            decoration: InputDecoration(
+                              labelText: 'Last Name',
+                              labelStyle: TextStyle(
+                                  fontFamily: "Modak",
+                                  fontSize: screenWidth * 0.06),
+                              border: OutlineInputBorder(),
+                              filled: true,
+                              fillColor: Colors.white,
+                            ),
+                            validator: (val) =>
+                                val!.isEmpty ? 'Enter your last name' : null,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 40),
+                          child: buildSaveButton(context),
+                        ),
+                      ],
+                    ),
                   ),
-                );
-              },
-            ),
           ),
           Positioned(
             top: screenHeight * 0.06,
@@ -178,17 +183,17 @@ class _InformationScreenState extends State<InformationScreen> {
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01), 
+      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
       child: SizedBox(
         width: screenWidth * 0.3,
-        height: screenHeight * 0.05, 
+        height: screenHeight * 0.05,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 242, 231, 249), 
+            backgroundColor: const Color.fromARGB(255, 242, 231, 249),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20), 
+              borderRadius: BorderRadius.circular(20),
               side: BorderSide(
-                color: const Color.fromARGB(255, 248, 129, 74), 
+                color: const Color.fromARGB(255, 248, 129, 74),
                 width: screenWidth * 0.01,
               ),
             ),
@@ -216,5 +221,4 @@ class _InformationScreenState extends State<InformationScreen> {
       ),
     );
   }
-
 }

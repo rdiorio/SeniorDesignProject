@@ -148,7 +148,7 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
       });
 
       // Save score after the user gets it right
-    /*  String? userUid = FirebaseAuth.instance.currentUser?.uid;
+      /*  String? userUid = FirebaseAuth.instance.currentUser?.uid;
       if (userUid != null) {
         Map<String, dynamic>? scores =
             await DatabaseService(uid: userUid).getUserScores();
@@ -178,8 +178,9 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
               builder: (context) => ResultsPage(
                 attempts: attemptsPerQuestion,
                 points: totalLessonPoints,
-                uid: userUid!, 
-                difficulty: 'medium',// ✅ Now userUid is guaranteed to be non-null
+                uid: userUid!,
+                difficulty:
+                    'medium', // ✅ Now userUid is guaranteed to be non-null
               ),
             ),
           );
@@ -211,7 +212,8 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
           backgroundColor: const Color.fromARGB(255, 242, 231, 249),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
-            side: const BorderSide(color: const Color.fromARGB(255, 248, 129, 74), width: 3),
+            side: const BorderSide(
+                color: const Color.fromARGB(255, 248, 129, 74), width: 3),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         ),
@@ -253,14 +255,6 @@ class _MediumEmotionsPageState extends State<MediumEmotionsPage> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                    ),
-                    Text(
-                      'Points: $totalLessonPoints', // Show cumulative score
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
                     ),
                   ],
                 ),

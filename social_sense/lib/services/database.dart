@@ -24,8 +24,8 @@ class DatabaseService {
         'voice': {'name': 'Leda', 'gender': 'FEMALE'},
         'buddy': 'Bear',
         'buddyName': 'No Name',
-        'currentHat' : "",
-        'currentGlasses' : ""
+        'currentHat': "",
+        'currentGlasses': ""
       });
     } catch (e) {
       print('Error creating user profile: $e');
@@ -280,9 +280,9 @@ class DatabaseService {
         "score": score,
         "positive": classificationCounts["positive"] ?? 0,
         "neutral": classificationCounts["neutral"] ?? 0,
-        "off_topic": classificationCounts["off-topic"] ?? 0,
+        "off-topic": classificationCounts["off-topic"] ?? 0,
         "inappropriate": classificationCounts["inappropriate"] ?? 0,
-        "non_responsive": classificationCounts["non-responsive"] ?? 0,
+        "non-responsive": classificationCounts["non-responsive"] ?? 0,
         "conversationLog": conversationLog, // Keep as a List
       });
 
@@ -501,11 +501,11 @@ class DatabaseService {
         int newStars = currentStars;
 
         // Check if totalPoints exceeded threshold (10 points)
-        if (newTotalPoints >= 10) {
+        if (newTotalPoints >= 100) {
           newStars += newTotalPoints ~/
-              10; // Increase stars by the number of times threshold is met
+              100; // Increase stars by the number of times threshold is met
           newTotalPoints =
-              newTotalPoints % 10; // Keep the remainder as new totalPoints
+              newTotalPoints % 100; // Keep the remainder as new totalPoints
         }
 
         // Update Firestore
@@ -522,30 +522,32 @@ class DatabaseService {
     }
   }
 
-Future<void> addToOwnedAccessory(String category, String item) async {
-  try {
-    DocumentReference userDocRef = FirebaseFirestore.instance.collection('users').doc(uid);
+  Future<void> addToOwnedAccessory(String category, String item) async {
+    try {
+      DocumentReference userDocRef =
+          FirebaseFirestore.instance.collection('users').doc(uid);
 
-    await userDocRef.update({
-      category: FieldValue.arrayUnion([item])
-    });
-  } catch (e) {
-    print('Error adding item to $category: $e');
-  }
-}
-
-Future<List<String>> getOwnedItems(String field) async {
-  try {
-    DocumentSnapshot doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    if (doc.exists && doc.data() != null) {
-      final data = doc.data() as Map<String, dynamic>;
-      return List<String>.from(data[field] ?? []);
+      await userDocRef.update({
+        category: FieldValue.arrayUnion([item])
+      });
+    } catch (e) {
+      print('Error adding item to $category: $e');
     }
-  } catch (e) {
-    print("Error fetching $field: $e");
   }
-  return [];
-}
+
+  Future<List<String>> getOwnedItems(String field) async {
+    try {
+      DocumentSnapshot doc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      if (doc.exists && doc.data() != null) {
+        final data = doc.data() as Map<String, dynamic>;
+        return List<String>.from(data[field] ?? []);
+      }
+    } catch (e) {
+      print("Error fetching $field: $e");
+    }
+    return [];
+  }
 
 //Update currently equipped accessories
   Future<void> updateCurrentAccessories({String? hat, String? glasses}) async {
@@ -560,33 +562,30 @@ Future<List<String>> getOwnedItems(String field) async {
 
   //Deduct stars
   Future<bool> deductStars(int amount) async {
-  DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(uid);
+    DocumentReference userRef =
+        FirebaseFirestore.instance.collection('users').doc(uid);
 
-  try {
-    return FirebaseFirestore.instance.runTransaction((transaction) async {
-      DocumentSnapshot snapshot = await transaction.get(userRef);
-      Map<String, dynamic> scores = snapshot.get('scores');
-      int currentStars = scores['stars'] ?? 0;
+    try {
+      return FirebaseFirestore.instance.runTransaction((transaction) async {
+        DocumentSnapshot snapshot = await transaction.get(userRef);
+        Map<String, dynamic> scores = snapshot.get('scores');
+        int currentStars = scores['stars'] ?? 0;
 
-      if (currentStars < amount) {
-        return false; 
-      }
+        if (currentStars < amount) {
+          return false;
+        }
 
-      int updatedStars = currentStars - amount;
+        int updatedStars = currentStars - amount;
 
-      transaction.update(userRef, {
-        'scores.stars': updatedStars,
+        transaction.update(userRef, {
+          'scores.stars': updatedStars,
+        });
+
+        return true;
       });
-
-      return true;
-    });
-  } catch (e) {
-    print("Failed to deduct stars: $e");
-    return false;
+    } catch (e) {
+      print("Failed to deduct stars: $e");
+      return false;
+    }
   }
-}
-
-
-
-
 }

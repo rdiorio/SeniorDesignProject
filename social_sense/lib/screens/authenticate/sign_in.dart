@@ -53,7 +53,8 @@ class _SignInState extends State<SignIn> {
                 Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/bottomPurple_background.png'), // Path to your image
+                      image: AssetImage(
+                          'assets/bottomPurple_background.png'), // Path to your image
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -62,8 +63,11 @@ class _SignInState extends State<SignIn> {
                 Center(
                   child: SingleChildScrollView(
                     child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
-                      constraints: BoxConstraints(maxWidth: 400), // Adjust the maxWidth to make the box smaller
+                      padding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 30.0),
+                      constraints: BoxConstraints(
+                          maxWidth:
+                              400), // Adjust the maxWidth to make the box smaller
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -92,10 +96,19 @@ class _SignInState extends State<SignIn> {
                                     hintText: 'Email',
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30.0),
-                                      borderSide: BorderSide(color: Colors.black),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 2.0),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.red, width: 2.0),
                                     ),
                                   ),
-                                  validator: (val) => (val?.isEmpty ?? true) ? 'Enter an email' : null,
+                                  validator: (val) => (val?.isEmpty ?? true)
+                                      ? 'Enter an email'
+                                      : null,
                                   onChanged: (val) {
                                     setState(() => email = val);
                                   },
@@ -107,9 +120,19 @@ class _SignInState extends State<SignIn> {
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30.0),
                                     ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 2.0),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.red, width: 2.0),
+                                    ),
                                   ),
                                   obscureText: true,
-                                  validator: (val) => (val?.length ?? 0) < 6 ? 'Enter a password that is 6 characters long' : null,
+                                  validator: (val) => (val?.length ?? 0) < 6
+                                      ? 'Enter a password that is 6 characters long'
+                                      : null,
                                   onChanged: (val) {
                                     setState(() => password = val);
                                   },
@@ -117,19 +140,25 @@ class _SignInState extends State<SignIn> {
                                 SizedBox(height: 20.0),
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color.fromARGB(255, 103, 27, 131), // Background color
+                                    backgroundColor: const Color.fromARGB(
+                                        255, 103, 27, 131), // Background color
                                   ),
                                   child: Text(
                                     'Sign in',
-                                    style: TextStyle(color: Colors.white), // Text color
+                                    style: TextStyle(
+                                        color: Colors.white), // Text color
                                   ),
                                   onPressed: () async {
-                                    if (_formKey.currentState?.validate() ?? false) {
+                                    if (_formKey.currentState?.validate() ??
+                                        false) {
                                       setState(() => loading = true);
-                                      dynamic result = await _auth.signInWithEmailAndPassword(email, password);
+                                      dynamic result = await _auth
+                                          .signInWithEmailAndPassword(
+                                              email, password);
                                       if (result == null) {
                                         setState(() {
-                                          error = 'could not sign in with those credentials';
+                                          error =
+                                              'could not sign in with those credentials';
                                           loading = false;
                                         });
                                       }
@@ -147,7 +176,8 @@ class _SignInState extends State<SignIn> {
                                 SizedBox(height: 12.0),
                                 Text(
                                   error,
-                                  style: TextStyle(color: Colors.red, fontSize: 14.0),
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 14.0),
                                 ),
                                 SizedBox(height: 20.0),
                                 Row(
@@ -161,7 +191,8 @@ class _SignInState extends State<SignIn> {
                                       child: Text(
                                         "Register",
                                         style: TextStyle(
-                                          color: const Color.fromARGB(255, 58, 131, 190),
+                                          color: const Color.fromARGB(
+                                              255, 58, 131, 190),
                                           decoration: TextDecoration.underline,
                                         ),
                                       ),
@@ -181,6 +212,3 @@ class _SignInState extends State<SignIn> {
           );
   }
 }
-
-
-

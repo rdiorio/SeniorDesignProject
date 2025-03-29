@@ -41,8 +41,8 @@ class _PieChartScreenState extends State<PieChartScreen> {
         classificationData = {
           "inappropriate": conversationData["inappropriate"] ?? 0,
           "neutral": conversationData["neutral"] ?? 0,
-          "non_responsive": conversationData["non_responsive"] ?? 0,
-          "off_topic": conversationData["off_topic"] ?? 0,
+          "non-responsive": conversationData["non-responsive"] ?? 0,
+          "off-topic": conversationData["off-topic"] ?? 0,
           "positive": conversationData["positive"] ?? 0,
         };
         isLoading = false;
@@ -145,9 +145,16 @@ class _PieChartScreenState extends State<PieChartScreen> {
     Map<String, Color> categoryColors = {
       "positive": Colors.green,
       "neutral": Colors.blue,
-      "off_topic": Colors.orange,
+      "off-topic": Colors.orange,
       "inappropriate": Colors.red,
-      "non_responsive": Colors.grey,
+      "non-responsive": Colors.grey,
+    };
+    final Map<String, String> categoryNames = {
+      "positive": "Positive",
+      "neutral": "Neutral",
+      "off-topic": "Off-Topic",
+      "inappropriate": "Inappropriate",
+      "non-responsive": "Non-Responsive",
     };
 
     return classificationData!.entries.map((entry) {
@@ -157,7 +164,7 @@ class _PieChartScreenState extends State<PieChartScreen> {
       return PieChartSectionData(
         color: categoryColors[category] ?? Colors.black,
         value: value.toDouble(),
-        title: "$category\n$value",
+        title: "${categoryNames[category]}\n$value",
         radius: screenWidth * 0.3,
         titleStyle: TextStyle(
           fontSize: screenWidth * 0.04,

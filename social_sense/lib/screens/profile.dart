@@ -105,7 +105,7 @@ class ProfilePage extends StatelessWidget {
               String buddy = userData['buddy'] ?? "Bear"; // Default buddy
               int stars = userData['scores']['stars'] ?? 0;
               int totalPoints = userData['scores']['totalPoints'] ?? 0;
-              double progress = (totalPoints % 10) / 10.0;
+              double progress = (totalPoints % 100) / 100.0;
               String? hat = userData['currentHat'];
               String? glasses = userData['currentGlasses'];
 
@@ -122,10 +122,10 @@ class ProfilePage extends StatelessWidget {
                         children: [
                           CircularProgressBar(
                             progress: progress, // ✅ Dynamic progress value
-                            size: screenWidth * 0.65,
-                            strokeWidth: 18,
+                            size: screenWidth * 0.70,
+                            strokeWidth: 20,
                           ),
-                           BuddyAvatar(
+                          BuddyAvatar(
                             buddy: buddy,
                             hat: hat,
                             glasses: glasses,
@@ -216,7 +216,7 @@ class ProfilePage extends StatelessWidget {
                         // Message for next star
                         const SizedBox(height: 10),
                         Text(
-                          'Earn ${10 - (totalPoints % 10)} more points to get another star!\nYou can do it!',
+                          'Earn ${100 - (totalPoints % 100)} more points to get another star!\nYou can do it!',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: screenWidth * 0.05,
@@ -281,6 +281,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 }
+
 class BuddyAvatar extends StatelessWidget {
   final String buddy;
   final String? hat;
@@ -314,7 +315,8 @@ class BuddyAvatar extends StatelessWidget {
             if (glasses != null && glasses!.isNotEmpty)
               Positioned(
                 top: 50,
-                child: Image.asset('assets/$glasses.png', width: 80, height: 40),
+                child:
+                    Image.asset('assets/$glasses.png', width: 80, height: 40),
               ),
           ],
         ),

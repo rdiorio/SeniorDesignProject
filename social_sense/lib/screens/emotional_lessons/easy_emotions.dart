@@ -152,7 +152,8 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
           backgroundColor: const Color.fromARGB(255, 242, 231, 249),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
-            side: const BorderSide(color: const Color.fromARGB(255, 248, 129, 74), width: 3),
+            side: const BorderSide(
+                color: const Color.fromARGB(255, 248, 129, 74), width: 3),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         ),
@@ -194,14 +195,6 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                    ),
-                    Text(
-                      'Points: $totalLessonPoints', // Show cumulative score
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
                     ),
                   ],
                 ),
@@ -269,7 +262,8 @@ class _EasyEmotionsPageState extends State<EasyEmotionsPage> {
                         ElevatedButton(
                           onPressed: _startFaceCapture,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 242, 231, 249),
+                            backgroundColor:
+                                const Color.fromARGB(255, 242, 231, 249),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                               side: const BorderSide(

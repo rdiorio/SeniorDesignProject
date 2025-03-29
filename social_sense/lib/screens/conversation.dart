@@ -5,6 +5,7 @@ import 'package:social_sense/conversation_services/tts_services.dart';
 import 'package:social_sense/services/database.dart';
 import 'package:social_sense/screens/conversation_results.dart';
 import 'dart:async';
+import 'package:social_sense/screens/conversational_lessons.dart';
 
 class ConversationScreen extends StatefulWidget {
   final String conversationTopic;
@@ -26,8 +27,6 @@ class ConversationScreenState extends State<ConversationScreen> {
   bool isConversationEnded = false;
   bool isTTSActive = true;
 
-
-  // Initialize conversation values
   List<Map<String, String>> conversationLog = [];
   Map<String, int> classificationCounts = {
     "positive": 0,
@@ -38,7 +37,6 @@ class ConversationScreenState extends State<ConversationScreen> {
   };
   int conversationScore = 0;
 
-  // Voice & Buddy Preferences (Default)
   String voiceName = "Leda";
   String voiceGender = "FEMALE";
   String buddyName = "";
@@ -46,11 +44,8 @@ class ConversationScreenState extends State<ConversationScreen> {
   String? currentHat;
   String? currentGlasses;
 
-
-  // Variable to store the most recent user input
   String _currentUserInput = "";
 
-  //Animation Variables
   bool isTalking = false;
   bool showTalkingImage = false;
   Timer? _talkingTimer;
@@ -63,10 +58,7 @@ class ConversationScreenState extends State<ConversationScreen> {
 
   void _initializeUser() async {
     userUid = FirebaseAuth.instance.currentUser?.uid;
-    if (userUid == null) {
-      print("Error: No user signed in.");
-      return;
-    }
+    if (userUid == null) return;
 
     _controller = ConversationController(uid: userUid!);
     _ttsService = TextToSpeechService(uid: userUid!);
@@ -79,9 +71,9 @@ class ConversationScreenState extends State<ConversationScreen> {
   Future<void> _loadUserBuddyPreferences() async {
     if (userUid == null) return;
     try {
-      DatabaseService dbService = DatabaseService(uid: userUid!);
-      Map<String, String> buddyData = await dbService.getBuddyInfo();
-      Map<String, dynamic>? userData = await dbService.getUserData();
+      final dbService = DatabaseService(uid: userUid!);
+      final buddyData = await dbService.getBuddyInfo();
+      final userData = await dbService.getUserData();
 
       setState(() {
         buddyName = buddyData["buddyName"] ?? "Buddy";
@@ -91,18 +83,15 @@ class ConversationScreenState extends State<ConversationScreen> {
         isBuddyLoaded = true;
         _checkLoadingState();
       });
-      print("current hat $currentHat");
-      print("current glasses $currentGlasses");
     } catch (e) {
-      print("Error loading user data: $e");
+      print("Error loading buddy preferences: $e");
     }
   }
 
   Future<void> _loadUserVoicePreferences() async {
     if (userUid == null) return;
     try {
-      Map<String, String> voiceData =
-          await DatabaseService(uid: userUid!).getUserVoice();
+      final voiceData = await DatabaseService(uid: userUid!).getUserVoice();
       setState(() {
         voiceName = voiceData["name"] ?? "Leda";
         voiceGender = voiceData["gender"] ?? "FEMALE";
@@ -113,17 +102,13 @@ class ConversationScreenState extends State<ConversationScreen> {
   }
 
   Future<void> _startConversation() async {
-    if (userUid == null) return;
-
-    String initMessage =
+    final initMessage =
         await _controller.startConversation(widget.conversationTopic);
-
     setState(() {
       conversationLog.add({"role": "assistant", "content": initMessage});
       _checkLoadingState();
       _startTalkingAnimation();
     });
-
     if (isTTSActive) {
       await _ttsService.speak(initMessage, voiceName, voiceGender);
       _stopTalkingAnimation();
@@ -132,10 +117,7 @@ class ConversationScreenState extends State<ConversationScreen> {
 
   void _checkLoadingState() {
     if (conversationLog.isNotEmpty && isBuddyLoaded) {
-      setState(() {
-        isLoading = false;
-        
-      });
+      setState(() => isLoading = false);
     }
   }
 
@@ -148,12 +130,14 @@ class ConversationScreenState extends State<ConversationScreen> {
       _textController.clear();
     });
 
-    String response = await _controller.handleUserInput(userInput, widget.conversationTopic);
-    String responseContent = _controller.extractResponseContent(response);
-    String classification = _controller.extractClassification(response);
+    final response =
+        await _controller.handleUserInput(userInput, widget.conversationTopic);
+    final responseContent = _controller.extractResponseContent(response);
+    final classification = _controller.extractClassification(response);
 
     if (classificationCounts.containsKey(classification)) {
-      classificationCounts[classification] = classificationCounts[classification]! + 1;
+      classificationCounts[classification] =
+          classificationCounts[classification]! + 1;
     }
 
     setState(() {
@@ -166,16 +150,15 @@ class ConversationScreenState extends State<ConversationScreen> {
       _stopTalkingAnimation();
     }
 
-    bool shouldEnd = await _controller.endConversation(response);
-    if (shouldEnd) {
-      String goodbyeResponse =
-          await _controller.handleUserInput("end conversation", widget.conversationTopic);
-      String goodbyeContent =
+    if (await _controller.endConversation(response)) {
+      final goodbyeResponse = await _controller.handleUserInput(
+          "end conversation", widget.conversationTopic);
+      final goodbyeContent =
           _controller.extractResponseContent(goodbyeResponse);
 
       setState(() {
         conversationLog.add({"role": "assistant", "content": goodbyeContent});
-        isConversationEnded = true;  // ✅ Conversation is over
+        isConversationEnded = true;
         _startTalkingAnimation();
       });
 
@@ -185,42 +168,25 @@ class ConversationScreenState extends State<ConversationScreen> {
       }
 
       conversationScore = _controller.scoreConversation(classificationCounts);
-
-      if (userUid != null) {
-        DatabaseService dbService = DatabaseService(uid: userUid!);
-        await dbService.storeConversation(
-          userId: userUid!,
-          topic: widget.conversationTopic,
-          score: conversationScore,
-          classificationCounts: classificationCounts,
-          conversationLog: conversationLog,
-        );
-      } else {
-        print("Error: No user signed in.");
-      }
+      await DatabaseService(uid: userUid!).storeConversation(
+        userId: userUid!,
+        topic: widget.conversationTopic,
+        score: conversationScore,
+        classificationCounts: classificationCounts,
+        conversationLog: conversationLog,
+      );
     }
   }
 
-  void _toggleTTS() {
-    setState(() {
-      isTTSActive = !isTTSActive;
-    });
-  }
+  void _toggleTTS() => setState(() => isTTSActive = !isTTSActive);
 
-   // ✅ Starts talking animation (switches between open/closed mouth)
   void _startTalkingAnimation() {
-    setState(() {
-      isTalking = true;
-    });
-
+    setState(() => isTalking = true);
     _talkingTimer = Timer.periodic(Duration(milliseconds: 200), (timer) {
-      setState(() {
-        showTalkingImage = !showTalkingImage; // Toggle between images
-      });
+      setState(() => showTalkingImage = !showTalkingImage);
     });
   }
 
-  // ✅ Stops talking animation
   void _stopTalkingAnimation() {
     _talkingTimer?.cancel();
     setState(() {
@@ -239,17 +205,11 @@ class ConversationScreenState extends State<ConversationScreen> {
           content: TextField(
             controller: _textController,
             decoration: InputDecoration(hintText: "Enter your message..."),
-            onChanged: (value) {
-              tempUserInput = value;
-            },
+            onChanged: (value) => tempUserInput = value,
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text("Cancel"),
-            ),
+                onPressed: () => Navigator.pop(context), child: Text("Cancel")),
             TextButton(
               onPressed: () {
                 _sendUserMessage(tempUserInput);
@@ -265,116 +225,132 @@ class ConversationScreenState extends State<ConversationScreen> {
 
   @override
   Widget build(BuildContext context) {
-      String buddyImage = showTalkingImage
-        ? "assets/animal_${buddyType}_talking.png" // ✅ Open-mouth version
-        : "assets/animal_$buddyType.png"; // ✅ Closed-mouth version
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    String buddyImage = showTalkingImage
+        ? "assets/animal_${buddyType}_talking.png"
+        : "assets/animal_$buddyType.png";
 
     return Scaffold(
-      extendBodyBehindAppBar: true, // Allows content to go behind the app bar
-      appBar: AppBar(
-        backgroundColor: Colors.transparent, // Transparent app bar
-        elevation: 0, // Removes shadow
-        shadowColor: Colors.transparent,
-        actions: [
-          IconButton(
-            icon: Icon(isTTSActive ? Icons.volume_up : Icons.volume_off),
-            onPressed: _toggleTTS,
-            tooltip: "Toggle Speech Output",
-          ),
-        ],
-      ),
+      extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          // Background Image
           Positioned.fill(
-            child: Image.asset(
-              "assets/bottomPurple_background.png", // Change to your actual background image path
-              fit: BoxFit.cover, // Covers the entire screen
+            child: Image.asset("assets/bottomPurple_background.png",
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity),
+          ),
+          // "Back" (to Conversational Lessons Menu) Button
+          Positioned(
+            top: screenHeight * 0.06,
+            left: screenWidth * 0.05,
+            child: SizedBox(
+              width: screenWidth * 0.25,
+              height: screenHeight * 0.05,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 239, 133, 57),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 5,
+                ),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ConversationalLessons(uid: userUid!)),
+                  );
+                },
+                child: Text(
+                  "Back",
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.04,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ),
           ),
-
-          // Foreground Content
           isLoading
               ? Center(child: CircularProgressIndicator())
               : Column(
                   children: [
-                    SizedBox(height: kToolbarHeight + 100), // Push content below AppBar
+                    SizedBox(height: screenHeight * 0.12),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: screenWidth * 0.15),
                       child: Column(
                         children: [
                           Text(
                             buddyName,
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.purple[400]),
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.05,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.purple[400],
+                            ),
                           ),
-                          SizedBox(height: 5),
+                          SizedBox(height: screenHeight * 0.01),
                           if (conversationLog.isNotEmpty)
                             Container(
-                              padding: EdgeInsets.all(12.0),
-                              decoration: BoxDecoration(color: Colors.purple[300], borderRadius: BorderRadius.circular(20)),
-                              child: Text(conversationLog.lastWhere((message) => message["role"] == "assistant")["content"]!, style: TextStyle(color: Colors.white, fontSize: 18)),
+                              padding: EdgeInsets.all(screenWidth * 0.03),
+                              decoration: BoxDecoration(
+                                color: Colors.purple[300],
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                conversationLog.lastWhere((msg) =>
+                                    msg["role"] == "assistant")["content"]!,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: screenWidth * 0.045,
+                                ),
+                              ),
                             ),
-                          SizedBox(height: 10),
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Image.asset(buddyImage, width: 400, height: 400),
-                              if (currentHat != null && currentHat!.isNotEmpty)
-                                Positioned(
-                                  top: 40,
-                                  child: Image.asset(
-                                    "assets/$currentHat.png",
-                                    width: 150,
-                                    height: 70,
-                                  ),
-                                ),
-                              if (currentGlasses != null && currentGlasses!.isNotEmpty)
-                                Positioned(
-                                  top: 100,
-                                  child: Image.asset(
-                                    "assets/$currentGlasses.png",
-                                    width: 160,
-                                    height: 90,
-                                  ),
-                                ),
-                            ],
+                          SizedBox(height: screenHeight * 0.1),
+                          BuddyAvatar(
+                            buddy: buddyType,
+                            hat: currentHat,
+                            glasses: currentGlasses,
+                            isTalking: showTalkingImage,
+                            scale:
+                                screenWidth / 300, // you can tweak this value
                           ),
                         ],
                       ),
                     ),
                     Spacer(),
-
                     if (!isConversationEnded) ...[
                       Padding(
-                        padding: EdgeInsets.only(bottom: 40), // Moves it up
+                        padding: EdgeInsets.only(bottom: screenHeight * 0.05),
                         child: GestureDetector(
                           onTap: _showTextInputDialog,
                           child: Container(
-                            padding: EdgeInsets.all(12),
+                            padding: EdgeInsets.all(screenWidth * 0.035),
                             decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 246, 239, 250), 
-                              borderRadius: BorderRadius.circular(20), // Rounded corners
+                              color: Color(0xFFF6EFFA),
+                              borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: const Color.fromARGB(255, 248, 129, 74), 
-                                width: 4,
-                              ),
+                                  color: Color(0xFFF8814A), width: 3),
                             ),
                             child: Text(
-                              _currentUserInput.isEmpty ? "Touch to type..." : _currentUserInput,
+                              _currentUserInput.isEmpty
+                                  ? "Touch to type..."
+                                  : _currentUserInput,
                               style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold, 
+                                fontSize: screenWidth * 0.045,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                         ),
                       ),
-                      SizedBox(height: 10),
-
-                      // Move Mic Icon Up
                       Padding(
-                        padding: EdgeInsets.only(bottom: 80), // Moves it up
+                        padding: EdgeInsets.only(bottom: screenHeight * 0.07),
                         child: FloatingActionButton(
                           backgroundColor: Colors.purple[400],
                           onPressed: () {
@@ -384,18 +360,22 @@ class ConversationScreenState extends State<ConversationScreen> {
                               });
                             });
                           },
-                          child: Icon(Icons.mic, color: Colors.white, size: 30),
+                          child: Icon(Icons.mic, size: screenWidth * 0.075),
                         ),
                       ),
                     ] else ...[
                       Padding(
-                        padding: EdgeInsets.only(bottom: 75), // Adjust as needed
-                        child: buildButton(
-                          context,
-                          'View Results',
-                          ConversationResults(
-                            buddyType: buddyType,
-                            conversationScore: conversationScore,
+                        padding: EdgeInsets.only(bottom: screenHeight * 0.07),
+                        child: SizedBox(
+                          width: screenWidth * .6,
+                          height: screenHeight * .08,
+                          child: buildButton(
+                            context,
+                            'View Results',
+                            ConversationResults(
+                              buddyType: buddyType,
+                              conversationScore: conversationScore,
+                            ),
                           ),
                         ),
                       )
@@ -406,41 +386,87 @@ class ConversationScreenState extends State<ConversationScreen> {
       ),
     );
   }
+
   Widget buildButton(BuildContext context, String text, Widget targetScreen) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Padding(
-      padding: EdgeInsets.symmetric(
-          vertical: screenHeight * 0.005), // Reduced space between buttons
+      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.005),
       child: SizedBox(
-        width: screenWidth * 0.9, // Scales width dynamically
-        height: screenHeight * 0.075, // Scales height dynamically
+        width: double.infinity,
+        height: double.infinity,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 242, 231, 249),
+            backgroundColor: Color(0xFFF2E7F9),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
               side: BorderSide(
-                  color: const Color.fromARGB(255, 248, 129, 74),
-                  width: screenWidth * 0.015
-              ),
+                  color: Color(0xFFF8814A), width: screenWidth * 0.015),
             ),
             elevation: 5,
           ),
           onPressed: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => targetScreen));
+                context, MaterialPageRoute(builder: (_) => targetScreen));
           },
           child: Text(
             text,
-            textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: screenWidth * 0.06, // Scales text size dynamically
+              fontSize: screenWidth * 0.06,
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class BuddyAvatar extends StatelessWidget {
+  final String buddy;
+  final String? hat;
+  final String? glasses;
+  final double scale;
+  final bool isTalking;
+
+  const BuddyAvatar({
+    super.key,
+    required this.buddy,
+    this.hat,
+    this.glasses,
+    this.scale = 1.0,
+    this.isTalking = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    String buddyImage = isTalking
+        ? 'assets/animal_${buddy}_talking.png'
+        : 'assets/animal_$buddy.png';
+
+    return Transform.scale(
+      scale: scale,
+      child: SizedBox(
+        width: 250,
+        height: 250,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.asset(buddyImage, width: 300, height: 300),
+            if (hat != null && hat!.isNotEmpty)
+              Positioned(
+                top: 15,
+                child: Image.asset('assets/$hat.png', width: 100, height: 40),
+              ),
+            if (glasses != null && glasses!.isNotEmpty)
+              Positioned(
+                top: 60,
+                child:
+                    Image.asset('assets/$glasses.png', width: 100, height: 55),
+              ),
+          ],
         ),
       ),
     );
