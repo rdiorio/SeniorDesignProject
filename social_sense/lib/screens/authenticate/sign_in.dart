@@ -92,7 +92,12 @@ class _SignInState extends State<SignIn> {
                                     hintText: 'Email',
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30.0),
-                                      borderSide: BorderSide(color: Colors.black),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.black, width:2.0),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.red, width: 2.0),
                                     ),
                                   ),
                                   validator: (val) => (val?.isEmpty ?? true) ? 'Enter an email' : null,
@@ -106,6 +111,13 @@ class _SignInState extends State<SignIn> {
                                     hintText: 'Password',
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30.0),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.black, width: 2.0),
+                                      
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.red, width: 2.0),
                                     ),
                                   ),
                                   obscureText: true,
