@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_sense/conversation_services/openAI_api_service.dart';
 import 'package:social_sense/services/database.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt; // Speech-to-Text
-import 'dart:convert';
+import 'dart:async';
+
 
 class ConversationController {
   final AIAPIService _apiService;
@@ -91,7 +92,7 @@ class ConversationController {
   }
 
   //Starts Listening for Speech
-  Future<void> startListening(Function(String) onResult) async {
+  /*Future<void> startListening(Function(String) onResult) async {
     if (!_isListening) {
       bool available = await _speech.initialize(
         onStatus: (status) => print("Status: $status"),
@@ -112,7 +113,42 @@ class ConversationController {
         );
       }
     }
+  }*/
+
+  Future<void> startListening(Function(String) onResult) async {
+  if (!_isListening) {
+    bool available = await _speech.initialize(
+      onStatus: (status) => print("Status: $status"),
+      onError: (error) => print("Error: $error"),
+    );
+
+    if (available) {
+      _isListening = true;
+      bool hasResult = false;
+
+      
+      Timer(Duration(seconds: 5), () {
+        if (!hasResult && _isListening) {
+          _isListening = false;
+          _speech.stop();
+          onResult(" "); // send blank if no speech was detected
+        }
+      });
+
+      _speech.listen(
+        onResult: (result) async {
+          if (result.finalResult) {
+            hasResult = true;
+            _isListening = false;
+            _speech.stop();
+            onResult(result.recognizedWords.trim().isEmpty ? " " : result.recognizedWords);
+          }
+        },
+      );
+    }
   }
+}
+
 
   //Stops Listening
   Future<void> stopListening() async {

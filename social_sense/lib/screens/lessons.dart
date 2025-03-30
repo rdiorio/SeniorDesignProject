@@ -167,6 +167,7 @@ class _LessonsPageState extends State<LessonsPage> {
                             glasses: glasses,
                             scale: screenWidth / 300,
                           ),
+                          
                           Positioned(
                             top: screenHeight * -0.025,
                             child: Container(

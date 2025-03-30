@@ -357,23 +357,27 @@ class ConversationScreenState extends State<ConversationScreen> {
                         ),
                       ),
                       Padding(
-  padding: EdgeInsets.only(bottom: screenHeight * 0.07),
-  child: FloatingActionButton(
-    backgroundColor: Colors.purple[400],
-    onPressed: () {
-      _controller.startListening((recognizedText) {
-        final userInput = (recognizedText == null || recognizedText.trim().isEmpty)
-            ? " "
-            : recognizedText;
+                        padding: EdgeInsets.only(bottom: screenHeight * 0.07),
+                        child: FloatingActionButton(
+                          backgroundColor: Colors.purple[400],
+                          onPressed: () {
+                            if (isTalking){
+                              null;
+                            }
+                            else{
+                            _controller.startListening((recognizedText) {
+                              // If nothing was recognized, send a blank string
+                              final userInput = recognizedText.trim().isEmpty ? " " : recognizedText;
 
-        setState(() {
-          _sendUserMessage(userInput);
-        });
-      });
-    },
-    child: Icon(Icons.mic, size: screenWidth * 0.075),
-  ),
-),
+                              setState(() {
+                                _sendUserMessage(userInput);
+                              });
+                            });
+                          }
+                          },
+                          child: Icon(Icons.mic, size: screenWidth * 0.075),
+                        ),
+                      ),
 
                     ] else ...[
                       Padding(

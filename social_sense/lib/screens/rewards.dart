@@ -43,7 +43,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
     "Colorful",
     "Heart",
     "Orange",
-    "Pink",
+    "Round",
     "Star",
     "Disguise"
   ];
@@ -130,27 +130,40 @@ class _RewardsScreenState extends State<RewardsScreen> {
                               fontWeight: FontWeight.bold)),
                       SizedBox(height: screenHeight * 0.02),
                       Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Image.asset("assets/animal_$buddyType.png",
-                              width: screenWidth * 0.5),
-                          if (selectedHat != null)
-                            Positioned(
-                              top: screenHeight * 0.01,
-                              child: Image.asset("assets/hat$selectedHat.png",
-                                  width: screenWidth * 0.18,
-                                  height: screenHeight * 0.1),
-                            ),
-                          if (selectedGlasses != null)
-                            Positioned(
-                              top: screenHeight * 0.03,
-                              child: Image.asset(
-                                  "assets/glasses$selectedGlasses.png",
-                                  width: screenWidth * 0.25,
-                                  height: screenHeight * 0.17),
-                            ),
-                        ],
-                      ),
+  clipBehavior: Clip.none,
+  alignment: Alignment.center,
+  children: [
+    BuddyAvatar(
+      buddy: buddyType,
+      hat: selectedHat?.isNotEmpty == true ? 'hat$selectedHat' : wearingHat,
+      glasses: selectedGlasses?.isNotEmpty == true ? 'glasses$selectedGlasses' : wearingGlasses,
+      scale: screenWidth / 300,
+    ),
+    Positioned(
+      right: -screenWidth * 0.15,
+      top: screenHeight * 0.1,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Image.asset(
+            'assets/star.png',
+            width: screenWidth * 0.3,
+            height: screenHeight * 0.1,
+          ),
+          Text(
+            '$stars',
+            style: TextStyle(
+              fontSize: screenWidth * 0.06,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      ),
+    ),
+  ],
+),
+
 
                       SizedBox(height: 20),
 
@@ -563,6 +576,48 @@ class _RewardsScreenState extends State<RewardsScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+class BuddyAvatar extends StatelessWidget {
+  final String buddy;
+  final String? hat;
+  final String? glasses;
+  final double scale;
+
+  const BuddyAvatar({
+    super.key,
+    required this.buddy,
+    this.hat,
+    this.glasses,
+    this.scale = 1.0,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.scale(
+      scale: scale,
+      child: SizedBox(
+        width: 200,
+        height: 200,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.asset('assets/animal_$buddy.png', width: 200, height: 200),
+            if (hat != null && hat!.isNotEmpty)
+              Positioned(
+                top: 10,
+                child: Image.asset('assets/$hat.png', width: 100, height: 40),
+              ),
+            if (glasses != null && glasses!.isNotEmpty)
+              Positioned(
+                top: 50,
+                child:
+                    Image.asset('assets/$glasses.png', width: 70, height: 40),
+              ),
+          ],
+        ),
       ),
     );
   }

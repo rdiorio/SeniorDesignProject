@@ -178,6 +178,9 @@ class _HistoryConvoMenuState extends State<HistoryConvoMenu> {
                           } else if (currentScore < previousScore) {
                             arrowIcon = Icons.arrow_downward;
                             arrowColor = Colors.red;
+                          } else {
+                            arrowIcon = Icons.remove;
+                            arrowColor = Colors.orange;
                           }
                         }
 

@@ -6,6 +6,7 @@ import 'package:social_sense/services/database.dart';
 import 'package:social_sense/screens/progress_bar.dart';
 import 'package:confetti/confetti.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'dart:ui';
 
 class ResultsPage extends StatefulWidget {
   final List<int> attempts;
@@ -149,7 +150,7 @@ class _ResultsPageState extends State<ResultsPage> {
                           ),
                           if (earnedStars == 0)
                             Text(
-                              "${100 - ((initialTotalPoints + widget.points) % 100)} more to your next star!",
+                              "${100 - ((initialTotalPoints + widget.points) % 100)} more ${(100 - (initialTotalPoints + widget.points)) % 100 == 1 ? 'point' : 'points' } to your next star!",
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontSize: 18,
@@ -164,7 +165,7 @@ class _ResultsPageState extends State<ResultsPage> {
                             children: [
                               CircularProgressBar(
                                 progress: progress,
-                                size: screenWidth * 0.72,
+                                size: screenWidth * 0.70,
                                 strokeWidth: screenWidth * 0.045,
                               ),
 
@@ -176,10 +177,10 @@ class _ResultsPageState extends State<ResultsPage> {
                                 fit: BoxFit.contain,
                               ),
 
-                              /// 🧢 Hat (if any)
+                              //Hat (if any)
                               if (hat != null && hat!.isNotEmpty)
                                 Positioned(
-                                  top: screenHeight * 0.02,
+                                  top: screenHeight * 0.04,
                                   child: Image.asset(
                                     'assets/$hat.png',
                                     width: screenWidth * 0.25,
@@ -188,20 +189,19 @@ class _ResultsPageState extends State<ResultsPage> {
                                   ),
                                 ),
 
-                              /// 🕶️ Glasses (if any)
+                              //Glasses (if any)
                               if (glasses != null && glasses!.isNotEmpty)
                                 Positioned(
-                                  top: screenHeight * 0.06,
+                                  top: screenHeight * 0.075,
                                   child: Image.asset(
                                     'assets/$glasses.png',
-                                    width: screenWidth *
-                                        0.3, // Scale width for more accurate size
+                                    width: screenWidth * 0.25, // Scale width for more accurate size
                                     height: screenHeight * 0.1,
                                     fit: BoxFit.contain,
                                   ),
                                 ),
 
-                              /// ⭐ Star Counter
+                              //Star Counter
                               Positioned(
                                 top: screenHeight * -0.025,
                                 child: Container(
@@ -230,75 +230,85 @@ class _ResultsPageState extends State<ResultsPage> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 30),
+                          const SizedBox(height: 20),
                           ...List.generate(widget.attempts.length, (index) {
-                            return Container(
-                              margin: const EdgeInsets.symmetric(vertical: 6),
-                              padding: const EdgeInsets.all(12),
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 220, 198, 255),
-                                borderRadius: BorderRadius.circular(20),
-                                border:
-                                    Border.all(color: Colors.black, width: 3),
-                              ),
-                              child: Text(
-                                '${emotions[index]}: Took ${widget.attempts[index]} ${widget.attempts[index] == 1 ? 'try' : 'tries'}',
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            );
-                          }),
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: screenWidth * 0.7, // Shrink horizontally (adjust as needed)
+                                        margin: EdgeInsets.symmetric(vertical: screenHeight * 0.003),
+                                        padding: EdgeInsets.all(screenWidth * 0.03),
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromARGB(255, 220, 198, 255),
+                                          borderRadius: BorderRadius.circular(screenWidth * 0.05),
+                                          border: Border.all(
+                                            color: Colors.deepOrangeAccent,
+                                            width: screenWidth * 0.008,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          '${emotions[index]}: Took ${widget.attempts[index]} ${widget.attempts[index] == 1 ? 'try' : 'tries'}',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: screenWidth * 0.045,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }),
+
+
                           const SizedBox(height: 20),
                           Container(
-                            padding: const EdgeInsets.all(15),
-                            decoration: BoxDecoration(
-                              color: Colors.yellow[300],
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.black, width: 3),
-                            ),
-                            child: Text(
-                              'You earned ${widget.points} \n Max Score: $maxScore',
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
+                          padding: EdgeInsets.all(screenWidth * 0.05),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFF6C3),
+                            borderRadius: BorderRadius.circular(screenWidth * 0.05),
+                            border: Border.all(color: Colors.yellowAccent, width: screenWidth * 0.008),
                           ),
-                          const SizedBox(height: 25),
-                          ElevatedButton(
-                            onPressed: () => Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      LessonsPage(uid: widget.uid)),
-                              (route) => false,
+                          child: Text(
+                            'You earned ${widget.points} \nMax Score: $maxScore',
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.05,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
                             ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.purple[300],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                side: const BorderSide(
-                                    color: Colors.black, width: 3),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 12),
-                            ),
-                            child: const Text(
-                              'Back to Lessons',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
+                            textAlign: TextAlign.center,
                           ),
+                        ),
+
+                          const SizedBox(height: 20),
+                          SizedBox(
+                              width: screenWidth * 0.65,
+                              height: screenHeight * 0.07,
+                              child: ElevatedButton(
+                                onPressed: () => Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => LessonsPage(uid: widget.uid)),
+                                  (route) => false,
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color.fromARGB(255, 247, 129, 51),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(screenWidth * 0.05),
+                                    side: BorderSide(color: Colors.yellow, width: screenWidth * 0.008),
+                                  ),
+                                ),
+                                child: Text(
+                                  'Back to Lessons',
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.05,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+
                         ],
                       ),
                     ),
@@ -318,3 +328,6 @@ class _ResultsPageState extends State<ResultsPage> {
     );
   }
 }
+
+
+

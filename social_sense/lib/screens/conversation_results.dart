@@ -53,7 +53,7 @@ class _ConversationResultsState extends State<ConversationResults> {
     if (userUid == null) return;
 
     try {
-      // Step 1: Get initial scores
+      //Get initial scores
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
           .collection('users')
           .doc(userUid)
@@ -69,11 +69,11 @@ class _ConversationResultsState extends State<ConversationResults> {
         glasses = userDoc['currentGlasses'];
       }
 
-      // Step 2: Update scores
+      // Update scores
       await DatabaseService(uid: userUid!)
           .updateUserScores(userUid!, widget.conversationScore);
 
-      // Step 3: Get updated scores
+      //Get updated scores
       DocumentSnapshot updatedDoc = await FirebaseFirestore.instance
           .collection('users')
           .doc(userUid)
@@ -135,33 +135,38 @@ class _ConversationResultsState extends State<ConversationResults> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // 🎉 First line (always centered)
-                      Text(
-                        earnedStars > 0
-                            ? "Wow! You earned $earnedStars ${earnedStars == 1 ? 'star' : 'stars'}!"
-                            : "Awesome job!",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: const Color.fromARGB(255, 0, 0, 0),
-                        ),
-                      ),
+                      // First line (always centered)
+                      Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: const Color.fromARGB(255, 201, 177, 255).withOpacity(0.85),
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      "Awesome job!",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 24,
+                                        color: Colors.purple[800],
+                                      ),
+                                    ),
+                                    Text(
+                                      "${100 - updatedTotalPoints} points until your next star!",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
 
-                      // 🎉 Second line (only if no stars were earned)
-                      if (earnedStars == 0)
-                        Text(
-                          "${100 - updatedTotalPoints} ${100 - updatedTotalPoints == 1 ? 'point' : 'points'} until your next star!",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.normal,
-                            color: const Color.fromARGB(255, 0, 0, 0),
-                          ),
-                        ),
+
                       SizedBox(height: 25),
 
-                      // 🐻 Buddy + Progress Bar + Star
+                      // Buddy + Progress Bar + Star
                       Stack(
                         clipBehavior: Clip.none,
                         alignment: Alignment.center,
@@ -172,7 +177,7 @@ class _ConversationResultsState extends State<ConversationResults> {
                             strokeWidth: screenWidth * 0.045,
                           ),
 
-                          /// 🐻 Buddy
+                          // Buddy
                           Image.asset(
                             buddyAsset,
                             width: screenWidth * 0.6,
@@ -180,10 +185,10 @@ class _ConversationResultsState extends State<ConversationResults> {
                             fit: BoxFit.contain,
                           ),
 
-                          /// 🧢 Hat (if any)
+                          // Hat (if any)
                           if (hat != null && hat!.isNotEmpty)
                             Positioned(
-                              top: screenHeight * 0.02,
+                              top: screenHeight * 0.04,
                               child: Image.asset(
                                 'assets/$hat.png',
                                 width: screenWidth * 0.25,
@@ -192,20 +197,19 @@ class _ConversationResultsState extends State<ConversationResults> {
                               ),
                             ),
 
-                          /// 🕶️ Glasses (if any)
+                          //Glasses (if any)
                           if (glasses != null && glasses!.isNotEmpty)
                             Positioned(
-                              top: screenHeight * 0.06,
+                              top: screenHeight * 0.08,
                               child: Image.asset(
                                 'assets/$glasses.png',
-                                width: screenWidth *
-                                    0.3, // Scale width for more accurate size
+                                width: screenWidth *0.27, // Scale width for more accurate size
                                 height: screenHeight * 0.1,
                                 fit: BoxFit.contain,
                               ),
                             ),
 
-                          /// ⭐ Star Counter
+                          //Star Counter
                           Positioned(
                             top: screenHeight * -0.025,
                             child: Container(
@@ -237,7 +241,7 @@ class _ConversationResultsState extends State<ConversationResults> {
 
                       SizedBox(height: 20),
 
-                      // ✅ Score
+                      //  Score
                       Text(
                         "Your Score: ${widget.conversationScore}",
                         style: TextStyle(
@@ -245,7 +249,7 @@ class _ConversationResultsState extends State<ConversationResults> {
                       ),
                       SizedBox(height: 30),
 
-                      // ✅ Back to Lessons Button
+                      // Back to Lessons Button
                       buildButton(
                         context,
                         'Back to Lessons',
@@ -260,7 +264,7 @@ class _ConversationResultsState extends State<ConversationResults> {
               ),
             ),
 
-          // 🎉 Confetti Animation
+          // Confetti Animation
           ConfettiWidget(
             confettiController: _confettiController,
             blastDirectionality: BlastDirectionality.explosive,
