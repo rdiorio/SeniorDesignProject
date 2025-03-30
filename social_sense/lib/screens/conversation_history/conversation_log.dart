@@ -24,6 +24,7 @@ class _ConversationLogState extends State<ConversationLog> {
   String buddyType = "";
   String? currentHat;
   String? currentGlasses;
+ 
 
 
   @override
@@ -135,24 +136,24 @@ class _ConversationLogState extends State<ConversationLog> {
                         ),
                       )
                     : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           SizedBox(height: 100),
                           Text(
-                            widget.topic,
+                            widget.topic[0].toUpperCase() + widget.topic.substring(1).toLowerCase(),
                             style: TextStyle(
                               fontSize: 40,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
                           ),
-                          SizedBox(height: 40),
+                          SizedBox(height: 0),
                           Text(
                             "Score: ${conversationData!["score"] ?? "N/A"}",
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 25,
                               fontWeight: FontWeight.bold,
-                              color: const Color.fromARGB(255, 86, 100, 249),
+                              color: Colors.white,
                             ),
                           ),
                           SizedBox(height: 10),
@@ -205,8 +206,8 @@ class _ConversationLogState extends State<ConversationLog> {
                                         padding: EdgeInsets.all(12),
                                         decoration: BoxDecoration(
                                           color: isUser
-                                              ? Colors.purple[300]
-                                              : Colors.purple[100],
+                                              ? const Color.fromARGB(255, 248, 97, 27)
+                                              : const Color.fromARGB(255, 255, 173, 135),
                                           borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(15),
                                             topRight: Radius.circular(15),
@@ -221,7 +222,7 @@ class _ConversationLogState extends State<ConversationLog> {
                                         child: Text(
                                           message["content"] ?? "",
                                           style: TextStyle(
-                                            color: Colors.white,
+                                            color: const Color.fromARGB(255, 0, 0, 0),
                                             fontSize: 16,
                                             fontWeight: FontWeight.w500,
                                           ),

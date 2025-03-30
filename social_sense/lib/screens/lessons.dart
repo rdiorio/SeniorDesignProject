@@ -244,7 +244,7 @@ class _LessonsPageState extends State<LessonsPage> {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: EdgeInsets.only(
-                bottom: screenHeight * 0.12,
+                bottom: screenHeight * 0.08,
                 left: screenWidth * 0.05,
                 right: screenWidth * 0.05,
               ),
@@ -275,8 +275,7 @@ class _LessonsPageState extends State<LessonsPage> {
     );
   }
 
-  Widget buildLessonButton(
-      BuildContext context, String title, String subtitle, Widget targetPage) {
+  Widget buildLessonButton(BuildContext context, String title, String subtitle, Widget targetPage) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
@@ -284,7 +283,7 @@ class _LessonsPageState extends State<LessonsPage> {
       padding: EdgeInsets.symmetric(vertical: screenHeight * 0.009),
       child: SizedBox(
         width: screenWidth * 0.9,
-        height: screenHeight * 0.0955,
+        height: screenHeight * 0.1,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 221, 202, 235),
