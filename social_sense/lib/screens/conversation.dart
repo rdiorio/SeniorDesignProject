@@ -243,39 +243,46 @@ class ConversationScreenState extends State<ConversationScreen> {
                 height: double.infinity),
           ),
           // "Back" (to Conversational Lessons Menu) Button
-          Positioned(
-            top: screenHeight * 0.06,
-            left: screenWidth * 0.05,
-            child: SizedBox(
-              width: screenWidth * 0.25,
-              height: screenHeight * 0.05,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 239, 133, 57),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+          isConversationEnded
+              ? SizedBox()
+              : Positioned(
+                  top: screenHeight * 0.06,
+                  left: screenWidth * 0.05,
+                  child: SizedBox(
+                    width: screenWidth * 0.25,
+                    height: screenHeight * 0.05,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromARGB(255, 239, 133, 57),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 5,
+                      ),
+                      onPressed: () {
+                        if (isTalking) {
+                          null;
+                        } else {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    ConversationalLessons(uid: userUid!)),
+                          );
+                        }
+                      },
+                      child: Text(
+                        "Back",
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.04,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
-                  elevation: 5,
                 ),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ConversationalLessons(uid: userUid!)),
-                  );
-                },
-                child: Text(
-                  "Back",
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.04,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ),
           isLoading
               ? Center(child: CircularProgressIndicator())
               : Column(
@@ -354,11 +361,20 @@ class ConversationScreenState extends State<ConversationScreen> {
                         child: FloatingActionButton(
                           backgroundColor: Colors.purple[400],
                           onPressed: () {
-                            _controller.startListening((recognizedText) {
-                              setState(() {
-                                _sendUserMessage(recognizedText);
+                            if (isTalking) {
+                              null;
+                            } else {
+                              _controller.startListening((recognizedText) {
+                                // If nothing was recognized, send a blank string
+                                final userInput = recognizedText.trim().isEmpty
+                                    ? " "
+                                    : recognizedText;
+
+                                setState(() {
+                                  _sendUserMessage(userInput);
+                                });
                               });
-                            });
+                            }
                           },
                           child: Icon(Icons.mic, size: screenWidth * 0.075),
                         ),
