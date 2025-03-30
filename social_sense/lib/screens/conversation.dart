@@ -243,7 +243,9 @@ class ConversationScreenState extends State<ConversationScreen> {
                 height: double.infinity),
           ),
           // "Back" (to Conversational Lessons Menu) Button
-          Positioned(
+          isConversationEnded ?
+          SizedBox()
+           : Positioned(
             top: screenHeight * 0.06,
             left: screenWidth * 0.05,
             child: SizedBox(
@@ -258,12 +260,17 @@ class ConversationScreenState extends State<ConversationScreen> {
                   elevation: 5,
                 ),
                 onPressed: () {
+                  if (isTalking){
+                    null;
+                  }
+                  else{
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
                             ConversationalLessons(uid: userUid!)),
                   );
+                  }
                 },
                 child: Text(
                   "Back",
@@ -350,19 +357,24 @@ class ConversationScreenState extends State<ConversationScreen> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(bottom: screenHeight * 0.07),
-                        child: FloatingActionButton(
-                          backgroundColor: Colors.purple[400],
-                          onPressed: () {
-                            _controller.startListening((recognizedText) {
-                              setState(() {
-                                _sendUserMessage(recognizedText);
-                              });
-                            });
-                          },
-                          child: Icon(Icons.mic, size: screenWidth * 0.075),
-                        ),
-                      ),
+  padding: EdgeInsets.only(bottom: screenHeight * 0.07),
+  child: FloatingActionButton(
+    backgroundColor: Colors.purple[400],
+    onPressed: () {
+      _controller.startListening((recognizedText) {
+        final userInput = (recognizedText == null || recognizedText.trim().isEmpty)
+            ? " "
+            : recognizedText;
+
+        setState(() {
+          _sendUserMessage(userInput);
+        });
+      });
+    },
+    child: Icon(Icons.mic, size: screenWidth * 0.075),
+  ),
+),
+
                     ] else ...[
                       Padding(
                         padding: EdgeInsets.only(bottom: screenHeight * 0.07),
