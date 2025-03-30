@@ -23,29 +23,51 @@ class _BreathingExercisesState extends State<BreathingExercises>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 12),
+      duration: Duration(seconds: 96),
     );
 
-    _animation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: .7, end: 1.5), weight: 3),
-      TweenSequenceItem(tween: ConstantTween(1.5), weight: 3),
-      TweenSequenceItem(tween: Tween(begin: 1.5, end: .7), weight: 3),
-      TweenSequenceItem(tween: ConstantTween(.7), weight: 3),
-    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-  }
+ _animation = TweenSequence<double>([
+  TweenSequenceItem(tween: Tween(begin: 0.7, end: 1.5), weight: 5), //inhale GOOD
+  TweenSequenceItem(tween: ConstantTween(1.5), weight: 6), //hold GOOD
+  TweenSequenceItem(tween: Tween(begin: 1.5, end: 0.7), weight: 5), //exhale GOOD
+  TweenSequenceItem(tween: ConstantTween(0.7), weight: 6), //hold GOOD
+  TweenSequenceItem(tween: Tween(begin: 0.7, end: 1.5), weight: 5), //inhale GOOD
+  TweenSequenceItem(tween: ConstantTween(1.5), weight: 5), //hold GOOD
+  TweenSequenceItem(tween: Tween(begin: 1.5, end: 0.7), weight: 5), //exhale GOOD
+  TweenSequenceItem(tween: ConstantTween(0.7), weight: 5), //hold GOOD
+  TweenSequenceItem(tween: Tween(begin: 0.7, end: 1.5), weight: 6), //inhale GOOD
+  TweenSequenceItem(tween: ConstantTween(1.5), weight: 5), //hold GOOD
+  TweenSequenceItem(tween: Tween(begin: 1.5, end: 0.7), weight: 6), // exhale GOOD
+  TweenSequenceItem(tween: ConstantTween(0.7), weight: 6), //hold GOOD
+  TweenSequenceItem(tween: Tween(begin: 0.7, end: 1.5), weight: 5), //inhale GOOD 
+  TweenSequenceItem(tween: ConstantTween(1.5), weight: 5), //hold GOOD
+  TweenSequenceItem(tween: Tween(begin: 1.5, end: 0.7), weight: 5), //exhale GOOD
+  TweenSequenceItem(tween: ConstantTween(0.7), weight: 7), //hold
+  TweenSequenceItem(tween: Tween(begin: 0.7, end: 1.5), weight: 5), //inhale 
+  TweenSequenceItem(tween: Tween(begin: 1.5, end: 0.7), weight: 4), //exhale 
+]).animate(
+  CurvedAnimation(parent: _controller, curve: Curves.linear), 
+);
 
-  Future<void> _toggleAudioAndAnimation() async {
-    if (_isPlaying) {
-      await _audioPlayer.pause();
-      _controller.stop(); // ✅ Stop animation when paused
-    } else {
-      await _audioPlayer.play(AssetSource('square_breathing.wav'));
-      _controller.repeat(); // ✅ Start animation when playing
-    }
-    setState(() {
-      _isPlaying = !_isPlaying;
+  }
+ Future<void> _toggleAudioAndAnimation() async {
+  if (_isPlaying) {
+    await _audioPlayer.pause();
+    _controller.stop();
+  } else {
+    await _audioPlayer.play(AssetSource('square_breathing.wav'));
+    Future.delayed(Duration(seconds: 34), () {
+      if (_isPlaying) {
+        _controller.repeat();
+      }
     });
   }
+
+  setState(() {
+    _isPlaying = !_isPlaying;
+  });
+}
+
 
   @override
   void dispose() {

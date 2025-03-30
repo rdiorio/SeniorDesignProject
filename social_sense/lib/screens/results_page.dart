@@ -237,7 +237,7 @@ class _ResultsPageState extends State<ResultsPage> {
                                     children: [
                                       Container(
                                         width: screenWidth * 0.7, // Shrink horizontally (adjust as needed)
-                                        margin: EdgeInsets.symmetric(vertical: screenHeight * 0.003),
+                                        margin: EdgeInsets.symmetric(vertical: screenHeight * 0.00),
                                         padding: EdgeInsets.all(screenWidth * 0.03),
                                         decoration: BoxDecoration(
                                           color: const Color.fromARGB(255, 220, 198, 255),

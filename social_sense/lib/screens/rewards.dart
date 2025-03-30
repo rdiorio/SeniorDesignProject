@@ -140,8 +140,8 @@ class _RewardsScreenState extends State<RewardsScreen> {
       scale: screenWidth / 300,
     ),
     Positioned(
-      right: -screenWidth * 0.15,
-      top: screenHeight * 0.1,
+      right: -screenWidth * 0.2,
+      top: screenHeight * 0.15,
       child: Stack(
         alignment: Alignment.center,
         children: [
