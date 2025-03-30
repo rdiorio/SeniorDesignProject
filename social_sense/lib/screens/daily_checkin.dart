@@ -62,7 +62,8 @@ class ArcTextPainter extends CustomPainter {
       )..layout();
 
       double x = size.width / 2 + radius * cos(currentAngle);
-      double y = (size.height / 2 + radius * sin(currentAngle)) + verticalOffset;
+      double y =
+          (size.height / 2 + radius * sin(currentAngle)) + verticalOffset;
 
       canvas.save();
       canvas.translate(x, y);

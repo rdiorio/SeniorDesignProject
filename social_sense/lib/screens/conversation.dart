@@ -237,53 +237,53 @@ class ConversationScreenState extends State<ConversationScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-                child: Image.asset(
-                  "assets/bottomPurple_background.png",
-                  fit: BoxFit.cover,
-                ),
-              ),
-
-          // "Back" (to Conversational Lessons Menu) Button
-          isConversationEnded ?
-          SizedBox()
-           : Positioned(
-            top: screenHeight * 0.06,
-            left: screenWidth * 0.05,
-            child: SizedBox(
-              width: screenWidth * 0.25,
-              height: screenHeight * 0.05,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 239, 133, 57),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  elevation: 5,
-                ),
-                onPressed: () {
-                  if (isTalking){
-                    null;
-                  }
-                  else{
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ConversationalLessons(uid: userUid!)),
-                  );
-                  }
-                },
-                child: Text(
-                  "Back",
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.04,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+            child: Image.asset(
+              "assets/bottomPurple_background.png",
+              fit: BoxFit.cover,
             ),
           ),
+
+          // "Back" (to Conversational Lessons Menu) Button
+          isConversationEnded
+              ? SizedBox()
+              : Positioned(
+                  top: screenHeight * 0.06,
+                  left: screenWidth * 0.05,
+                  child: SizedBox(
+                    width: screenWidth * 0.25,
+                    height: screenHeight * 0.05,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromARGB(255, 239, 133, 57),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 5,
+                      ),
+                      onPressed: () {
+                        if (isTalking) {
+                          null;
+                        } else {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    ConversationalLessons(uid: userUid!)),
+                          );
+                        }
+                      },
+                      child: Text(
+                        "Back",
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.04,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
           isLoading
               ? Center(child: CircularProgressIndicator())
               : Column(
@@ -319,7 +319,7 @@ class ConversationScreenState extends State<ConversationScreen> {
                                 ),
                               ),
                             ),
-                          SizedBox(height: screenHeight * 0.05),
+                          SizedBox(height: screenHeight * 0.07),
                           BuddyAvatar(
                             buddy: buddyType,
                             hat: currentHat,
@@ -331,85 +331,91 @@ class ConversationScreenState extends State<ConversationScreen> {
                         ],
                       ),
                     ),
-                   Spacer(),
-AnimatedSwitcher(
-  duration: Duration(milliseconds: 1000),
-  transitionBuilder: (Widget child, Animation<double> animation) {
-    return FadeTransition(
-      opacity: animation,
-      child: ScaleTransition(scale: animation, child: child),
-    );
-  },
-  child: isConversationEnded
-      ? Container(
-          key: ValueKey("results"),
-          padding: EdgeInsets.only(bottom: screenHeight * 0.07),
-          alignment: Alignment.center,
-          child: SizedBox(
-            width: screenWidth * .6,
-            height: screenHeight * .08,
-            child: buildButton(
-              context,
-              'View Results',
-              ConversationResults(
-                buddyType: buddyType,
-                conversationScore: conversationScore,
-              ),
-            ),
-          ),
-        )
-      : Container(
-          key: ValueKey("inputArea"),
-          padding: EdgeInsets.only(bottom: screenHeight * 0.07),
-          alignment: Alignment.center,
-          width: screenWidth * 0.9,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              GestureDetector(
-                onTap: _showTextInputDialog,
-                child: Container(
-                  padding: EdgeInsets.all(screenWidth * 0.035),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFF6EFFA),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Color(0xFFF8814A),
-                      width: 3,
-                    ),
-                  ),
-                  child: Text(
-                    _currentUserInput.isEmpty
-                        ? "Touch to type..."
-                        : _currentUserInput,
-                    style: TextStyle(
-                      fontSize: screenWidth * 0.045,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: screenHeight * 0.02),
-              FloatingActionButton(
-                backgroundColor: Colors.purple[400],
-                onPressed: () {
-                  if (!isTalking) {
-                    _controller.startListening((recognizedText) {
-                      final userInput = recognizedText.trim().isEmpty
-                          ? " "
-                          : recognizedText;
-                      _sendUserMessage(userInput);
-                    });
-                  }
-                },
-                child: Icon(Icons.mic, size: screenWidth * 0.075),
-              ),
-            ],
-          ),
-        ),
-)
-
-
+                    Spacer(),
+                    AnimatedSwitcher(
+                      duration: Duration(milliseconds: 1000),
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child:
+                              ScaleTransition(scale: animation, child: child),
+                        );
+                      },
+                      child: isConversationEnded
+                          ? Container(
+                              key: ValueKey("results"),
+                              padding:
+                                  EdgeInsets.only(bottom: screenHeight * 0.07),
+                              alignment: Alignment.center,
+                              child: SizedBox(
+                                width: screenWidth * .6,
+                                height: screenHeight * .08,
+                                child: buildButton(
+                                  context,
+                                  'View Results',
+                                  ConversationResults(
+                                    buddyType: buddyType,
+                                    conversationScore: conversationScore,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(
+                              key: ValueKey("inputArea"),
+                              padding:
+                                  EdgeInsets.only(bottom: screenHeight * 0.07),
+                              alignment: Alignment.center,
+                              width: screenWidth * 0.9,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  GestureDetector(
+                                    onTap: _showTextInputDialog,
+                                    child: Container(
+                                      padding:
+                                          EdgeInsets.all(screenWidth * 0.035),
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFF6EFFA),
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(
+                                          color: Color(0xFFF8814A),
+                                          width: 3,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        _currentUserInput.isEmpty
+                                            ? "Touch to type..."
+                                            : _currentUserInput,
+                                        style: TextStyle(
+                                          fontSize: screenWidth * 0.045,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: screenHeight * 0.02),
+                                  FloatingActionButton(
+                                    backgroundColor: Colors.purple[400],
+                                    onPressed: () {
+                                      if (!isTalking) {
+                                        _controller
+                                            .startListening((recognizedText) {
+                                          final userInput =
+                                              recognizedText.trim().isEmpty
+                                                  ? " "
+                                                  : recognizedText;
+                                          _sendUserMessage(userInput);
+                                        });
+                                      }
+                                    },
+                                    child: Icon(Icons.mic,
+                                        size: screenWidth * 0.075),
+                                  ),
+                                ],
+                              ),
+                            ),
+                    )
                   ],
                 ),
         ],
