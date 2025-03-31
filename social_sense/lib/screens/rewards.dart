@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_sense/screens/profile.dart';
 import 'package:social_sense/services/database.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class RewardsScreen extends StatefulWidget {
   final String uid;
@@ -125,51 +126,54 @@ class _RewardsScreenState extends State<RewardsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(buddyName,
-                          style: TextStyle(
-                              fontSize: screenWidth * 0.06,
+                          style: GoogleFonts.baloo2(
+                              fontSize: screenWidth * 0.07,
                               fontWeight: FontWeight.bold)),
-                      SizedBox(height: screenHeight * 0.02),
+                      SizedBox(height: screenHeight * 0.09),
                       Stack(
-  clipBehavior: Clip.none,
-  alignment: Alignment.center,
-  children: [
-    BuddyAvatar(
-      buddy: buddyType,
-      hat: selectedHat?.isNotEmpty == true ? 'hat$selectedHat' : wearingHat,
-      glasses: selectedGlasses?.isNotEmpty == true ? 'glasses$selectedGlasses' : wearingGlasses,
-      scale: screenWidth / 300,
-    ),
-    Positioned(
-      right: -screenWidth * 0.2,
-      top: screenHeight * 0.15,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Image.asset(
-            'assets/star.png',
-            width: screenWidth * 0.3,
-            height: screenHeight * 0.1,
-          ),
-          Text(
-            '$stars',
-            style: TextStyle(
-              fontSize: screenWidth * 0.06,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-        ],
-      ),
-    ),
-  ],
-),
+                        clipBehavior: Clip.none,
+                        alignment: Alignment.center,
+                        children: [
+                          BuddyAvatar(
+                            buddy: buddyType,
+                            hat: selectedHat?.isNotEmpty == true
+                                ? 'hat$selectedHat'
+                                : wearingHat,
+                            glasses: selectedGlasses?.isNotEmpty == true
+                                ? 'glasses$selectedGlasses'
+                                : wearingGlasses,
+                            scale: screenWidth / 300,
+                          ),
+                          Positioned(
+                            right: -screenWidth * 0.2,
+                            top: screenHeight * 0.15,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/star.png',
+                                  width: screenWidth * 0.3,
+                                  height: screenHeight * 0.1,
+                                ),
+                                Text(
+                                  '$stars',
+                                  style: GoogleFonts.baloo2(
+                                    fontSize: screenWidth * 0.06,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
 
-
-                      SizedBox(height: 20),
+                      SizedBox(height: 100),
 
                       // Hat Selection
                       Text("Choose a Hat",
-                          style: TextStyle(
+                          style: GoogleFonts.baloo2(
                               fontSize: 20, fontWeight: FontWeight.bold)),
                       SizedBox(height: 10),
                       SingleChildScrollView(
@@ -209,7 +213,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                                             (wearingHat == "hat$hat")
                                                 ? "Wearing"
                                                 : hat,
-                                            style: TextStyle(
+                                            style: GoogleFonts.baloo2(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
                                               color: (wearingHat == "hat$hat")
@@ -258,7 +262,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                                           SizedBox(height: 5),
                                           Text(
                                             hat,
-                                            style: TextStyle(
+                                            style: GoogleFonts.baloo2(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
                                               color: isOwned
@@ -268,7 +272,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                                           ),
                                           Text(
                                             isOwned ? "SOLD" : "5 ⭐",
-                                            style: TextStyle(
+                                            style: GoogleFonts.baloo2(
                                               fontSize: 14,
                                               color: isOwned
                                                   ? Colors.red
@@ -284,11 +288,11 @@ class _RewardsScreenState extends State<RewardsScreen> {
                         ),
                       ),
 
-                      SizedBox(height: 20),
+                      SizedBox(height: 60),
 
                       // Glasses Selection
                       Text("Choose Glasses",
-                          style: TextStyle(
+                          style: GoogleFonts.baloo2(
                               fontSize: 20, fontWeight: FontWeight.bold)),
                       SizedBox(height: 10),
                       SingleChildScrollView(
@@ -331,7 +335,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                                                     "glasses$glassesType")
                                                 ? "Wearing"
                                                 : glassesType,
-                                            style: TextStyle(
+                                            style: GoogleFonts.baloo2(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
                                               color: (wearingGlasses ==
@@ -384,7 +388,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                                           SizedBox(height: 5),
                                           Text(
                                             glassesType,
-                                            style: TextStyle(
+                                            style: GoogleFonts.baloo2(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
                                               color: isOwned
@@ -394,7 +398,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                                           ),
                                           Text(
                                             isOwned ? "SOLD" : "5 ⭐",
-                                            style: TextStyle(
+                                            style: GoogleFonts.baloo2(
                                               fontSize: 14,
                                               color: isOwned
                                                   ? Colors.red
@@ -517,7 +521,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
             ),
           ),
           Positioned(
-            top: screenHeight * 0.05,
+            top: screenHeight * 0.07,
             left: screenWidth * 0.05,
             right: screenWidth * 0.05,
             child: Row(
@@ -538,10 +542,11 @@ class _RewardsScreenState extends State<RewardsScreen> {
                         borderRadius: BorderRadius.circular(10)),
                     elevation: 3,
                   ),
-                  child: const Text(
+                  child: Text(
                     'Back',
-                    style: TextStyle(
+                    style: GoogleFonts.baloo2(
                       color: Colors.white,
+                      fontSize: screenWidth * .05,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -562,8 +567,11 @@ class _RewardsScreenState extends State<RewardsScreen> {
                   ),
                   label: Text(
                     showCloset ? 'Store' : 'Closet',
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.baloo2(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: screenWidth * .04,
+                    ),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.purple[400],
@@ -580,6 +588,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
     );
   }
 }
+
 class BuddyAvatar extends StatelessWidget {
   final String buddy;
   final String? hat;
@@ -596,25 +605,28 @@ class BuddyAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Transform.scale(
       scale: scale,
       child: SizedBox(
-        width: 200,
-        height: 200,
+        width: screenWidth * 0.4,
+        height: screenHeight * 0.2,
         child: Stack(
           alignment: Alignment.center,
           children: [
             Image.asset('assets/animal_$buddy.png', width: 200, height: 200),
             if (hat != null && hat!.isNotEmpty)
               Positioned(
-                top: 10,
-                child: Image.asset('assets/$hat.png', width: 100, height: 40),
+                top: 25,
+                child: Image.asset('assets/$hat.png', width: 80, height: 40),
               ),
             if (glasses != null && glasses!.isNotEmpty)
               Positioned(
-                top: 50,
+                top: 60,
                 child:
-                    Image.asset('assets/$glasses.png', width: 70, height: 40),
+                    Image.asset('assets/$glasses.png', width: 75, height: 40),
               ),
           ],
         ),

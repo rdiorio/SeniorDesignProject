@@ -6,6 +6,7 @@ import 'package:social_sense/services/database.dart';
 import 'package:social_sense/screens/conversation_results.dart';
 import 'dart:async';
 import 'package:social_sense/screens/conversational_lessons.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ConversationScreen extends StatefulWidget {
   final String conversationTopic;
@@ -275,7 +276,7 @@ class ConversationScreenState extends State<ConversationScreen> {
                       },
                       child: Text(
                         "Back",
-                        style: TextStyle(
+                        style: GoogleFonts.baloo2(
                           fontSize: screenWidth * 0.04,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -296,7 +297,7 @@ class ConversationScreenState extends State<ConversationScreen> {
                         children: [
                           Text(
                             buddyName,
-                            style: TextStyle(
+                            style: GoogleFonts.baloo2(
                               fontSize: screenWidth * 0.05,
                               fontWeight: FontWeight.bold,
                               color: Colors.purple[400],
@@ -313,7 +314,7 @@ class ConversationScreenState extends State<ConversationScreen> {
                               child: Text(
                                 conversationLog.lastWhere((msg) =>
                                     msg["role"] == "assistant")["content"]!,
-                                style: TextStyle(
+                                style: GoogleFonts.baloo2(
                                   color: Colors.white,
                                   fontSize: screenWidth * 0.045,
                                 ),
@@ -387,7 +388,7 @@ class ConversationScreenState extends State<ConversationScreen> {
                                         _currentUserInput.isEmpty
                                             ? "Touch to type..."
                                             : _currentUserInput,
-                                        style: TextStyle(
+                                        style: GoogleFonts.baloo2(
                                           fontSize: screenWidth * 0.045,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -448,7 +449,7 @@ class ConversationScreenState extends State<ConversationScreen> {
           },
           child: Text(
             text,
-            style: TextStyle(
+            style: GoogleFonts.baloo2(
               fontSize: screenWidth * 0.06,
               fontWeight: FontWeight.bold,
               color: Colors.black,

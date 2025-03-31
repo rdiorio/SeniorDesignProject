@@ -7,6 +7,7 @@ import 'package:social_sense/services/database.dart';
 import 'package:social_sense/screens/conversation_history/conversation_log.dart';
 import 'package:social_sense/screens/conversation_history/pieChart.dart';
 import 'package:social_sense/screens/conversation_history/progression.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HistoryConvoMenu extends StatefulWidget {
   final String uid;
@@ -83,7 +84,7 @@ class _HistoryConvoMenuState extends State<HistoryConvoMenu> {
                 },
                 child: Text(
                   "Home",
-                  style: TextStyle(
+                  style: GoogleFonts.baloo2(
                     fontSize: screenWidth * 0.04,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -118,7 +119,7 @@ class _HistoryConvoMenuState extends State<HistoryConvoMenu> {
                 },
                 child: Text(
                   "Back",
-                  style: TextStyle(
+                  style: GoogleFonts.baloo2(
                     fontSize: screenWidth * 0.04,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -143,7 +144,8 @@ class _HistoryConvoMenuState extends State<HistoryConvoMenu> {
                     child: Center(
                       child: Text(
                         "No conversations found",
-                        style: TextStyle(fontSize: screenHeight * 0.025),
+                        style:
+                            GoogleFonts.baloo2(fontSize: screenHeight * 0.025),
                       ),
                     ),
                   )
@@ -220,7 +222,7 @@ class _HistoryConvoMenuState extends State<HistoryConvoMenu> {
                                       children: [
                                         Text(
                                           formattedDate,
-                                          style: TextStyle(
+                                          style: GoogleFonts.baloo2(
                                             fontSize: screenHeight * 0.02,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.blueAccent,
@@ -231,7 +233,7 @@ class _HistoryConvoMenuState extends State<HistoryConvoMenu> {
                                           child: Text(
                                             "View Conversation",
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
+                                            style: GoogleFonts.baloo2(
                                                 fontSize: screenHeight * 0.018),
                                           ),
                                         ),
@@ -251,7 +253,7 @@ class _HistoryConvoMenuState extends State<HistoryConvoMenu> {
                                     children: [
                                       Text(
                                         "Score: $currentScore",
-                                        style: TextStyle(
+                                        style: GoogleFonts.baloo2(
                                           fontSize: screenHeight * 0.02,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.redAccent,
@@ -335,7 +337,7 @@ class _HistoryConvoMenuState extends State<HistoryConvoMenu> {
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: GoogleFonts.baloo2(
               fontSize: screenWidth * 0.06, // Scales text size dynamically
               fontWeight: FontWeight.bold,
               color: Colors.black,

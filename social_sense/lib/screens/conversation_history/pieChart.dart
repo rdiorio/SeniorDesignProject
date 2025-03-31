@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:social_sense/services/database.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class PieChartScreen extends StatefulWidget {
   final String userId;
@@ -81,7 +82,7 @@ class _PieChartScreenState extends State<PieChartScreen> {
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   "Back",
-                  style: TextStyle(
+                  style: GoogleFonts.baloo2(
                     fontSize: screenWidth * 0.045,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -98,7 +99,7 @@ class _PieChartScreenState extends State<PieChartScreen> {
                     ? Center(
                         child: Text(
                           "No classification data found.",
-                          style: TextStyle(
+                          style: GoogleFonts.baloo2(
                             fontSize: screenWidth * 0.06,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -112,7 +113,7 @@ class _PieChartScreenState extends State<PieChartScreen> {
                           SizedBox(height: screenHeight * 0.2),
                           Text(
                             "Classification Breakdown",
-                            style: TextStyle(
+                            style: GoogleFonts.baloo2(
                               fontSize: screenWidth * 0.075,
                               fontWeight: FontWeight.bold,
                               color: const Color.fromARGB(255, 0, 0, 0),
@@ -166,7 +167,7 @@ class _PieChartScreenState extends State<PieChartScreen> {
         value: value.toDouble(),
         title: "${categoryNames[category]}\n$value",
         radius: screenWidth * 0.3,
-        titleStyle: TextStyle(
+        titleStyle: GoogleFonts.baloo2(
           fontSize: screenWidth * 0.04,
           fontWeight: FontWeight.bold,
           color: Colors.white,

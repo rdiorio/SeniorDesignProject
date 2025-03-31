@@ -179,7 +179,7 @@ class _ChangeBuddyState extends State<ChangeBuddy> {
                   Flexible(
                     child: Text(
                       "Your buddy's name: $buddyName",
-                      style: GoogleFonts.sniglet(
+                      style: GoogleFonts.baloo2(
                         fontSize: screenWidth * 0.05,
                         fontWeight: FontWeight.w100,
                       ),
@@ -242,7 +242,7 @@ class _ChangeBuddyState extends State<ChangeBuddy> {
                           SizedBox(height: screenHeight * 0.01),
                           Text(
                             buddies[index]['name']!,
-                            style: GoogleFonts.sniglet(
+                            style: GoogleFonts.baloo2(
                                 fontSize: screenWidth * 0.04),
                           ),
                         ],
@@ -254,7 +254,7 @@ class _ChangeBuddyState extends State<ChangeBuddy> {
               SizedBox(height: screenHeight * 0.03),
               Text(
                 "Your buddy's voice:",
-                style: GoogleFonts.sniglet(
+                style: GoogleFonts.baloo2(
                     fontSize: screenWidth * 0.045, fontWeight: FontWeight.w100),
               ),
               SizedBox(height: screenHeight * 0.02),
@@ -286,7 +286,7 @@ class _ChangeBuddyState extends State<ChangeBuddy> {
                     ),
                     child: Text(
                       voice["name"]!,
-                      style: GoogleFonts.sniglet(
+                      style: GoogleFonts.baloo2(
                         color: isSelected
                             ? const Color.fromARGB(255, 0, 0, 0)
                             : Colors.black,
@@ -310,9 +310,9 @@ class _ChangeBuddyState extends State<ChangeBuddy> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 242, 231, 249),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20), 
+                    borderRadius: BorderRadius.circular(20),
                     side: BorderSide(
-                      color: const Color.fromARGB(255, 248, 129, 74), 
+                      color: const Color.fromARGB(255, 248, 129, 74),
                       width: screenWidth * 0.01,
                     ),
                   ),
@@ -321,7 +321,7 @@ class _ChangeBuddyState extends State<ChangeBuddy> {
                       vertical: screenHeight * 0.01),
                 ),
                 child: Text("Save",
-                    style: GoogleFonts.sniglet(
+                    style: GoogleFonts.baloo2(
                         fontSize: screenWidth * 0.047,
                         fontWeight: FontWeight.w900,
                         color: Colors.black)),

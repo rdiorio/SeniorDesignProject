@@ -5,6 +5,8 @@ import 'package:social_sense/screens/conversation_history/history_topic_menu.dar
 import 'package:social_sense/screens/home/home.dart';
 import 'package:social_sense/screens/progress_bar.dart';
 
+import 'package:google_fonts/google_fonts.dart';
+
 // Utility function for consistent scaling across different screen sizes
 double scaleWidth(BuildContext context, double size) {
   double screenWidth = MediaQuery.of(context).size.width;
@@ -77,8 +79,8 @@ class ProfilePage extends StatelessWidget {
                 },
                 child: Text(
                   "Home",
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.04,
+                  style: GoogleFonts.baloo2(
+                    fontSize: screenWidth * 0.05,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -146,8 +148,8 @@ class ProfilePage extends StatelessWidget {
                       children: [
                         Text(
                           userName,
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.06,
+                          style: GoogleFonts.baloo2(
+                            fontSize: screenWidth * 0.09,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
@@ -170,7 +172,7 @@ class ProfilePage extends StatelessWidget {
                                     ),
                                     Text(
                                       '$stars',
-                                      style: const TextStyle(
+                                      style: GoogleFonts.baloo2(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
@@ -181,7 +183,7 @@ class ProfilePage extends StatelessWidget {
                                 const Text(
                                   'Stars',
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -204,7 +206,7 @@ class ProfilePage extends StatelessWidget {
                                 const Text(
                                   'Total Points',
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -218,7 +220,7 @@ class ProfilePage extends StatelessWidget {
                         Text(
                           'Earn ${100 - (totalPoints % 100)} more points to get another star!\nYou can do it!',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: GoogleFonts.baloo2(
                             fontSize: screenWidth * 0.05,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
@@ -270,7 +272,7 @@ class ProfilePage extends StatelessWidget {
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: GoogleFonts.baloo2(
               fontSize: screenWidth * 0.06, // Scales text size dynamically
               fontWeight: FontWeight.bold,
               color: Colors.black,

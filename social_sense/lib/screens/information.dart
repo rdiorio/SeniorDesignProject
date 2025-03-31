@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:social_sense/services/database.dart';
 import 'package:social_sense/screens/home/home.dart';
 import 'package:social_sense/screens/change_buddy.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class InformationScreen extends StatefulWidget {
   final String uid;
@@ -89,8 +90,7 @@ class _InformationScreenState extends State<InformationScreen> {
                         SizedBox(height: 150),
                         Text(
                           'Change Information',
-                          style: TextStyle(
-                            fontFamily: "Modak",
+                          style: GoogleFonts.baloo2(
                             fontSize: screenWidth * 0.08,
                             color: Colors.black,
                           ),
@@ -102,9 +102,9 @@ class _InformationScreenState extends State<InformationScreen> {
                             controller: _firstNameController,
                             decoration: InputDecoration(
                               labelText: 'First Name',
-                              labelStyle: TextStyle(
-                                  fontFamily: "Modak",
-                                  fontSize: screenWidth * 0.06),
+                              labelStyle: GoogleFonts.baloo2(
+                                  fontSize: screenWidth * 0.06,
+                                  fontWeight: FontWeight.bold),
                               border: OutlineInputBorder(),
                               filled: true,
                               fillColor: Colors.white,
@@ -121,9 +121,9 @@ class _InformationScreenState extends State<InformationScreen> {
                             controller: _lastNameController,
                             decoration: InputDecoration(
                               labelText: 'Last Name',
-                              labelStyle: TextStyle(
-                                  fontFamily: "Modak",
-                                  fontSize: screenWidth * 0.06),
+                              labelStyle: GoogleFonts.baloo2(
+                                  fontSize: screenWidth * 0.06,
+                                  fontWeight: FontWeight.bold),
                               border: OutlineInputBorder(),
                               filled: true,
                               fillColor: Colors.white,
@@ -164,7 +164,7 @@ class _InformationScreenState extends State<InformationScreen> {
                 },
                 child: Text(
                   "Home",
-                  style: TextStyle(
+                  style: GoogleFonts.baloo2(
                     fontSize: screenWidth * 0.04,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -211,7 +211,7 @@ class _InformationScreenState extends State<InformationScreen> {
           child: Text(
             "Save",
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: GoogleFonts.baloo2(
               fontSize: screenWidth * 0.047,
               fontWeight: FontWeight.w900,
               color: Colors.black,

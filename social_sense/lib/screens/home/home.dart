@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:social_sense/services/auth.dart';
 import 'package:social_sense/screens/information.dart';
 import 'package:social_sense/screens/lessons.dart';
@@ -205,7 +206,7 @@ class Home extends StatelessWidget {
                                   ),
                                   Text(
                                     '$stars',
-                                    style: TextStyle(
+                                    style: GoogleFonts.baloo2(
                                       fontSize: screenWidth * 0.06,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
@@ -261,8 +262,8 @@ class Home extends StatelessWidget {
                 },
                 child: Text(
                   "Logout",
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.0375,
+                  style: GoogleFonts.baloo2(
+                    fontSize: screenWidth * 0.05,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -347,7 +348,7 @@ class Home extends StatelessWidget {
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: GoogleFonts.baloo2(
               fontSize: screenWidth * 0.06, // Scales text size dynamically
               fontWeight: FontWeight.bold,
               color: Colors.black,

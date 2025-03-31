@@ -6,6 +6,7 @@ import 'package:social_sense/screens/progress_bar.dart';
 import 'package:confetti/confetti.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:social_sense/screens/conversational_lessons.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ConversationResults extends StatefulWidget {
   final String buddyType;
@@ -137,32 +138,37 @@ class _ConversationResultsState extends State<ConversationResults> {
                     children: [
                       // First line (always centered)
                       Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                                decoration: BoxDecoration(
-                                  color: const Color.fromARGB(255, 201, 177, 255).withOpacity(0.85),
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "Awesome job!",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 24,
-                                        color: Colors.purple[800],
-                                      ),
-                                    ),
-                                    Text(
-                                      "${100 - updatedTotalPoints} points until your next star!",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 201, 177, 255)
+                              .withOpacity(0.85),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              earnedStars > 0
+                                  ? "Wow! You did amazing!"
+                                  : "Awesome job!",
+                              style: GoogleFonts.baloo2(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
+                                color: Colors.purple[800],
                               ),
-
+                            ),
+                            Text(
+                              earnedStars > 0
+                                  ? "You got $earnedStars ${earnedStars == 1 ? 'star' : 'stars'}!"
+                                  : "${100 - updatedTotalPoints} ${100 - updatedTotalPoints == 1 ? 'point' : 'points'} until your next star!",
+                              style: GoogleFonts.baloo2(
+                                fontSize: 18,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
 
                       SizedBox(height: 25),
 
@@ -203,8 +209,9 @@ class _ConversationResultsState extends State<ConversationResults> {
                               top: screenHeight * 0.08,
                               child: Image.asset(
                                 'assets/$glasses.png',
-                                width: screenWidth *0.27, // Scale width for more accurate size
-                                height: screenHeight * 0.1,
+                                width: screenWidth *
+                                    0.27, // Scale width for more accurate size
+                                height: screenHeight * 0.07,
                                 fit: BoxFit.contain,
                               ),
                             ),
@@ -226,7 +233,7 @@ class _ConversationResultsState extends State<ConversationResults> {
                                   ),
                                   Text(
                                     '$updatedStars',
-                                    style: TextStyle(
+                                    style: GoogleFonts.baloo2(
                                       fontSize: screenWidth * 0.06,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
@@ -244,7 +251,7 @@ class _ConversationResultsState extends State<ConversationResults> {
                       //  Score
                       Text(
                         "Your Score: ${widget.conversationScore}",
-                        style: TextStyle(
+                        style: GoogleFonts.baloo2(
                             fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 30),
@@ -308,7 +315,7 @@ class _ConversationResultsState extends State<ConversationResults> {
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: GoogleFonts.baloo2(
               fontSize: screenWidth * 0.06,
               fontWeight: FontWeight.bold,
               color: Colors.black,

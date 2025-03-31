@@ -7,6 +7,7 @@ import 'package:social_sense/screens/progress_bar.dart';
 import 'package:social_sense/screens/ArcTextPainter.dart' as arc;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
+import 'package:google_fonts/google_fonts.dart';
 
 class LessonsPage extends StatefulWidget {
   final String uid;
@@ -167,7 +168,6 @@ class _LessonsPageState extends State<LessonsPage> {
                             glasses: glasses,
                             scale: screenWidth / 300,
                           ),
-                          
                           Positioned(
                             top: screenHeight * -0.025,
                             child: Container(
@@ -184,7 +184,7 @@ class _LessonsPageState extends State<LessonsPage> {
                                   ),
                                   Text(
                                     '$stars',
-                                    style: TextStyle(
+                                    style: GoogleFonts.baloo2(
                                       fontSize: screenWidth * 0.06,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
@@ -225,7 +225,7 @@ class _LessonsPageState extends State<LessonsPage> {
                 },
                 child: Text(
                   "Home",
-                  style: TextStyle(
+                  style: GoogleFonts.baloo2(
                     fontSize: screenWidth * 0.04,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -275,7 +275,8 @@ class _LessonsPageState extends State<LessonsPage> {
     );
   }
 
-  Widget buildLessonButton(BuildContext context, String title, String subtitle, Widget targetPage) {
+  Widget buildLessonButton(
+      BuildContext context, String title, String subtitle, Widget targetPage) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
@@ -309,7 +310,7 @@ class _LessonsPageState extends State<LessonsPage> {
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: GoogleFonts.baloo2(
                   fontSize: screenWidth * 0.06,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -319,7 +320,7 @@ class _LessonsPageState extends State<LessonsPage> {
               Text(
                 subtitle,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: GoogleFonts.baloo2(
                   fontSize: screenWidth * 0.03,
                   color: Colors.black87,
                 ),

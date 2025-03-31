@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:social_sense/services/database.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ConversationLog extends StatefulWidget {
   final String userId;
@@ -24,8 +25,6 @@ class _ConversationLogState extends State<ConversationLog> {
   String buddyType = "";
   String? currentHat;
   String? currentGlasses;
- 
-
 
   @override
   void initState() {
@@ -71,7 +70,6 @@ class _ConversationLogState extends State<ConversationLog> {
         currentHat = userData?['currentHat'];
         currentGlasses = userData?['currentGlasses'];
       });
-
     }
   }
 
@@ -109,7 +107,7 @@ class _ConversationLogState extends State<ConversationLog> {
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   "Back",
-                  style: TextStyle(
+                  style: GoogleFonts.baloo2(
                     fontSize: screenWidth * 0.04,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -128,7 +126,7 @@ class _ConversationLogState extends State<ConversationLog> {
                     ? Center(
                         child: Text(
                           "No conversation data found.",
-                          style: TextStyle(
+                          style: GoogleFonts.baloo2(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -140,8 +138,9 @@ class _ConversationLogState extends State<ConversationLog> {
                         children: [
                           SizedBox(height: 100),
                           Text(
-                            widget.topic[0].toUpperCase() + widget.topic.substring(1).toLowerCase(),
-                            style: TextStyle(
+                            widget.topic[0].toUpperCase() +
+                                widget.topic.substring(1).toLowerCase(),
+                            style: GoogleFonts.baloo2(
                               fontSize: 40,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -150,7 +149,7 @@ class _ConversationLogState extends State<ConversationLog> {
                           SizedBox(height: 0),
                           Text(
                             "Score: ${conversationData!["score"] ?? "N/A"}",
-                            style: TextStyle(
+                            style: GoogleFonts.baloo2(
                               fontSize: 25,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -182,15 +181,14 @@ class _ConversationLogState extends State<ConversationLog> {
                                       Column(
                                         children: [
                                           SizedBox(
-                                              width: 50,
-                                              height: 50,
-                                              child: buildBuddyAvatar(50),
-                                            ),
-
+                                            width: 50,
+                                            height: 50,
+                                            child: buildBuddyAvatar(50),
+                                          ),
                                           SizedBox(height: 3),
                                           Text(
                                             speakerName,
-                                            style: TextStyle(
+                                            style: GoogleFonts.baloo2(
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.white,
@@ -206,8 +204,10 @@ class _ConversationLogState extends State<ConversationLog> {
                                         padding: EdgeInsets.all(12),
                                         decoration: BoxDecoration(
                                           color: isUser
-                                              ? const Color.fromARGB(255, 248, 97, 27)
-                                              : const Color.fromARGB(255, 255, 173, 135),
+                                              ? const Color.fromARGB(
+                                                  255, 248, 97, 27)
+                                              : const Color.fromARGB(
+                                                  255, 255, 173, 135),
                                           borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(15),
                                             topRight: Radius.circular(15),
@@ -221,8 +221,9 @@ class _ConversationLogState extends State<ConversationLog> {
                                         ),
                                         child: Text(
                                           message["content"] ?? "",
-                                          style: TextStyle(
-                                            color: const Color.fromARGB(255, 0, 0, 0),
+                                          style: GoogleFonts.baloo2(
+                                            color: const Color.fromARGB(
+                                                255, 0, 0, 0),
                                             fontSize: 16,
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -241,7 +242,7 @@ class _ConversationLogState extends State<ConversationLog> {
                                           SizedBox(height: 3),
                                           Text(
                                             speakerName,
-                                            style: TextStyle(
+                                            style: GoogleFonts.baloo2(
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.white,
@@ -263,30 +264,29 @@ class _ConversationLogState extends State<ConversationLog> {
   }
 
   Widget buildBuddyAvatar(double size) {
-  return Stack(
-    alignment: Alignment.center,
-    children: [
-      Image.asset("assets/animal_$buddyType.png", width: size, height: size),
-      if (currentHat != null && currentHat!.isNotEmpty)
-        Positioned(
-          top: size * -0.05,
-          child: Image.asset(
-            "assets/$currentHat.png",
-            width: size * 0.9,
-            height: size * 0.3,
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Image.asset("assets/animal_$buddyType.png", width: size, height: size),
+        if (currentHat != null && currentHat!.isNotEmpty)
+          Positioned(
+            top: size * -0.05,
+            child: Image.asset(
+              "assets/$currentHat.png",
+              width: size * 0.9,
+              height: size * 0.3,
+            ),
           ),
-        ),
-      if (currentGlasses != null && currentGlasses!.isNotEmpty)
-        Positioned(
-          top: size * 0.1,
-          child: Image.asset(
-            "assets/$currentGlasses.png",
-            width: size * 0.5,
-            height: size * 0.45,
+        if (currentGlasses != null && currentGlasses!.isNotEmpty)
+          Positioned(
+            top: size * 0.1,
+            child: Image.asset(
+              "assets/$currentGlasses.png",
+              width: size * 0.5,
+              height: size * 0.45,
+            ),
           ),
-        ),
-    ],
-  );
-}
-
+      ],
+    );
+  }
 }

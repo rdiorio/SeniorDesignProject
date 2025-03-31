@@ -5,6 +5,7 @@ import 'package:social_sense/screens/ArcTextPainter.dart' as arc;
 import 'package:social_sense/screens/progress_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
+import 'package:google_fonts/google_fonts.dart';
 
 class ConversationalLessons extends StatefulWidget {
   final String uid;
@@ -196,7 +197,7 @@ class _ConversationalLessonsState extends State<ConversationalLessons> {
                                   ),
                                   Text(
                                     '$stars',
-                                    style: TextStyle(
+                                    style: GoogleFonts.baloo2(
                                       fontSize: screenWidth * 0.06,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
@@ -239,7 +240,7 @@ class _ConversationalLessonsState extends State<ConversationalLessons> {
                 },
                 child: Text(
                   "Home",
-                  style: TextStyle(
+                  style: GoogleFonts.baloo2(
                     fontSize: screenWidth * 0.04,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -318,7 +319,7 @@ class _ConversationalLessonsState extends State<ConversationalLessons> {
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: GoogleFonts.baloo2(
               fontSize: screenWidth * 0.06, // Scale text size dynamically
               fontWeight: FontWeight.bold,
               color: Colors.black,

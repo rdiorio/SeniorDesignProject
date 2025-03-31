@@ -158,7 +158,7 @@ class _SignInState extends State<SignIn> {
                                       if (result == null) {
                                         setState(() {
                                           error =
-                                              'could not sign in with those credentials';
+                                              'Could not sign in with those credentials';
                                           loading = false;
                                         });
                                       }
@@ -170,7 +170,8 @@ class _SignInState extends State<SignIn> {
                                   onPressed: _resetPassword,
                                   child: Text(
                                     'Forgot Password?',
-                                    style: TextStyle(color: Colors.blue),
+                                    style: TextStyle(
+                                        color: Colors.blue, fontSize: 18),
                                   ),
                                 ),
                                 SizedBox(height: 12.0),
@@ -191,6 +192,7 @@ class _SignInState extends State<SignIn> {
                                       child: Text(
                                         "Register",
                                         style: TextStyle(
+                                          fontSize: 18,
                                           color: const Color.fromARGB(
                                               255, 58, 131, 190),
                                           decoration: TextDecoration.underline,

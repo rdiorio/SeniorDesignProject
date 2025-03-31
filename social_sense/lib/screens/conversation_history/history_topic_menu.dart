@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:social_sense/screens/home/home.dart';
 import 'package:social_sense/screens/conversation_history/history_convo_menu.dart';
 import 'package:social_sense/screens/profile.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ConversationHistory extends StatefulWidget {
   final String uid;
@@ -75,7 +76,7 @@ class _ConversationHistoryState extends State<ConversationHistory> {
                 },
                 child: Text(
                   "Home",
-                  style: TextStyle(
+                  style: GoogleFonts.baloo2(
                     fontSize: screenWidth * 0.04,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -109,7 +110,7 @@ class _ConversationHistoryState extends State<ConversationHistory> {
                 },
                 child: Text(
                   "Back",
-                  style: TextStyle(
+                  style: GoogleFonts.baloo2(
                     fontSize: screenWidth * 0.04,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -150,7 +151,7 @@ class _ConversationHistoryState extends State<ConversationHistory> {
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: GoogleFonts.baloo2(
               fontSize: screenWidth * 0.06,
               fontWeight: FontWeight.bold,
               color: Colors.black,

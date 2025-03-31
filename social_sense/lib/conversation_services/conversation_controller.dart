@@ -4,7 +4,6 @@ import 'package:social_sense/services/database.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt; // Speech-to-Text
 import 'dart:async';
 
-
 class ConversationController {
   final AIAPIService _apiService;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -116,39 +115,39 @@ class ConversationController {
   }*/
 
   Future<void> startListening(Function(String) onResult) async {
-  if (!_isListening) {
-    bool available = await _speech.initialize(
-      onStatus: (status) => print("Status: $status"),
-      onError: (error) => print("Error: $error"),
-    );
+    if (!_isListening) {
+      bool available = await _speech.initialize(
+        onStatus: (status) => print("Status: $status"),
+        onError: (error) => print("Error: $error"),
+      );
 
-    if (available) {
-      _isListening = true;
-      bool hasResult = false;
+      if (available) {
+        _isListening = true;
+        bool hasResult = false;
 
-      
-      Timer(Duration(seconds: 5), () {
-        if (!hasResult && _isListening) {
-          _isListening = false;
-          _speech.stop();
-          onResult(" "); // send blank if no speech was detected
-        }
-      });
-
-      _speech.listen(
-        onResult: (result) async {
-          if (result.finalResult) {
-            hasResult = true;
+        Timer(Duration(seconds: 5), () {
+          if (!hasResult && _isListening) {
             _isListening = false;
             _speech.stop();
-            onResult(result.recognizedWords.trim().isEmpty ? " " : result.recognizedWords);
+            onResult(" "); // send blank if no speech was detected
           }
-        },
-      );
+        });
+
+        _speech.listen(
+          onResult: (result) async {
+            if (result.finalResult) {
+              hasResult = true;
+              _isListening = false;
+              _speech.stop();
+              onResult(result.recognizedWords.trim().isEmpty
+                  ? " "
+                  : result.recognizedWords);
+            }
+          },
+        );
+      }
     }
   }
-}
-
 
   //Stops Listening
   Future<void> stopListening() async {
@@ -168,6 +167,8 @@ class ConversationController {
     } else if (classification == "off-topic" ||
         classification == "inappropriate" ||
         classification == "non-responsive") {
+      this.negativeCount++;
+    } else {
       this.negativeCount++;
     }
 

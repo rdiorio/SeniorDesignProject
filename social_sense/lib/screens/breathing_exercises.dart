@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:social_sense/screens/home/home.dart'; // Import Home screen
+import 'package:social_sense/screens/home/home.dart';
+import 'package:google_fonts/google_fonts.dart'; // Import Home screen
 
 class BreathingExercises extends StatefulWidget {
   final String uid; // ✅ Takes in the uid
@@ -26,48 +27,55 @@ class _BreathingExercisesState extends State<BreathingExercises>
       duration: Duration(seconds: 96),
     );
 
- _animation = TweenSequence<double>([
-  TweenSequenceItem(tween: Tween(begin: 0.7, end: 1.5), weight: 5), //inhale GOOD
-  TweenSequenceItem(tween: ConstantTween(1.5), weight: 6), //hold GOOD
-  TweenSequenceItem(tween: Tween(begin: 1.5, end: 0.7), weight: 5), //exhale GOOD
-  TweenSequenceItem(tween: ConstantTween(0.7), weight: 6), //hold GOOD
-  TweenSequenceItem(tween: Tween(begin: 0.7, end: 1.5), weight: 5), //inhale GOOD
-  TweenSequenceItem(tween: ConstantTween(1.5), weight: 5), //hold GOOD
-  TweenSequenceItem(tween: Tween(begin: 1.5, end: 0.7), weight: 5), //exhale GOOD
-  TweenSequenceItem(tween: ConstantTween(0.7), weight: 5), //hold GOOD
-  TweenSequenceItem(tween: Tween(begin: 0.7, end: 1.5), weight: 6), //inhale GOOD
-  TweenSequenceItem(tween: ConstantTween(1.5), weight: 5), //hold GOOD
-  TweenSequenceItem(tween: Tween(begin: 1.5, end: 0.7), weight: 6), // exhale GOOD
-  TweenSequenceItem(tween: ConstantTween(0.7), weight: 6), //hold GOOD
-  TweenSequenceItem(tween: Tween(begin: 0.7, end: 1.5), weight: 5), //inhale GOOD 
-  TweenSequenceItem(tween: ConstantTween(1.5), weight: 5), //hold GOOD
-  TweenSequenceItem(tween: Tween(begin: 1.5, end: 0.7), weight: 5), //exhale GOOD
-  TweenSequenceItem(tween: ConstantTween(0.7), weight: 7), //hold
-  TweenSequenceItem(tween: Tween(begin: 0.7, end: 1.5), weight: 5), //inhale 
-  TweenSequenceItem(tween: Tween(begin: 1.5, end: 0.7), weight: 4), //exhale 
-]).animate(
-  CurvedAnimation(parent: _controller, curve: Curves.linear), 
-);
-
+    _animation = TweenSequence<double>([
+      TweenSequenceItem(
+          tween: Tween(begin: 0.7, end: 1.5), weight: 5), //inhale GOOD
+      TweenSequenceItem(tween: ConstantTween(1.5), weight: 6), //hold GOOD
+      TweenSequenceItem(
+          tween: Tween(begin: 1.5, end: 0.7), weight: 5), //exhale GOOD
+      TweenSequenceItem(tween: ConstantTween(0.7), weight: 6), //hold GOOD
+      TweenSequenceItem(
+          tween: Tween(begin: 0.7, end: 1.5), weight: 5), //inhale GOOD
+      TweenSequenceItem(tween: ConstantTween(1.5), weight: 5), //hold GOOD
+      TweenSequenceItem(
+          tween: Tween(begin: 1.5, end: 0.7), weight: 5), //exhale GOOD
+      TweenSequenceItem(tween: ConstantTween(0.7), weight: 5), //hold GOOD
+      TweenSequenceItem(
+          tween: Tween(begin: 0.7, end: 1.5), weight: 6), //inhale GOOD
+      TweenSequenceItem(tween: ConstantTween(1.5), weight: 5), //hold GOOD
+      TweenSequenceItem(
+          tween: Tween(begin: 1.5, end: 0.7), weight: 6), // exhale GOOD
+      TweenSequenceItem(tween: ConstantTween(0.7), weight: 6), //hold GOOD
+      TweenSequenceItem(
+          tween: Tween(begin: 0.7, end: 1.5), weight: 5), //inhale GOOD
+      TweenSequenceItem(tween: ConstantTween(1.5), weight: 5), //hold GOOD
+      TweenSequenceItem(
+          tween: Tween(begin: 1.5, end: 0.7), weight: 5), //exhale GOOD
+      TweenSequenceItem(tween: ConstantTween(0.7), weight: 7), //hold
+      TweenSequenceItem(tween: Tween(begin: 0.7, end: 1.5), weight: 5), //inhale
+      TweenSequenceItem(tween: Tween(begin: 1.5, end: 0.7), weight: 4), //exhale
+    ]).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.linear),
+    );
   }
- Future<void> _toggleAudioAndAnimation() async {
-  if (_isPlaying) {
-    await _audioPlayer.pause();
-    _controller.stop();
-  } else {
-    await _audioPlayer.play(AssetSource('square_breathing.wav'));
-    Future.delayed(Duration(seconds: 34), () {
-      if (_isPlaying) {
-        _controller.repeat();
-      }
+
+  Future<void> _toggleAudioAndAnimation() async {
+    if (_isPlaying) {
+      await _audioPlayer.pause();
+      _controller.stop();
+    } else {
+      await _audioPlayer.play(AssetSource('square_breathing.wav'));
+      Future.delayed(Duration(seconds: 34), () {
+        if (_isPlaying) {
+          _controller.repeat();
+        }
+      });
+    }
+
+    setState(() {
+      _isPlaying = !_isPlaying;
     });
   }
-
-  setState(() {
-    _isPlaying = !_isPlaying;
-  });
-}
-
 
   @override
   void dispose() {
@@ -117,7 +125,7 @@ class _BreathingExercisesState extends State<BreathingExercises>
                 },
                 child: Text(
                   "Home",
-                  style: TextStyle(
+                  style: GoogleFonts.baloo2(
                     fontSize: screenWidth * 0.04,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -134,7 +142,7 @@ class _BreathingExercisesState extends State<BreathingExercises>
             right: 0,
             child: Text(
               'Breathe in... Hold... Breathe out...',
-              style: TextStyle(
+              style: GoogleFonts.baloo2(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -202,13 +210,16 @@ class _BreathingExercisesState extends State<BreathingExercises>
                   backgroundColor: const Color.fromARGB(255, 242, 231, 249),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(color: const Color.fromARGB(255, 248, 129, 74), width: screenWidth * 0.01),
+                    side: BorderSide(
+                        color: const Color.fromARGB(255, 248, 129, 74),
+                        width: screenWidth * 0.01),
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
                 child: Text(
                   _isPlaying ? 'Pause' : 'Start',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.baloo2(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ),
             ),

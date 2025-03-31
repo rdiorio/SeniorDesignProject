@@ -3,6 +3,7 @@ import 'package:social_sense/screens/breathing_exercises.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 import 'package:social_sense/screens/home/home.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // Utility function for consistent scaling across different screen sizes
 double scaleWidth(BuildContext context, double size) {
@@ -151,7 +152,7 @@ class DailyCheckInScreen extends StatelessWidget {
                           },
                           child: Text(
                             "Home",
-                            style: TextStyle(
+                            style: GoogleFonts.baloo2(
                               fontSize: screenWidth * 0.04,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -229,7 +230,7 @@ class DailyCheckInScreen extends StatelessWidget {
           backgroundColor: bgColor,
           foregroundColor: Colors.black,
           padding: EdgeInsets.symmetric(vertical: screenHeight * 0.015),
-          textStyle: TextStyle(
+          textStyle: GoogleFonts.baloo2(
             fontWeight: FontWeight.bold,
             fontSize: screenWidth * 0.06, // Scale text size dynamically
           ),

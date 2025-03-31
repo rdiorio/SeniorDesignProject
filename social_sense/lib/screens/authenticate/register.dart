@@ -16,7 +16,6 @@ class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
 
-
   // text field state
   String email = '';
   String password = '';
@@ -32,13 +31,15 @@ class _RegisterState extends State<Register> {
                 // Background image with color filter
                 ColorFiltered(
                   colorFilter: ColorFilter.mode(
-                    Colors.black.withOpacity(0.1), // Change this to the desired color
+                    Colors.black
+                        .withOpacity(0.1), // Change this to the desired color
                     BlendMode.darken,
                   ),
                   child: Container(
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('assets/bottomPurple_background.png'), // Path to your image
+                        image: AssetImage(
+                            'assets/bottomPurple_background.png'), // Path to your image
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -48,8 +49,11 @@ class _RegisterState extends State<Register> {
                 Center(
                   child: SingleChildScrollView(
                     child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
-                      constraints: BoxConstraints(maxWidth: 400), // Adjust the maxWidth to make the box smaller
+                      padding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 30.0),
+                      constraints: BoxConstraints(
+                          maxWidth:
+                              400), // Adjust the maxWidth to make the box smaller
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -79,10 +83,21 @@ class _RegisterState extends State<Register> {
                                     hintText: 'Email',
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30.0),
-                                      borderSide: BorderSide(color: Colors.black),
+                                      borderSide:
+                                          BorderSide(color: Colors.black),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 2.0),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.red, width: 2.0),
                                     ),
                                   ),
-                                  validator: (val) => (val?.isEmpty ?? true) ? 'Enter an email' : null,
+                                  validator: (val) => (val?.isEmpty ?? true)
+                                      ? 'Enter an email'
+                                      : null,
                                   onChanged: (val) {
                                     setState(() => email = val);
                                   },
@@ -91,12 +106,20 @@ class _RegisterState extends State<Register> {
                                 TextFormField(
                                   decoration: textInputDecoration.copyWith(
                                     hintText: 'Password',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(300.0),
+                                    border: OutlineInputBorder(),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 2.0),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.red, width: 2.0),
                                     ),
                                   ),
                                   obscureText: true,
-                                  validator: (val) => (val?.length ?? 0) < 6 ? 'Enter a password that is 6 characters long' : null,
+                                  validator: (val) => (val?.length ?? 0) < 6
+                                      ? 'Enter a password that is 6 characters long'
+                                      : null,
                                   onChanged: (val) {
                                     setState(() => password = val);
                                   },
@@ -104,17 +127,24 @@ class _RegisterState extends State<Register> {
                                 SizedBox(height: 20.0),
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.pink[400], // Background color
+                                    backgroundColor:
+                                        Colors.pink[400], // Background color
                                   ),
                                   child: Text(
                                     'Register',
-                                    style: TextStyle(color: Colors.white), // Text color
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.white), // Text color
                                   ),
                                   onPressed: () async {
-                                    if (_formKey.currentState?.validate() ?? false) {
+                                    if (_formKey.currentState?.validate() ??
+                                        false) {
                                       setState(() => loading = true);
-                                      dynamic result = await _auth.registerWithEmailAndPassword(email, password);
-                                      if (!mounted) return; // Check if the widget is still mounted
+                                      dynamic result = await _auth
+                                          .registerWithEmailAndPassword(
+                                              email, password);
+                                      if (!mounted)
+                                        return; // Check if the widget is still mounted
                                       if (result == null) {
                                         setState(() {
                                           error = 'Please supply a valid email';
@@ -127,13 +157,19 @@ class _RegisterState extends State<Register> {
                                 SizedBox(height: 12.0),
                                 Text(
                                   error,
-                                  style: TextStyle(color: Colors.red, fontSize: 14.0),
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 14.0),
                                 ),
                                 SizedBox(height: 20.0),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text("Already have an account? ", style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold), ),
+                                    Text(
+                                      "Already have an account? ",
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                     GestureDetector(
                                       onTap: () {
                                         widget.toggleView();
@@ -141,7 +177,8 @@ class _RegisterState extends State<Register> {
                                       child: Text(
                                         "Sign in",
                                         style: TextStyle(
-                                          color: const Color.fromARGB(255, 17, 116, 196),
+                                          color: const Color.fromARGB(
+                                              255, 17, 116, 196),
                                           decoration: TextDecoration.underline,
                                           fontSize: 16.0,
                                           fontWeight: FontWeight.bold,
@@ -163,8 +200,3 @@ class _RegisterState extends State<Register> {
           );
   }
 }
-
-
-
-
-
